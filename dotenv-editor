@@ -98,11 +98,16 @@ function updateVariable() {
 
     # Show dialog
     OLD=`./bin/dotenv.sh get $KEY | sed -e 's/^"//' -e 's/"$//'`
-    NEW=`$DIALOG --clear --title "Configuration - $i" --inputbox "$KEY" 8 80 "$OLD"`
+    NEW=$($DIALOG \
+        --clear \
+        --inputbox "$KEY" \
+        8 80 "$OLD" \
+        3>&1 1>&2 2>&3)
+        # --title "Configuration - $KEY" \
 
     if [ "$OLD" != "$NEW" ]; then
         echo "Updating $KEY: $OLD => $NEW"
-        # `./bin/dotenv.sh set $KEY $NEW | sed -e 's/^"//' -e 's/"$//'`
+        ./bin/dotenv.sh set $KEY $NEW
     else
         echo "No change $KEY: $OLD => $NEW"
     fi

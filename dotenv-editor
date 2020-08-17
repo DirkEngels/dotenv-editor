@@ -95,43 +95,6 @@ function setValue() {
 }
 
 
-
-# function mainMenu() {
-#     # echo "hi";
-#     detectFullKeyOrCategory
-#     echo $MENU_LIST;
-#     # exit;
-
-#     choosenMenuOptions=$($DIALOG --cancel-button "Exit" --title "Dotenv Editor" --fb --menu "Choose an option" 15 60 6 \
-#         $MENU_LIST \
-#         3>&1 1>&2 2>&3)
-#     EXIT_STATUS=$?
-#     [[ "$EXIT_STATUS" = 1 ]] && exit;	#test if exit button is pressed
-
-#     echo "OPTION: $choosenMenuOptions\n"
-
-#     case $choosenMenuOptions in
-#         Exit) #Exit the dotenv editor application
-#         	# echo "1 => Aap"
-#         	# clear;
-#             echo $MENU_LIST
-#         	exit;
-#     	    ;;
-
-#         $CURRENT)
-#             echo "CURRENT!! WHOOAAAAHHH"
-#             ;;
-
-# 	    *)
-#             echo $choosenMenuOptions
-# 			echo "Other: $choosenMenuOptions"
-#             exit;
-# 			;;
-# 	esac
-# 	mainMenu
-# }
-
-
 ###
 # Menu: Display a menu using dialog/whiptail with the provided options. The
 # return value is the selected item.

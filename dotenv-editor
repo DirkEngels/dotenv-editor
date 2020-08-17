@@ -7,7 +7,12 @@ DIALOG=${DIALOG=dialog}
 # Welcome: display a nice and warm welcome message.
 ###
 function welcomeMessage() {
-    echo "Welcome"
+    $DIALOG \
+        --clear \
+        --title "Setup" \
+        --clear \
+        --yesno "$APP_TITLE\n\nThis setup will guide you through configuring all the existing variables.\n\nTheir defaults are already prefilled, so hit ENTER to go the next one." \
+        20 80
 }
 
 

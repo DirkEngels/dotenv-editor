@@ -16,7 +16,7 @@ CURRENT=""
 function welcomeMessage() {
     $DIALOG \
         --clear \
-        --title "Setup" \
+        --title "Dotenv Editor - Welcome" \
         --clear \
         --msgbox "$APP_TITLE\n\nThis setup will guide you through configuring all the existing variables.\n\nTheir defaults are already prefilled, so hit ENTER to go the next one." \
         20 80
@@ -140,7 +140,7 @@ function menu() {
     # MENU_LIST= $1
     SELECTED_ITEM=$($DIALOG \
         --cancel-button "Exit" \
-        --title "Dotenv Editor" \
+        --title "Dotenv Editor - Menu" \
         --fb \
         --menu "Choose an option" \
         25 60 16 \
@@ -200,7 +200,7 @@ function main() {
 
 
 # Display welcome message
-# welcomeMessage
+welcomeMessage
 
 # Select .env file (or copy from a sample file)
 DOTENV_FILE= determineDotEnvFile

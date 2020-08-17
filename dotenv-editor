@@ -3,9 +3,14 @@
 DIALOG=${DIALOG=dialog}
 
 
+###
+# Welcome: display a nice and warm welcome message.
+###
 function welcomeMessage() {
     echo "Welcome"
 }
+
+
 
 
 function checkIfEnvFileExists() {
@@ -119,11 +124,19 @@ function selectDotEnvFile() {
 
 
 ###
-# Main program structure
+# Main Menu: show the main menu of (grouped) topics based on the select prefix.
+# The main program keeps running until the user has selected a topic or exited
+# the application.
 ###
 function main() {
+    # Display welcome message
     welcomeMessage
+
+    # Select .env file (or copy from a sample file)
     DOTENV_FILE= selectDotEnvFile
+
+    # Keep looping the (main) menu until a valid key has been selected or the
+    # user exists the application.
     mainMenu
 }
 

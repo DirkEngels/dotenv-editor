@@ -117,7 +117,7 @@ function askInputForConfigurationKeyValuePair() {
 }
 
 
-function selectDotEnvFile() {
+function determineDotEnvFile() {
     echo "Check of existing .env file\n";
     # Detect .env-* files
 
@@ -151,11 +151,16 @@ function main() {
     welcomeMessage
 
     # Select .env file (or copy from a sample file)
-    DOTENV_FILE= selectDotEnvFile
+    DOTENV_FILE= determineDotEnvFile
 
-    # Keep looping the (main) menu until a valid key has been selected or the
-    # user exists the application.
+    loop;
+}
 
+###
+# Loop: Keep looping the (main) menu until a valid key has been selected or the user
+# exists the application.
+###
+function loop() {
     detectFullKeyOrCategory
 
     SELECTED_ITEM= menu
@@ -179,7 +184,6 @@ function main() {
             exit;
             ;;
     esac
-    menu
 }
 
 main

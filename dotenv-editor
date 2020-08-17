@@ -2,9 +2,46 @@
 
 DIALOG=${DIALOG=dialog}
 
+function welcomeMessage() {
+    echo "Welcome"
+}
+
+function checkIfEnvFileExists() {
+    # Check if .env file exists, otherwise select one of the .env-* files as starting point/
+    echo "Checking .env file"
+}
+
 
 
 function detectFullKeyOrCategory () {
+    CURRENT=$1
+
+    echo "CURRENT: $CURRENT";
+
+
+    # Check if a single option has been chosen
+    CNT_MATCHES=`cat .env | grep "$CURRENT=" | wc -l`
+    if [ $CNT_MATCHES == 1 ]; then
+        return $CURRENT;
+    fi
+
+    echo "MATCHES: $CNT_MATCHES"
+
+    PREFIX=$CURRENT"_"
+    # echo "PREFIX: $PREFIX"
+    CNT_MATCHES=`cat .env | grep "$PREFIX" | wc -l`
+    echo "MATCHES: $CNT_MATCHES"
+
+    if [ "$CURRENT" == "" ]; then
+        OPTIONS=`awk -F= '{print $1 }' .env  | grep -v '^#' | grep -v '^$' | awk -F"_" '{print $1}' | sort | uniq`
+    else
+        OPTIONS=`awk -F= '{print $1 }' .env  | grep -v '^#' | grep "^$CURRENT" | grep -v '^$'`
+        # @todo: strip off current part
+    fi
+echo "OPTIONS: $OPTIONS";
+exit;
+
+
     VARIABLE_LIST=`awk -F= '{print $1 }' .env  | grep -v '^#' | grep -v '^$'`
     VARIABLE_GROUP=`awk -F= '{print $1 }' .env  | grep -v '^#' | grep -v '^$' | awk -F"_" '{print $1}' | sort | uniq`
 
@@ -25,8 +62,7 @@ function detectFullKeyOrCategory () {
 
 
 function mainMenu() {
-
-
+    detectFullKeyOrCategory "APP"
 
 
     choosenMenuOptions=$($DIALOG --cancel-button "Exit" --title "DBeng main menu" --fb --menu "Choose an option" 15 60 6 \
@@ -34,28 +70,20 @@ function mainMenu() {
         "2" "List existing databases" \
         "3" "Delete database" \
         "4" "Do a table operation" \
-        # $MENU_LIST \
-        "OTHER" "Other" \
         "Exit" "Exit to shell" \
             3>&1 1>&2 2>&3)
     exitstatus=$?
     [[ "$exitstatus" = 1 ]] && exit;	#test if exit button is pressed
 
+    echo "OPTION: $choosenMenuOptions\n"
+
     case $choosenMenuOptions in
         Exit) #Exit the dotenv editor application
         	# echo "1 => Aap"
         	# clear;
-    echo $MENU_LIST
+            echo $MENU_LIST
         	exit;
     	    ;;
-
-        1) #Create Database
-        	echo "1 => Aap"
-    	    ;;
-
-        2) #Create Database
-        	echo "2 => Blaat"
-	        ;;
 
 	    *)
             echo $choosenMenuOptions
@@ -67,7 +95,27 @@ function mainMenu() {
 }
 
 
+function askInputForConfigurationKeyValuePair() {
+    echo "sdfdsdf\n";
+}
+
+
+function selectDotEnvFile() {
+    echo "sdfdsdf\n";
+    # Detect .env-* files
+    # If count == 0 => error
+    # If count > 0 => show dialog
+    # If count == 1 => want to use this one? perhaps copy?
+}
+
+
 ###
 # Main program structure
-# welcomeMessage;
-mainMenu
+###
+function main() {
+    welcomeMessage
+    selectDotEnvFile
+    mainMenu
+}
+
+main

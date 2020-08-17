@@ -6,6 +6,7 @@ function welcomeMessage() {
     echo "Welcome"
 }
 
+
 function checkIfEnvFileExists() {
     # Check if .env file exists, otherwise select one of the .env-* files as starting point/
     echo "Checking .env file"
@@ -101,8 +102,10 @@ function askInputForConfigurationKeyValuePair() {
 
 
 function selectDotEnvFile() {
-    echo "sdfdsdf\n";
+    echo "Check of existing .env file\n";
     # Detect .env-* files
+
+    echo "Or choose sample .env-* file.\n";
     # If count == 0 => error
     # If count > 0 => show dialog
     # If count == 1 => want to use this one? perhaps copy?
@@ -114,7 +117,7 @@ function selectDotEnvFile() {
 ###
 function main() {
     welcomeMessage
-    selectDotEnvFile
+    DOTENV_FILE = selectDotEnvFile
     mainMenu
 }
 

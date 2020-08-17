@@ -8,7 +8,7 @@ DIALOG=${DIALOG=dialog}
 MENU_LIST=""
 MENU_OPTIONS=""
 DOTENV_FILE=.env
-
+CURRENT=""
 
 ###
 # Welcome: display a nice and warm welcome message.
@@ -42,7 +42,7 @@ function determineDotEnvFile() {
 
 
 function detectFullKeyOrCategory () {
-    CURRENT=$1
+    # CURRENT=$1
 
     echo "CURRENT: $CURRENT";
 
@@ -96,49 +96,46 @@ function setValue() {
 
 
 
-function mainMenu() {
-    # echo "hi";
-    detectFullKeyOrCategory
-    echo $MENU_LIST;
-    # exit;
+# function mainMenu() {
+#     # echo "hi";
+#     detectFullKeyOrCategory
+#     echo $MENU_LIST;
+#     # exit;
 
-    choosenMenuOptions=$($DIALOG --cancel-button "Exit" --title "Dotenv Editor" --fb --menu "Choose an option" 15 60 6 \
-        $MENU_LIST \
-        3>&1 1>&2 2>&3)
-    EXIT_STATUS=$?
-    [[ "$EXIT_STATUS" = 1 ]] && exit;	#test if exit button is pressed
+#     choosenMenuOptions=$($DIALOG --cancel-button "Exit" --title "Dotenv Editor" --fb --menu "Choose an option" 15 60 6 \
+#         $MENU_LIST \
+#         3>&1 1>&2 2>&3)
+#     EXIT_STATUS=$?
+#     [[ "$EXIT_STATUS" = 1 ]] && exit;	#test if exit button is pressed
 
-    echo "OPTION: $choosenMenuOptions\n"
+#     echo "OPTION: $choosenMenuOptions\n"
 
-    case $choosenMenuOptions in
-        Exit) #Exit the dotenv editor application
-        	# echo "1 => Aap"
-        	# clear;
-            echo $MENU_LIST
-        	exit;
-    	    ;;
+#     case $choosenMenuOptions in
+#         Exit) #Exit the dotenv editor application
+#         	# echo "1 => Aap"
+#         	# clear;
+#             echo $MENU_LIST
+#         	exit;
+#     	    ;;
 
-        $CURRENT)
-            echo "CURRENT!! WHOOAAAAHHH"
-            ;;
+#         $CURRENT)
+#             echo "CURRENT!! WHOOAAAAHHH"
+#             ;;
 
-	    *)
-            echo $choosenMenuOptions
-			echo "Other: $choosenMenuOptions"
-            exit;
-			;;
-	esac
-	mainMenu
-}
-
-
-function askInputForConfigurationKeyValuePair() {
-    echo "sdfdsdf\n";
-}
+# 	    *)
+#             echo $choosenMenuOptions
+# 			echo "Other: $choosenMenuOptions"
+#             exit;
+# 			;;
+# 	esac
+# 	mainMenu
+# }
 
 
-
-
+###
+# Menu: Display a menu using dialog/whiptail with the provided options. The
+# return value is the selected item.
+###
 function menu() {
     # MENU_LIST= $1
     SELECTED_ITEM=$($DIALOG \
@@ -152,7 +149,7 @@ function menu() {
     EXIT_STATUS=$?
     [[ "$EXIT_STATUS" = 1 ]] && exit;    #test if exit button is pressed
 
-    return $SELECTED_ITEM
+    return $SELECTED_ITEM;
 }
 
 
@@ -161,10 +158,10 @@ function menu() {
 # exists the application.
 ###
 function loop() {
-    detectFullKeyOrCategory
+    detectFullKeyOrCategory $CURRENT
 
     SELECTED_ITEM= menu
-    echo "OPTION: $SELECTED_ITEM\n"
+    echo "SELECTED: $SELECTED_ITEM"
 
     case $SELECTED_ITEM in
         Exit) #Exit the dotenv editor application
@@ -179,9 +176,12 @@ function loop() {
             ;;
 
         *)
+            echo "CURRENT: $CURRENT"
+
             # Check if a single option has been chosen
             CNT_MATCHES=`cat $DOTENV_FILE | grep "$CURRENT=" | wc -l`
             if [ $CNT_MATCHES == 1 ]; then
+                echo "MATCH: $CURRENT"
                 setValue $CURRENT
 
             else
@@ -203,7 +203,7 @@ function loop() {
 ###
 function main() {
     # Display welcome message
-    welcomeMessage
+    # welcomeMessage
 
     # Select .env file (or copy from a sample file)
     DOTENV_FILE= determineDotEnvFile

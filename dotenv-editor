@@ -65,7 +65,7 @@ function detectFullKeyOrCategory () {
     done
 
     # echo $MENU_LIST;
-    return $MENU_LIST
+    # return $MENU_LIST
 }
 
 
@@ -80,8 +80,8 @@ function mainMenu() {
         $MENU_LIST \
         "Exit" "Exit to shell" \
             3>&1 1>&2 2>&3)
-    exitstatus=$?
-    [[ "$exitstatus" = 1 ]] && exit;	#test if exit button is pressed
+    EXIT_STATUS=$?
+    [[ "$EXIT_STATUS" = 1 ]] && exit;	#test if exit button is pressed
 
     echo "OPTION: $choosenMenuOptions\n"
 
@@ -123,6 +123,19 @@ function selectDotEnvFile() {
 }
 
 
+function menu() {
+    MENU_LIST= $1
+    SELECTED_ITEM=$($DIALOG --cancel-button "Exit" --title "Dotenv Editor" --fb --menu "Choose an option" 15 60 6 \
+        $MENU_LIST \
+        "Exit" "Exit to shell" \
+            3>&1 1>&2 2>&3)
+    EXIT_STATUS=$?
+    [[ "$EXIT_STATUS" = 1 ]] && exit;    #test if exit button is pressed
+
+    return $SELECTED_ITEM
+}
+
+
 ###
 # Main Menu: show the main menu of (grouped) topics based on the select prefix.
 # The main program keeps running until the user has selected a topic or exited
@@ -137,7 +150,31 @@ function main() {
 
     # Keep looping the (main) menu until a valid key has been selected or the
     # user exists the application.
-    mainMenu
+
+    detectFullKeyOrCategory
+
+    SELECTED_ITEM= menu
+    echo "OPTION: $SELECTED_ITEM\n"
+
+    case $SELECTED_ITEM in
+        Exit) #Exit the dotenv editor application
+            # echo "1 => Aap"
+            # clear;
+            echo $MENU_LIST
+            exit;
+            ;;
+
+        $CURRENT)
+            echo "CURRENT!! WHOOAAAAHHH"
+            ;;
+
+        *)
+            echo $SELECTED_ITEM
+            echo "ITEM: $SELECTED_ITEM"
+            exit;
+            ;;
+    esac
+    menu
 }
 
 main

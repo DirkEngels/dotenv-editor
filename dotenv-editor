@@ -1,6 +1,13 @@
 #!/bin/bash
 
+
+###
+# Global Config
+###
 DIALOG=${DIALOG=dialog}
+MENU_LIST=""
+MENU_OPTIONS=""
+DOTENV_FILE=.env
 
 
 ###
@@ -17,16 +24,22 @@ function welcomeMessage() {
 
 
 
+### 
+# Determine if .env file exists or create a new file by copying one of the 
+# .env-* files as a starting point.
+###
+function determineDotEnvFile() {
+    echo "Check of existing .env file\n";
+    # Detect .env-* files
 
-function checkIfEnvFileExists() {
-    # Check if .env file exists, otherwise select one of the .env-* files as starting point/
-    echo "Checking .env file"
+    echo "Or choose sample .env-* file.\n";
+    # If count == 0 => error
+    # If count > 0 => show dialog
+    # If count == 1 => want to use this one? perhaps copy?
 }
 
 
 
-MENU_LIST=""
-MENU_OPTIONS=""
 
 function detectFullKeyOrCategory () {
     CURRENT=$1
@@ -35,7 +48,7 @@ function detectFullKeyOrCategory () {
 
 
     # Check if a single option has been chosen
-    CNT_MATCHES=`cat .env | grep "$CURRENT=" | wc -l`
+    CNT_MATCHES=`cat $DOTENV_FILE | grep "$CURRENT=" | wc -l`
     if [ $CNT_MATCHES == 1 ]; then
         return $CURRENT;
     fi
@@ -44,18 +57,18 @@ function detectFullKeyOrCategory () {
 
     PREFIX=$CURRENT"_"
     # echo "PREFIX: $PREFIX"
-    CNT_MATCHES=`cat .env | grep "$PREFIX" | wc -l`
+    CNT_MATCHES=`cat $DOTENV_FILE | grep "$PREFIX" | wc -l`
     echo "MATCHES: $CNT_MATCHES"
 
     if [ "$CURRENT" == "" ]; then
-        OPTIONS=`awk -F= '{print $1 }' .env  | grep -v '^#' | grep -v '^$' | awk -F"_" '{print $1}' | sort | uniq`
+        OPTIONS=`awk -F= '{print $1 }' $DOTENV_FILE  | grep -v '^#' | grep -v '^$' | awk -F"_" '{print $1}' | sort | uniq`
     else
-        OPTIONS=`awk -F= '{print $1 }' .env  | grep -v '^#' | grep "^$CURRENT" | grep -v '^$'`
+        OPTIONS=`awk -F= '{print $1 }' $DOTENV_FILE  | grep -v '^#' | grep "^$CURRENT" | grep -v '^$'`
         # @todo: strip off current part
     fi
 
-    VARIABLE_LIST=`awk -F= '{print $1 }' .env  | grep -v '^#' | grep -v '^$'`
-    VARIABLE_GROUP=`awk -F= '{print $1 }' .env  | grep -v '^#' | grep -v '^$' | awk -F"_" '{print $1}' | sort | uniq`
+    VARIABLE_LIST=`awk -F= '{print $1 }' $DOTENV_FILE  | grep -v '^#' | grep -v '^$'`
+    VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE  | grep -v '^#' | grep -v '^$' | awk -F"_" '{print $1}' | sort | uniq`
 
     MENU_LIST=""
     for i in $VARIABLE_LIST; do
@@ -83,8 +96,7 @@ function mainMenu() {
 
     choosenMenuOptions=$($DIALOG --cancel-button "Exit" --title "Dotenv Editor" --fb --menu "Choose an option" 15 60 6 \
         $MENU_LIST \
-        "Exit" "Exit to shell" \
-            3>&1 1>&2 2>&3)
+        3>&1 1>&2 2>&3)
     EXIT_STATUS=$?
     [[ "$EXIT_STATUS" = 1 ]] && exit;	#test if exit button is pressed
 
@@ -117,44 +129,24 @@ function askInputForConfigurationKeyValuePair() {
 }
 
 
-function determineDotEnvFile() {
-    echo "Check of existing .env file\n";
-    # Detect .env-* files
-
-    echo "Or choose sample .env-* file.\n";
-    # If count == 0 => error
-    # If count > 0 => show dialog
-    # If count == 1 => want to use this one? perhaps copy?
-}
 
 
 function menu() {
-    MENU_LIST= $1
-    SELECTED_ITEM=$($DIALOG --cancel-button "Exit" --title "Dotenv Editor" --fb --menu "Choose an option" 15 60 6 \
+    # MENU_LIST= $1
+    SELECTED_ITEM=$($DIALOG \
+        --cancel-button "Exit" \
+        --title "Dotenv Editor" \
+        --fb \
+        --menu "Choose an option" \
+        25 60 16 \
         $MENU_LIST \
-        "Exit" "Exit to shell" \
-            3>&1 1>&2 2>&3)
+        3>&1 1>&2 2>&3)
     EXIT_STATUS=$?
     [[ "$EXIT_STATUS" = 1 ]] && exit;    #test if exit button is pressed
 
     return $SELECTED_ITEM
 }
 
-
-###
-# Main Menu: show the main menu of (grouped) topics based on the select prefix.
-# The main program keeps running until the user has selected a topic or exited
-# the application.
-###
-function main() {
-    # Display welcome message
-    welcomeMessage
-
-    # Select .env file (or copy from a sample file)
-    DOTENV_FILE= determineDotEnvFile
-
-    loop;
-}
 
 ###
 # Loop: Keep looping the (main) menu until a valid key has been selected or the user
@@ -184,6 +176,25 @@ function loop() {
             exit;
             ;;
     esac
+    loop
 }
 
+
+###
+# Main: show the main menu of (grouped) topics based on the select prefix. The
+# main program keeps running until the user has selected a topic or exited the
+# application.
+###
+function main() {
+    # Display welcome message
+    welcomeMessage
+
+    # Select .env file (or copy from a sample file)
+    DOTENV_FILE= determineDotEnvFile
+
+    loop;
+}
+
+
+# Run the main program.
 main

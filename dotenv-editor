@@ -73,10 +73,6 @@ function mainMenu() {
 
     choosenMenuOptions=$($DIALOG --cancel-button "Exit" --title "Dotenv Editor" --fb --menu "Choose an option" 15 60 6 \
         $MENU_LIST \
-        "1" "Create database" \
-        "2" "List existing databases" \
-        "3" "Delete database" \
-        "4" "Do a table operation" \
         "Exit" "Exit to shell" \
             3>&1 1>&2 2>&3)
     exitstatus=$?

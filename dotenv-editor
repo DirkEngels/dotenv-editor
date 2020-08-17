@@ -86,6 +86,14 @@ function detectFullKeyOrCategory () {
     # return $MENU_LIST
 }
 
+function setValue() {
+    KEY=$1
+
+    VALUE=`./bin/dotenv.sh get $KEY | sed -e 's/^"//' -e 's/"$//'`
+
+    # `./bin/dotenv.sh set $KEY $VALUE | sed -e 's/^"//' -e 's/"$//'`
+}
+
 
 
 function mainMenu() {
@@ -171,9 +179,17 @@ function loop() {
             ;;
 
         *)
-            echo $SELECTED_ITEM
-            echo "ITEM: $SELECTED_ITEM"
-            exit;
+            # Check if a single option has been chosen
+            CNT_MATCHES=`cat $DOTENV_FILE | grep "$CURRENT=" | wc -l`
+            if [ $CNT_MATCHES == 1 ]; then
+                setValue $CURRENT
+
+            else
+                echo $SELECTED_ITEM
+                echo "ITEM: $SELECTED_ITEM"
+                exit;
+            fi
+
             ;;
     esac
     loop

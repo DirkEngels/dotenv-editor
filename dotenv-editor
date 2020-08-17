@@ -8,6 +8,7 @@ DIALOG=${DIALOG=dialog}
 MENU_LIST=""
 MENU_OPTIONS=""
 DOTENV_FILE=.env
+SELECTED_ITEM=""
 CURRENT=""
 
 ###
@@ -50,7 +51,8 @@ function detectFullKeyOrCategory () {
     # Check if a single option has been chosen
     CNT_MATCHES=`cat $DOTENV_FILE | grep "$CURRENT=" | wc -l`
     if [ $CNT_MATCHES == 1 ]; then
-        return $CURRENT;
+        $CURRENT;
+        return;
     fi
 
     echo "MATCHES: $CNT_MATCHES"
@@ -86,12 +88,24 @@ function detectFullKeyOrCategory () {
     # return $MENU_LIST
 }
 
-function setValue() {
+
+###
+# Update value: Update a variable by using the dialog/whiptail textbox.
+###
+function updateVariable() {
+    # Parameters
     KEY=$1
 
-    VALUE=`./bin/dotenv.sh get $KEY | sed -e 's/^"//' -e 's/"$//'`
+    # Show dialog
+    OLD=`./bin/dotenv.sh get $KEY | sed -e 's/^"//' -e 's/"$//'`
+    NEW=`$DIALOG --clear --title "Configuration - $i" --inputbox "$KEY" 8 80 "$OLD"`
 
-    # `./bin/dotenv.sh set $KEY $VALUE | sed -e 's/^"//' -e 's/"$//'`
+    if [ "$OLD" != "$NEW" ]; then
+        echo "Updating $KEY: $OLD => $NEW"
+        # `./bin/dotenv.sh set $KEY $NEW | sed -e 's/^"//' -e 's/"$//'`
+    else
+        echo "No change $KEY: $OLD => $NEW"
+    fi
 }
 
 
@@ -112,7 +126,7 @@ function menu() {
     EXIT_STATUS=$?
     [[ "$EXIT_STATUS" = 1 ]] && exit;    #test if exit button is pressed
 
-    return $SELECTED_ITEM;
+    # return '$SELECTED_ITEM';
 }
 
 
@@ -124,7 +138,7 @@ function menu() {
 function main() {
     detectFullKeyOrCategory $CURRENT
 
-    SELECTED_ITEM= menu
+    menu
     echo "SELECTED: $SELECTED_ITEM"
 
     case $SELECTED_ITEM in
@@ -135,22 +149,22 @@ function main() {
             exit;
             ;;
 
-        $CURRENT)
-            echo "CURRENT!! WHOOAAAAHHH"
-            ;;
+        # $CURRENT)
+        #     echo "CURRENT!! WHOOAAAAHHH"
+        #     ;;
 
         *)
-            echo "CURRENT: $CURRENT"
-
+    
             # Check if a single option has been chosen
-            CNT_MATCHES=`cat $DOTENV_FILE | grep "$CURRENT=" | wc -l`
+            CNT_MATCHES=`cat $DOTENV_FILE | grep "$SELECTED_ITEM=" | wc -l`
+            echo "CURRENT: $SELECTED_ITEM => $CNT_MATCHES"
             if [ $CNT_MATCHES == 1 ]; then
-                echo "MATCH: $CURRENT"
-                setValue $CURRENT
+                echo "MATCH: $SELECTED_ITEM"
+                updateVariable $SELECTED_ITEM
 
             else
-                echo $SELECTED_ITEM
-                echo "ITEM: $SELECTED_ITEM"
+                # echo $SELECTED_ITEM
+                echo "GROUP: @TODO"
                 exit;
             fi
 

@@ -2,6 +2,7 @@
 
 DIALOG=${DIALOG=dialog}
 
+
 function welcomeMessage() {
     echo "Welcome"
 }
@@ -13,6 +14,9 @@ function checkIfEnvFileExists() {
 }
 
 
+
+MENU_LIST=""
+MENU_OPTIONS=""
 
 function detectFullKeyOrCategory () {
     CURRENT=$1
@@ -39,9 +43,6 @@ function detectFullKeyOrCategory () {
         OPTIONS=`awk -F= '{print $1 }' .env  | grep -v '^#' | grep "^$CURRENT" | grep -v '^$'`
         # @todo: strip off current part
     fi
-echo "OPTIONS: $OPTIONS";
-exit;
-
 
     VARIABLE_LIST=`awk -F= '{print $1 }' .env  | grep -v '^#' | grep -v '^$'`
     VARIABLE_GROUP=`awk -F= '{print $1 }' .env  | grep -v '^#' | grep -v '^$' | awk -F"_" '{print $1}' | sort | uniq`
@@ -51,22 +52,27 @@ exit;
         PREFIX=`echo $i | awk -F"_" '{print $1}'`
         REST=`echo $i | awk -F"_" '{print $2}'`
     
-        VALUE=`./bin/dotenv.sh get $i`
+        VALUE=`./bin/dotenv.sh get $i | sed -e 's/^"//' -e 's/"$//'`
+        # VALUE=`./bin/dotenv.sh get $i `
         MENU_LIST="$MENU_LIST $i \"$VALUE\" "
         # echo "- $i => $VALUE"
         #$DIALOG --clear --title "Configuration - $i" --inputbox "$i" 8 80 "`./bin/dotenv.sh get $i`"
     done
 
+    # echo $MENU_LIST;
     return $MENU_LIST
 }
 
 
 
 function mainMenu() {
-    detectFullKeyOrCategory "APP"
+    # echo "hi";
+    detectFullKeyOrCategory
+    echo $MENU_LIST;
+    # exit;
 
-
-    choosenMenuOptions=$($DIALOG --cancel-button "Exit" --title "DBeng main menu" --fb --menu "Choose an option" 15 60 6 \
+    choosenMenuOptions=$($DIALOG --cancel-button "Exit" --title "Dotenv Editor" --fb --menu "Choose an option" 15 60 6 \
+        $MENU_LIST \
         "1" "Create database" \
         "2" "List existing databases" \
         "3" "Delete database" \
@@ -85,6 +91,10 @@ function mainMenu() {
             echo $MENU_LIST
         	exit;
     	    ;;
+
+        $CURRENT)
+            echo "CURRENT!! WHOOAAAAHHH"
+            ;;
 
 	    *)
             echo $choosenMenuOptions
@@ -117,7 +127,7 @@ function selectDotEnvFile() {
 ###
 function main() {
     welcomeMessage
-    DOTENV_FILE = selectDotEnvFile
+    DOTENV_FILE= selectDotEnvFile
     mainMenu
 }
 

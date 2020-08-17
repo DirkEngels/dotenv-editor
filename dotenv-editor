@@ -154,10 +154,11 @@ function menu() {
 
 
 ###
-# Loop: Keep looping the (main) menu until a valid key has been selected or the user
-# exists the application.
+# Main: show the main menu of (grouped) topics based on the select prefix. The
+# main program keeps running until the user has selected a topic or exited the
+# application.
 ###
-function loop() {
+function main() {
     detectFullKeyOrCategory $CURRENT
 
     SELECTED_ITEM= menu
@@ -192,25 +193,17 @@ function loop() {
 
             ;;
     esac
-    loop
+    main
 }
 
 
-###
-# Main: show the main menu of (grouped) topics based on the select prefix. The
-# main program keeps running until the user has selected a topic or exited the
-# application.
-###
-function main() {
-    # Display welcome message
-    # welcomeMessage
 
-    # Select .env file (or copy from a sample file)
-    DOTENV_FILE= determineDotEnvFile
 
-    loop;
-}
+# Display welcome message
+# welcomeMessage
 
+# Select .env file (or copy from a sample file)
+DOTENV_FILE= determineDotEnvFile
 
 # Run the main program.
 main

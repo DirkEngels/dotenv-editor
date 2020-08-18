@@ -15,12 +15,14 @@ CURRENT=""
 # Welcome: display a nice and warm welcome message.
 ###
 function welcomeMessage() {
-    $DIALOG \
+    $($DIALOG \
         --clear \
         --title "Dotenv Editor - Welcome" \
         --clear \
         --msgbox "$APP_TITLE\n\nThis setup will guide you through configuring all the existing variables.\n\nTheir defaults are already prefilled, so hit ENTER to go the next one." \
-        20 80
+        20 80 \
+        3>&1 1>&2 2>&3)
+
 }
 
 
@@ -48,6 +50,7 @@ function determineDotEnvFile() {
     menu;
 
     DOTENV_FILE=$SELECTED_ITEM
+    SELECTED_ITEM=""
 }
 
 
@@ -84,6 +87,7 @@ function detectFullKeyOrCategory () {
     VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE  | grep -v '^#' | grep -v '^$' | awk -F"_" '{print $1}' | sort | uniq`
 
     MENU_LIST=""
+
     for i in $VARIABLE_GROUP; do
         PREFIX=`echo $i | awk -F"_" '{print $1}'`
         REST=`echo $i | awk -F"_" '{print $2}'`
@@ -116,7 +120,8 @@ function updateVariable() {
     KEY=$1
 
     # Show dialog
-    OLD=`./bin/dotenv.sh get $KEY | sed -e 's/^"//' -e 's/"$//'`
+    OLD=`./bin/dotenv.sh get $KEY`
+    # OLD=`./bin/dotenv.sh get $KEY | sed -e 's/^"//' -e 's/"$//'`
     NEW=$($DIALOG \
         --clear \
         --inputbox "$KEY" \
@@ -126,7 +131,8 @@ function updateVariable() {
 
     if [ "$OLD" != "$NEW" ]; then
         echo "Updating $KEY: $OLD => $NEW"
-        ./bin/dotenv.sh set $KEY $NEW
+        # @todo: this shit dotenv lib does not work.....
+        # ./bin/dotenv.sh -f $DOTENV_FILE set "$KEY" "$NEW"
     else
         echo "No change $KEY: $OLD => $NEW"
     fi
@@ -139,16 +145,24 @@ function updateVariable() {
 ###
 function menu() {
     # MENU_LIST= $1
+    TITLE_SELECTED=""
+    EXIT_OR_GO_BACK="Exit"
+    if [ "$SELECTED_ITEM" != "" ]; then
+        TITLE_SELECTED=" - $SELECTED_ITEM"
+        EXIT_OR_GO_BACK="Back"
+    fi
+
+
+
     SELECTED_ITEM=$($DIALOG \
-        --cancel-button "Exit" \
-        --title "Dotenv Editor - Menu" \
-        --fb \
+        --cancel-button "$EXIT_OR_GO_BACK" \
+        --title "Dotenv Editor $TITLE_SELECTED " \
         --menu "Choose an option" \
-        25 60 16 \
+        20 80 12 \
         $MENU_LIST \
         3>&1 1>&2 2>&3)
     EXIT_STATUS=$?
-    [[ "$EXIT_STATUS" = 1 ]] && clear && exit;    #test if exit button is pressed
+    [[ "$EXIT_STATUS" = 1 ]] && [[ "$EXIT_OR_GO_BACK" == "Exit" ]] && clear && exit;    #test if exit button is pressed
 
     # return '$SELECTED_ITEM';
 }
@@ -160,11 +174,11 @@ function menu() {
 # application.
 ###
 function main() {
-    echo "DETECTING: $CURRENT"
-    detectFullKeyOrCategory $CURRENT
+    # echo "DETECTING: $CURRENT"
+    # detectFullKeyOrCategory $CURRENT
 
-    menu
-    echo "SELECTED: $SELECTED_ITEM"
+    # menu
+    # echo "SELECTED: $SELECTED_ITEM"
 
     case $SELECTED_ITEM in
         Exit) #Exit the dotenv editor application
@@ -179,21 +193,102 @@ function main() {
         #     echo "CURRENT!! WHOOAAAAHHH"
         #     ;;
 
+        # Back)
+        #     echo "RESETTING CURRENT"
+        #     CURRENT=""
+        #     # menu
+        #     ;;
+
         *)
+            if [ "$SELECTED_ITEM" == "Back" ]; then
+                # CURRENT="";
+                SELECTED_ITEM="";
+            fi
+
     
             # Check if a single option has been chosen
             CNT_MATCHES=`cat $DOTENV_FILE | grep "$SELECTED_ITEM=" | wc -l`
+            CNT_GROUPS=`cat $DOTENV_FILE | grep $SELECTED_ITEM"_" | wc -l`
+            echo "GROUPS: $CNT_GROUPS"
             echo "CURRENT: $SELECTED_ITEM => $CNT_MATCHES"
             if [ $CNT_MATCHES == 1 ]; then
                 echo "MATCH: $SELECTED_ITEM"
                 updateVariable $SELECTED_ITEM
+                SELECTED_ITEM=""
+                CURRENT=""
 
             else
                 # echo $SELECTED_ITEM
-                echo "GROUP: @TODO"
                 CURRENT=$SELECTED_ITEM
-                echo "DETECTING: $CURRENT"
-                detectFullKeyOrCategory $SELECTED_ITEM
+                MENU_LIST=""
+                VARIABLE_GROUP=""
+
+                echo "CURRENT: $CURRENT"
+                # COUNT_UNDERSCORES=`echo $CURRENT | sed -e 's/\(.\)/\n/g' | grep '_' | wc -l`;
+                # DEPTH_LEVEL=0;
+                # if [ $COUNT_UNDERSCORES > 0 ]; then
+                # fi
+                DEPTH_LEVEL=`echo "$CURRENT" | grep -o \_  | wc -l`
+                if [ "$CURRENT" != "" ]; then
+                    ((DEPTH_LEVEL=DEPTH_LEVEL+1))
+                fi
+
+                echo "DEPTH: $DEPTH_LEVEL"
+                if [ "$CURRENT" == "" ]; then
+                    VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE  | grep -v '^#' | grep -v '^$' | awk -F"_" '{print $1}' | sort | uniq`
+                else 
+                    VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE  | grep -v '^#' | grep "^"$CURRENT"_" | grep -v '^$' | awk -F"_" '{print $1 "_" $2}' | sort | uniq`
+                    echo "GRGOUP: $VARIABLE_GROUP"
+                fi
+                for i in $VARIABLE_GROUP; do
+                    # @todo: fix this copy@paste stuff
+                    if [ $DEPTH_LEVEL == 0 ]; then
+                        PREFIX=`echo $i | awk -F"_" '{print $1}'`
+                        # PREFIX=$CURRENT"_"$PREFIX 
+                        REST=`echo $i | awk -F"_" '{print $2}'`
+                    fi
+                    if [ $DEPTH_LEVEL == 1 ]; then
+                        PREFIX=`echo $i | awk -F"_" '{print $1 "_" $2}'`
+                        REST=`echo $i | awk -F"_" '{print $3}'`
+                        # MENU_LIST="$MENU_LIST $PREFIX More "
+                    fi
+                    if [ $DEPTH_LEVEL == 2 ]; then
+                        PREFIX=`echo $i | awk -F"_" '{print $1 "_" $2 "_" $3}'`
+                        REST=`echo $i | awk -F"_" '{print $4}'`
+                        # MENU_LIST="$MENU_LIST $PREFIX More "
+                    fi
+                    if [ $DEPTH_LEVEL == 3 ]; then
+                        PREFIX=`echo $i | awk -F"_" '{print $1 "_" $2 "_" $3 "_" $4}'`
+                        REST=`echo $i | awk -F"_" '{print $5}'`
+                        # MENU_LIST="$MENU_LIST $PREFIX More "
+                    fi
+
+                    CNT_ITEMS=`cat $DOTENV_FILE | grep "$i=" | wc -l`
+                    echo "ITEMS: $ITEMS"
+                    if [ $CNT_ITEMS > 1 ]; then
+                        MENU_LIST="$MENU_LIST $PREFIX More "
+                    else
+                        VALUE=`./bin/dotenv.sh get $i | sed -e 's/^"//' -e 's/"$//'`
+                        MENU_LIST="$MENU_LIST $PREFIX $VALUE "
+                    fi
+              
+                    # MENU_LIST="$MENU_LIST $i \"$VALUE\" "
+                    # echo "- $i => $VALUE"
+                done
+                # if [ $DEPTH_LEVEL == 0 ]; then
+                #     if [ "$CURRENT" == "" ]; then
+                #         # MENU_LIST="$MENU_LIST \"\" Back "
+                #         MENU_LIST="$MENU_LIST Back Back "
+                #     else
+                #         MENU_LIST="$MENU_LIST Back Back "
+                #     fi
+                # fi
+                # MENU_LIST="$MENU_LIST \"\" "
+                # MENU_LIST="$MENU_LIST Back Back "
+
+                # exit;
+                menu
+                # detectFullKeyOrCategory $SELECTED_ITEM
             fi
 
             ;;

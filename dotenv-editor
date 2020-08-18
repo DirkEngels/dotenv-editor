@@ -31,7 +31,12 @@ function welcomeMessage() {
 ###
 function determineDotEnvFile() {
     echo "Check of existing .env file\n";
+    if [ -e $DOTENV_FILE ]; then
+        return $DOTENV_FILE;
+    fi
+
     # Detect .env-* files
+
 
     echo "Or choose sample .env-* file.\n";
     # If count == 0 => error
@@ -73,6 +78,15 @@ function detectFullKeyOrCategory () {
     VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE  | grep -v '^#' | grep -v '^$' | awk -F"_" '{print $1}' | sort | uniq`
 
     MENU_LIST=""
+    for i in $VARIABLE_GROUP; do
+        PREFIX=`echo $i | awk -F"_" '{print $1}'`
+        REST=`echo $i | awk -F"_" '{print $2}'`
+   
+        MENU_LIST="$MENU_LIST $PREFIX >more "
+        # MENU_LIST="$MENU_LIST $i \"$VALUE\" "
+        # echo "- $i => $VALUE"
+    done
+
     for i in $VARIABLE_LIST; do
         PREFIX=`echo $i | awk -F"_" '{print $1}'`
         REST=`echo $i | awk -F"_" '{print $2}'`
@@ -81,7 +95,6 @@ function detectFullKeyOrCategory () {
         # VALUE=`./bin/dotenv.sh get $i `
         MENU_LIST="$MENU_LIST $i \"$VALUE\" "
         # echo "- $i => $VALUE"
-        #$DIALOG --clear --title "Configuration - $i" --inputbox "$i" 8 80 "`./bin/dotenv.sh get $i`"
     done
 
     # echo $MENU_LIST;
@@ -141,6 +154,7 @@ function menu() {
 # application.
 ###
 function main() {
+    echo "DETECTING: $CURRENT"
     detectFullKeyOrCategory $CURRENT
 
     menu
@@ -171,7 +185,9 @@ function main() {
             else
                 # echo $SELECTED_ITEM
                 echo "GROUP: @TODO"
-                exit;
+                CURRENT=$SELECTED_ITEM
+                echo "DETECTING: $CURRENT"
+                detectFullKeyOrCategory $SELECTED_ITEM
             fi
 
             ;;

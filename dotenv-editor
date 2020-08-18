@@ -129,7 +129,7 @@ function menu() {
         $MENU_LIST \
         3>&1 1>&2 2>&3)
     EXIT_STATUS=$?
-    [[ "$EXIT_STATUS" = 1 ]] && exit;    #test if exit button is pressed
+    [[ "$EXIT_STATUS" = 1 ]] && clear && exit;    #test if exit button is pressed
 
     # return '$SELECTED_ITEM';
 }
@@ -151,6 +151,7 @@ function main() {
             # echo "1 => Aap"
             # clear;
             echo $MENU_LIST
+            clear;
             exit;
             ;;
 

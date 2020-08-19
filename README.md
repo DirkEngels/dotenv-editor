@@ -25,3 +25,6 @@ besides the generally available cli tools (bash, grep, awk)
 
 * dialog
 * whiptail
+
+One of these libraries is required. The script will detect which library is
+available or ask you to install one.

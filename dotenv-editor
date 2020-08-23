@@ -24,10 +24,10 @@ function checkDependencies() {
     echo "Checking if required dependencies are available"
     for COMMAND in $DEPENDENCIES; do
         if ! [ -x "$(command -v $COMMAND)" ]; then
-            printf " ${COLOR_RED}ERR${COLOR_NONE} : $COMMAND is not installed!\n" >&2
+            echo -e " ${COLOR_RED}ERR${COLOR_NONE} : $COMMAND is not installed!" >&2
             ERROR="$COMMAND is not installed!"
         else
-            printf " ${COLOR_GREEN}OK${COLOR_NONE}  : $COMMAND is available.\n" >&2
+            echo -e " ${COLOR_GREEN}OK${COLOR_NONE}  : $COMMAND is available." >&2
         fi
     done
     echo ""
@@ -37,21 +37,21 @@ function checkDependencies() {
     UI_SELECTED=""
     for UI_LIB in $UI_LIBRARIES; do
         if ! [ -x "$(command -v $UI_LIB)" ]; then
-            printf " ${COLOR_RED}ERR${COLOR_NONE} : $UI_LIB is not installed!\n" >&2
+            echo -e " ${COLOR_RED}ERR${COLOR_NONE} : $UI_LIB is not installed!" >&2
             ERROR="$UI_LIB is not available!"
         else
             if [ "$UI_SELECTED" == "" ]; then
-                printf " ${COLOR_GREEN}OK${COLOR_NONE}  : $UI_LIB is selected.\n" >&2
+                echo -e " ${COLOR_GREEN}OK${COLOR_NONE}  : $UI_LIB is selected." >&2
                 UI_SELECTED=$UI_LIB
             else
-                printf " ${COLOR_ORANGE}OK${COLOR_NONE}  : $UI_LIB is available.\n" >&2
+                echo -e " ${COLOR_ORANGE}OK${COLOR_NONE}  : $UI_LIB is available." >&2
             fi
         fi
     done
     echo ""
 
     if [ "$ERROR" != "" ]; then
-        printf " ${COLOR_RED}ERR${COLOR_NONE} : $ERROR\n" >&2
+        echo -e " ${COLOR_RED}ERR${COLOR_NONE} : $ERROR" >&2
         exit 1;
     fi
 

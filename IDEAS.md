@@ -14,6 +14,7 @@
 ### Fixes
 - Displaying menu with items with depth > 2
 - Do not create a file called 1 (a bug)
+- Error when variable value containt spaces
 
 ### Improvements
 - Improve layout for menu list (more space)

@@ -11,7 +11,6 @@ DOTENV_FILE=".env"
 SELECTED_ITEM=""
 CURRENT=""
 
-VERBOSE=0
 VERSION="0.2.1"
 
 COLOR_RED='\033[0;31m'
@@ -321,8 +320,7 @@ function showHelp {
     echo ""
     echo "  -f, --file=FILE            use this dotenv configuration file"
     echo "  -l, --log=FILE             use this file for (debug) logging"
-    echo "  -v, --verbose              emit verbose debugging messages"
-    echo "  -V, --version              print program version"
+    echo "  -v, --version              print program version"
     echo ""
 
 }
@@ -341,7 +339,7 @@ function showVersion {
 ###
 
 # read the options
-TEMP=`getopt -n "$0" -o f::l::h::V:: --long "+env-file,+log-file,help::,version::" -- "$@"`
+TEMP=`getopt -n "$0" -o f::l::h::v:: --long "+env-file,+log-file,help::,version::" -- "$@"`
 eval set -- "$TEMP"
 
 # FROM https://www.tutorialspoint.com/unix_commands/getopt.htm
@@ -364,7 +362,7 @@ while true ; do
             # shift 2;;
             ;;
 
-        -V|--version)
+        -v|--version)
             showVersion;
             exit
             # shift 2;;

@@ -35,6 +35,7 @@ function determineDotEnvFile() {
     echo "Check of existing .env file: $DOTENV_FILE\n";
     if [ -f $DOTENV_FILE ]; then
         echo "-> file exists: $DOTENV_FILE\n";
+        source .env
         return $DOTENV_FILE;
     fi
 
@@ -51,6 +52,9 @@ function determineDotEnvFile() {
 
     DOTENV_FILE=$SELECTED_ITEM
     SELECTED_ITEM=""
+
+    source .env
+    echo "APP_TITLE: $APP_TITLE"
 }
 
 
@@ -119,8 +123,11 @@ function updateVariable() {
     # Parameters
     KEY=$1
 
+    OLD=${!KEY}
+
+    echo "ASKING INPUT FOR KEY: $KEY ($OLD)"
     # Show dialog
-    OLD=`./bin/dotenv.sh get $KEY`
+    # OLD=`./bin/dotenv.sh get $KEY`
     # OLD=`./bin/dotenv.sh get $KEY | sed -e 's/^"//' -e 's/"$//'`
     NEW=$($DIALOG \
         --clear \
@@ -131,8 +138,13 @@ function updateVariable() {
 
     if [ "$OLD" != "$NEW" ]; then
         echo "Updating $KEY: $OLD => $NEW"
-        # @todo: this shit dotenv lib does not work.....
-        # ./bin/dotenv.sh -f $DOTENV_FILE set "$KEY" "$NEW"
+
+        # echo "Replacing key: $VAR => $VALUE"
+        sed -i "s/$KEY=.*/$KEY=\"$NEW\"/" $DOTENV_FILE
+
+        # Resource the file to update the global variables
+        source $DOTENV_FILE
+
     else
         echo "No change $KEY: $OLD => $NEW"
     fi
@@ -212,7 +224,7 @@ function main() {
             echo "GROUPS: $CNT_GROUPS"
             echo "CURRENT: $SELECTED_ITEM => $CNT_MATCHES"
             if [ $CNT_MATCHES == 1 ]; then
-                echo "MATCH: $SELECTED_ITEM"
+                echo "MATCH: $SELECTED_ITEM => ${!SELECTED_ITEM}"
                 updateVariable $SELECTED_ITEM
                 SELECTED_ITEM=""
                 CURRENT=""
@@ -254,7 +266,7 @@ function main() {
                         REST=`echo $i | awk -F"_" '{print $2}'`
                     fi
                     if [ $DEPTH_LEVEL == 1 ]; then
-                        PREFIX=`echo $i | awk -F"_" '{print $2}'`
+                        PREFIX=`echo $i | awk -F"_" '{print $1 "_" $2}'`
                         REST=`echo $i | awk -F"_" '{print $3}'`
                         # MENU_LIST="$MENU_LIST $PREFIX More "
                     fi

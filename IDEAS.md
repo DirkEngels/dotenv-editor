@@ -2,11 +2,11 @@
 Various bugfixes and improvements.
 
 ### Removed
-- Drop dependency: bin/dotenv.sh
++ Drop dependency: bin/dotenv.sh
 + Old proof of concepts scripts (poc/)
 
 ### Added
-- Check if required dependencies (sed, awk, dialog, whiptail, etc) exists.
++ Check if required dependencies (sed, awk, dialog, whiptail, etc) exists.
 
 ### Changes
 - Copy .env file to tmp file and ask before saving.
@@ -16,7 +16,7 @@ Various bugfixes and improvements.
 - Do not create a file called 1 (a bug)
 
 ### Improvements
-- Show current value in menu for variables
++ Show current value in menu for variables
 - Improve layout for menu list (more space)
 - After asking for input return to the previous menu, not the main menu.
 

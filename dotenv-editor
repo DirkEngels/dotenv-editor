@@ -43,7 +43,7 @@ function determineDotEnvFile() {
     SAMPLE_FILES=`ls .env-*`
     MENU_LIST=""
     for FILE in $SAMPLE_FILES; do
-        echo "$FILE"
+        # echo "$FILE"
         # PREFIX=`echo $i | awk -F"_" '{print $1}'`
         # REST=`echo $i | awk -F"_" '{print $2}'`   
         MENU_LIST="$MENU_LIST $FILE $FILE ";
@@ -54,7 +54,6 @@ function determineDotEnvFile() {
     SELECTED_ITEM=""
 
     source .env
-    echo "APP_TITLE: $APP_TITLE"
 }
 
 
@@ -62,23 +61,20 @@ function determineDotEnvFile() {
 
 function detectFullKeyOrCategory () {
     # CURRENT=$1
-
-    echo "CURRENT: $CURRENT";
-
+    # echo "CURRENT: $CURRENT";
 
     # Check if a single option has been chosen
     CNT_MATCHES=`cat $DOTENV_FILE | grep "$CURRENT=" | wc -l`
     if [ $CNT_MATCHES == 1 ]; then
+        # echo "EXACT MATCT: $CURRENT"
         $CURRENT;
         return;
     fi
 
-    echo "MATCHES: $CNT_MATCHES"
-
     PREFIX=$CURRENT"_"
     # echo "PREFIX: $PREFIX"
     CNT_MATCHES=`cat $DOTENV_FILE | grep "$PREFIX" | wc -l`
-    echo "MATCHES: $CNT_MATCHES"
+    # echo "MATCHES: $CNT_MATCHES"
 
     if [ "$CURRENT" == "" ]; then
         OPTIONS=`awk -F= '{print $1 }' $DOTENV_FILE  | grep -v '^#' | grep -v '^$' | awk -F"_" '{print $1}' | sort | uniq`
@@ -125,7 +121,7 @@ function updateVariable() {
 
     OLD=${!KEY}
 
-    echo "ASKING INPUT FOR KEY: $KEY ($OLD)"
+    # echo "ASKING INPUT FOR KEY: $KEY ($OLD)"
     # Show dialog
     # OLD=`./bin/dotenv.sh get $KEY`
     # OLD=`./bin/dotenv.sh get $KEY | sed -e 's/^"//' -e 's/"$//'`
@@ -221,8 +217,8 @@ function main() {
             # Check if a single option has been chosen
             CNT_MATCHES=`cat $DOTENV_FILE | grep "$SELECTED_ITEM=" | wc -l`
             CNT_GROUPS=`cat $DOTENV_FILE | grep $SELECTED_ITEM"_" | wc -l`
-            echo "GROUPS: $CNT_GROUPS"
-            echo "CURRENT: $SELECTED_ITEM => $CNT_MATCHES"
+            # echo "GROUPS: $CNT_GROUPS"
+            # echo "CURRENT: $SELECTED_ITEM => $CNT_MATCHES"
             if [ $CNT_MATCHES == 1 ]; then
                 echo "MATCH: $SELECTED_ITEM => ${!SELECTED_ITEM}"
                 updateVariable $SELECTED_ITEM
@@ -235,7 +231,7 @@ function main() {
                 MENU_LIST=""
                 VARIABLE_GROUP=""
 
-                echo "CURRENT: $CURRENT"
+                # echo "CURRENT: $CURRENT"
                 # COUNT_UNDERSCORES=`echo $CURRENT | sed -e 's/\(.\)/\n/g' | grep '_' | wc -l`;
                 # DEPTH_LEVEL=0;
                 # if [ $COUNT_UNDERSCORES > 0 ]; then
@@ -245,7 +241,7 @@ function main() {
                     ((DEPTH_LEVEL=DEPTH_LEVEL+1))
                 fi
 
-                echo "DEPTH: $DEPTH_LEVEL"
+                # echo "DEPTH: $DEPTH_LEVEL"
                 if [ "$CURRENT" == "" ]; then
                     VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE  | grep -v '^#' | grep -v '^$' | awk -F"_" '{print $1}' | sort | uniq`
                     if [ $DEPTH_LEVEL == 1 ]; then
@@ -256,7 +252,7 @@ function main() {
                     fi
                 else 
                     VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE  | grep -v '^#' | grep "^"$CURRENT"_" | grep -v '^$' | awk -F"_" '{print $1 "_" $2}' | sort | uniq`
-                    echo "GRGOUP: $VARIABLE_GROUP"
+                    # echo "GRGOUP: $VARIABLE_GROUP"
                 fi
                 for i in $VARIABLE_GROUP; do
                     # @todo: fix this copy@paste stuff

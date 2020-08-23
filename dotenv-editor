@@ -4,7 +4,7 @@
 ###
 # Global Config
 ###
-DIALOG=${DIALOG=dialog}
+DIALOG=${DIALOG=whiptail}
 MENU_LIST=""
 MENU_OPTIONS=""
 DOTENV_FILE=".env"
@@ -236,6 +236,12 @@ function main() {
                 echo "DEPTH: $DEPTH_LEVEL"
                 if [ "$CURRENT" == "" ]; then
                     VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE  | grep -v '^#' | grep -v '^$' | awk -F"_" '{print $1}' | sort | uniq`
+                    if [ $DEPTH_LEVEL == 1 ]; then
+                        VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE  | grep -v '^#' | grep -v '^$' | awk -F"_" '{print $1 " " $2}' | sort | uniq`
+                    fi
+                    if [ $DEPTH_LEVEL == 2 ]; then
+                        VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE  | grep -v '^#' | grep -v '^$' | awk -F"_" '{print $1 " " $2 " " $3}' | sort | uniq`
+                    fi
                 else 
                     VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE  | grep -v '^#' | grep "^"$CURRENT"_" | grep -v '^$' | awk -F"_" '{print $1 "_" $2}' | sort | uniq`
                     echo "GRGOUP: $VARIABLE_GROUP"
@@ -248,15 +254,15 @@ function main() {
                         REST=`echo $i | awk -F"_" '{print $2}'`
                     fi
                     if [ $DEPTH_LEVEL == 1 ]; then
-                        PREFIX=`echo $i | awk -F"_" '{print $1 "_" $2}'`
+                        PREFIX=`echo $i | awk -F"_" '{print $2}'`
                         REST=`echo $i | awk -F"_" '{print $3}'`
                         # MENU_LIST="$MENU_LIST $PREFIX More "
                     fi
-                    if [ $DEPTH_LEVEL == 2 ]; then
-                        PREFIX=`echo $i | awk -F"_" '{print $1 "_" $2 "_" $3}'`
-                        REST=`echo $i | awk -F"_" '{print $4}'`
-                        # MENU_LIST="$MENU_LIST $PREFIX More "
-                    fi
+#                    if [ $DEPTH_LEVEL == 2 ]; then
+#                        PREFIX=`echo $i | awk -F"_" '{print $1 "_" $2 "_" $3}'`
+#                        REST=`echo $i | awk -F"_" '{print $4}'`
+##                        # MENU_LIST="$MENU_LIST $PREFIX More "
+#                    fi
                     if [ $DEPTH_LEVEL == 3 ]; then
                         PREFIX=`echo $i | awk -F"_" '{print $1 "_" $2 "_" $3 "_" $4}'`
                         REST=`echo $i | awk -F"_" '{print $5}'`
@@ -264,7 +270,7 @@ function main() {
                     fi
 
                     CNT_ITEMS=`cat $DOTENV_FILE | grep "$i=" | wc -l`
-                    echo "ITEMS: $ITEMS"
+                    echo "ITEMS: $CNT_ITEMS"
                     if [ $CNT_ITEMS > 1 ]; then
                         MENU_LIST="$MENU_LIST $PREFIX More "
                     else

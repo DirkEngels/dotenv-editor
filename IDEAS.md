@@ -30,3 +30,5 @@ Various bugfixes and improvements.
 - Version flag
 - Option to specify .env file to use
 - Flag to write directly in stead of temp file
+- Flag to group variables (like the current version does)
+- Flag to hide intro

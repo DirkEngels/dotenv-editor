@@ -318,8 +318,8 @@ function mainLoop() {
 function showHelp {
     echo "Usage: dotenv-editor [OPTION...]"
     echo ""
-    echo "  -f, --file=FILE            use this dotenv configuration file"
-    echo "  -l, --log=FILE             use this file for (debug) logging"
+    echo "  -f, --file=FILE            use this dotenv configuration file (default: .env)"
+    echo "  -l, --log=FILE             use this file for (debug) logging (default: /dev/null)"
     echo "  -v, --version              print program version"
     echo ""
 

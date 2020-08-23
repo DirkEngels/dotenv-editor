@@ -53,7 +53,7 @@ function determineDotEnvFile() {
     DOTENV_FILE=$SELECTED_ITEM
     SELECTED_ITEM=""
 
-    source .env
+    source $DOTENV_FILE
 }
 
 

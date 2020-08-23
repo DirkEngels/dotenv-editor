@@ -4,12 +4,63 @@
 ###
 # Global Config
 ###
-DIALOG=${DIALOG=whiptail}
+DIALOG=${DIALOG=dialog}
 MENU_LIST=""
 MENU_OPTIONS=""
 DOTENV_FILE=".env"
 SELECTED_ITEM=""
 CURRENT=""
+
+COLOR_RED='\033[0;31m'
+COLOR_GREEN='\033[0;32m'
+COLOR_ORANGE='\033[0;33m'
+COLOR_NONE='\033[0m' # No Color
+
+
+function checkDependencies() {
+    ERROR=""
+
+    DEPENDENCIES="sed awk sort uniq grep"
+    echo "Checking if required dependencies are available"
+    for COMMAND in $DEPENDENCIES; do
+        if ! [ -x "$(command -v $COMMAND)" ]; then
+            printf " ${COLOR_RED}ERR${COLOR_NONE} : $COMMAND is not installed!\n" >&2
+            ERROR="$COMMAND is not installed!"
+        else
+            printf " ${COLOR_GREEN}OK${COLOR_NONE}  : $COMMAND is available.\n" >&2
+        fi
+    done
+    echo ""
+
+    UI_LIBRARIES="dialog whiptail"
+    echo "Checking if one of the UI libraries is available"
+    UI_SELECTED=""
+    for UI_LIB in $UI_LIBRARIES; do
+        if ! [ -x "$(command -v $UI_LIB)" ]; then
+            printf " ${COLOR_RED}ERR${COLOR_NONE} : $UI_LIB is not installed!\n" >&2
+            ERROR="$UI_LIB is not available!"
+        else
+            if [ "$UI_SELECTED" == "" ]; then
+                printf " ${COLOR_GREEN}OK${COLOR_NONE}  : $UI_LIB is selected.\n" >&2
+                UI_SELECTED=$UI_LIB
+            else
+                printf " ${COLOR_ORANGE}OK${COLOR_NONE}  : $UI_LIB is available.\n" >&2
+            fi
+        fi
+    done
+    echo ""
+
+    if [ "$ERROR" != "" ]; then
+        printf " ${COLOR_RED}ERR${COLOR_NONE} : $ERROR\n" >&2
+        exit 1;
+    fi
+
+    echo "All required dependencies are available!"
+    echo "Using the UI library: $UI_SELECTED"
+    echo ""
+
+}
+
 
 ###
 # Welcome: display a nice and warm welcome message.
@@ -311,6 +362,8 @@ function main() {
 }
 
 
+# Check dependencies
+checkDependencies;
 
 
 # Display welcome message

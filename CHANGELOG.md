@@ -1,6 +1,23 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+
+## 0.2.1 (2020-08-24)
+Various bugfixes and improvements.
+
+### Added
++ Check if required dependencies (sed, awk, dialog, whiptail, etc) exists.
++ Help option to display the command arguments and options
++ Version flag
+
+### Improvements
++ Show current value in menu for variables
+
+### Removed
++ Drop dependency: bin/dotenv.sh
++ Old proof of concepts scripts (poc/)
+
+
 ## 0.2 (2020-08-23)
 Working proof of concept which will update a configuration setting in a dotenv
 file.

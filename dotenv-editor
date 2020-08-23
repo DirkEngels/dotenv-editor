@@ -110,58 +110,6 @@ function determineDotEnvFile() {
 
 
 
-function detectFullKeyOrCategory () {
-    # CURRENT=$1
-    # echo "CURRENT: $CURRENT";
-
-    # Check if a single option has been chosen
-    CNT_MATCHES=`cat $DOTENV_FILE | grep "$CURRENT=" | wc -l`
-    if [ $CNT_MATCHES == 1 ]; then
-        # echo "EXACT MATCT: $CURRENT"
-        $CURRENT;
-        return;
-    fi
-
-    PREFIX=$CURRENT"_"
-    # echo "PREFIX: $PREFIX"
-    CNT_MATCHES=`cat $DOTENV_FILE | grep "$PREFIX" | wc -l`
-    # echo "MATCHES: $CNT_MATCHES"
-
-    if [ "$CURRENT" == "" ]; then
-        OPTIONS=`awk -F= '{print $1 }' $DOTENV_FILE  | grep -v '^#' | grep -v '^$' | awk -F"_" '{print $1}' | sort | uniq`
-    else
-        OPTIONS=`awk -F= '{print $1 }' $DOTENV_FILE  | grep -v '^#' | grep "^$CURRENT" | grep -v '^$'`
-        # @todo: strip off current part
-    fi
-
-    VARIABLE_LIST=`awk -F= '{print $1 }' $DOTENV_FILE  | grep -v '^#' | grep -v '^$'`
-    VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE  | grep -v '^#' | grep -v '^$' | awk -F"_" '{print $1}' | sort | uniq`
-
-    MENU_LIST=""
-
-    for i in $VARIABLE_GROUP; do
-        PREFIX=`echo $i | awk -F"_" '{print $1}'`
-        REST=`echo $i | awk -F"_" '{print $2}'`
-   
-        MENU_LIST="$MENU_LIST $PREFIX >more "
-        echo "SOME ITEM: ${!PREFIX}" 
-        # MENU_LIST="$MENU_LIST $i \"$VALUE\" "
-        # echo "- $i => $VALUE"
-    done
-
-    for i in $VARIABLE_LIST; do
-        PREFIX=`echo $i | awk -F"_" '{print $1}'`
-        REST=`echo $i | awk -F"_" '{print $2}'`
-    
-        VALUE=`./bin/dotenv.sh get $i | sed -e 's/^"//' -e 's/"$//'`
-        # VALUE=`./bin/dotenv.sh get $i `
-        MENU_LIST="$MENU_LIST $i \"$VALUE\" "
-        # echo "- $i => $VALUE"
-    done
-
-    # echo $MENU_LIST;
-    # return $MENU_LIST
-}
 
 
 ###
@@ -175,8 +123,6 @@ function updateVariable() {
 
     # echo "ASKING INPUT FOR KEY: $KEY ($OLD)"
     # Show dialog
-    # OLD=`./bin/dotenv.sh get $KEY`
-    # OLD=`./bin/dotenv.sh get $KEY | sed -e 's/^"//' -e 's/"$//'`
     NEW=$($DIALOG \
         --clear \
         --inputbox "$KEY" \
@@ -234,8 +180,6 @@ function menu() {
 # application.
 ###
 function main() {
-    # echo "DETECTING: $CURRENT"
-    # detectFullKeyOrCategory $CURRENT
 
     # menu
     # echo "SELECTED: $SELECTED_ITEM"
@@ -332,10 +276,9 @@ function main() {
                     CNT_ITEMS=`cat $DOTENV_FILE | grep "$i=" | wc -l`
                     echo "ITEMS: $CNT_ITEMS"
                     if [ "$CNT_ITEMS" == "1" ]; then
-                        # VALUE=`./bin/dotenv.sh get $i | sed -e 's/^"//' -e 's/"$//'`
                         VALUE=${!i}
                         echo "- Show value: $VALUE"
-                        MENU_LIST="$MENU_LIST $PREFIX $VALUE "
+                        MENU_LIST="$MENU_LIST $PREFIX  $VALUE "
                     else
                         echo "- Show more"
                         MENU_LIST="$MENU_LIST $PREFIX More "
@@ -357,7 +300,6 @@ function main() {
 
                 # exit;
                 menu
-                # detectFullKeyOrCategory $SELECTED_ITEM
             fi
 
             ;;

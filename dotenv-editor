@@ -4,7 +4,7 @@
 ###
 # Global Config
 ###
-DIALOG=${DIALOG=dialog}
+DIALOG=""
 MENU_LIST=""
 MENU_OPTIONS=""
 DOTENV_FILE=".env"
@@ -20,11 +20,14 @@ COLOR_ORANGE='\033[0;33m'
 COLOR_NONE='\033[0m' # No Color
 
 
+###
+# Check if all required dependencies have been installed. 
+###
 function checkDependencies() {
     ERROR=""
 
     DEPENDENCIES="sed awk sort uniq grep"
-    echo "Checking if required dependencies are available"
+    echo "Checking if required dependencies are available" > $LOG_FILE
     for COMMAND in $DEPENDENCIES; do
         if ! [ -x "$(command -v $COMMAND)" ]; then
             echo -e " ${COLOR_RED}ERR${COLOR_NONE} : $COMMAND is not installed!" >&2
@@ -35,9 +38,9 @@ function checkDependencies() {
     done
     echo ""
 
-    UI_LIBRARIES="dialog whiptail"
+    UI_LIBRARIES="whiptail dialog"
     echo "Checking if one of the UI libraries is available"
-    UI_SELECTED=""
+    DIALOG=""
     for UI_LIB in $UI_LIBRARIES; do
         if ! [ -x "$(command -v $UI_LIB)" ]; then
             echo -e " ${COLOR_RED}ERR${COLOR_NONE} : $UI_LIB is not installed!" >&2
@@ -45,7 +48,7 @@ function checkDependencies() {
         else
             if [ "$UI_SELECTED" == "" ]; then
                 echo -e " ${COLOR_GREEN}OK${COLOR_NONE}  : $UI_LIB is selected." >&2
-                UI_SELECTED=$UI_LIB
+                DIALOG=$UI_LIB
             else
                 echo -e " ${COLOR_ORANGE}OK${COLOR_NONE}  : $UI_LIB is available." >&2
             fi
@@ -86,9 +89,9 @@ function welcomeMessage() {
 # .env-* files as a starting point.
 ###
 function determineDotEnvFile() {
-    echo "Check of existing .env file: $DOTENV_FILE\n";
+    echo "Check of existing .env file: $DOTENV_FILE\n" > $LOG_FILE;
     if [ -f $DOTENV_FILE ]; then
-        echo "-> file exists: $DOTENV_FILE\n";
+        echo "-> file exists: $DOTENV_FILE\n" > $LOG_FILE;
         source .env
         return $DOTENV_FILE;
     fi
@@ -134,7 +137,7 @@ function updateVariable() {
         # --title "Configuration - $KEY" \
 
     if [ "$OLD" != "$NEW" ]; then
-        echo "Updating $KEY: $OLD => $NEW"
+        echo "Updating $KEY: $OLD => $NEW" > $LOG_FILE;
 
         # echo "Replacing key: $VAR => $VALUE"
         sed -i "s/$KEY=.*/$KEY=\"$NEW\"/" $DOTENV_FILE
@@ -143,7 +146,7 @@ function updateVariable() {
         source $DOTENV_FILE
 
     else
-        echo "No change $KEY: $OLD => $NEW"
+        echo "No change $KEY: $OLD => $NEW" > $LOG_FILE;
     fi
 }
 
@@ -191,7 +194,6 @@ function mainLoop() {
         Exit) #Exit the dotenv editor application
             # echo "1 => Aap"
             # clear;
-            echo $MENU_LIST
             clear;
             exit;
             ;;
@@ -219,7 +221,7 @@ function mainLoop() {
             # echo "GROUPS: $CNT_GROUPS"
             # echo "CURRENT: $SELECTED_ITEM => $CNT_MATCHES"
             if [ $CNT_MATCHES == 1 ]; then
-                echo "MATCH: $SELECTED_ITEM => ${!SELECTED_ITEM}"
+                echo "MATCH: $SELECTED_ITEM => ${!SELECTED_ITEM}" > $LOG_FILE;
                 updateVariable $SELECTED_ITEM
                 SELECTED_ITEM=""
                 CURRENT=""
@@ -277,14 +279,14 @@ function mainLoop() {
                     fi
 
                     CNT_ITEMS=`cat $DOTENV_FILE | grep "$i=" | wc -l`
-                    echo "ITEMS: $CNT_ITEMS"
+                    echo "ITEMS: $CNT_ITEMS" > $LOG_FILE;
                     if [ "$CNT_ITEMS" == "1" ]; then
                         VALUE=${!i}
-                        echo "- Show value: $VALUE"
+                        echo "- Show value: $VALUE" > $LOG_FILE;
                         MENU_LIST="$MENU_LIST $PREFIX  $VALUE "
                     else
                         echo "- Show more"
-                        MENU_LIST="$MENU_LIST $PREFIX More "
+                        MENU_LIST="$MENU_LIST $PREFIX More " > $LOG_FILE;
                     fi
               
                     # MENU_LIST="$MENU_LIST $i \"$VALUE\" "
@@ -311,7 +313,9 @@ function mainLoop() {
 }
 
 
-
+###
+# Display the help for this command.
+###
 function showHelp {
     echo "Usage: dotenv-editor [OPTION...]"
     echo ""
@@ -323,6 +327,10 @@ function showHelp {
 
 }
 
+
+###
+# Display the version of this command.
+###
 function showVersion {
     echo "dotenv-edit $VERSION"
 }

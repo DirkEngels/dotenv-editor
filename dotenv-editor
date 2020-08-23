@@ -11,6 +11,9 @@ DOTENV_FILE=".env"
 SELECTED_ITEM=""
 CURRENT=""
 
+VERBOSE=0
+VERSION="0.2.1"
+
 COLOR_RED='\033[0;31m'
 COLOR_GREEN='\033[0;32m'
 COLOR_ORANGE='\033[0;33m'
@@ -179,7 +182,7 @@ function menu() {
 # main program keeps running until the user has selected a topic or exited the
 # application.
 ###
-function main() {
+function mainLoop() {
 
     # menu
     # echo "SELECTED: $SELECTED_ITEM"
@@ -304,13 +307,76 @@ function main() {
 
             ;;
     esac
-    main
+    mainLoop
 }
 
 
+
+function showHelp {
+    echo "Usage: dotenv-editor [OPTION...]"
+    echo ""
+    echo "  -f, --file=FILE            use this dotenv configuration file"
+    echo "  -l, --log=FILE             use this file for (debug) logging"
+    echo "  -v, --verbose              emit verbose debugging messages"
+    echo "  -V, --version              print program version"
+    echo ""
+
+}
+
+function showVersion {
+    echo "dotenv-edit $VERSION"
+}
+
+
+###
+# Main application
+###
+
+# read the options
+TEMP=`getopt -n "$0" -o f::l::h::V:: --long "+env-file,+log-file,help::,version::" -- "$@"`
+eval set -- "$TEMP"
+
+# FROM https://www.tutorialspoint.com/unix_commands/getopt.htm
+# extract options and their arguments into variables.
+while true ; do
+    case "$1" in
+        -f|--env-file)
+            DOTENV_FILE=${2#=}
+            echo "- receiving option --env-file: $DOTENV_FILE";
+            shift 2 ;;
+
+        -l|--log-file)
+            LOG_FILE=${2#=}
+            echo "- receiving option --log-file: $LOG_FILE";
+            shift 2 ;;
+
+        -h|--help)
+            showHelp;
+            exit
+            # shift 2;;
+            ;;
+
+        -V|--version)
+            showVersion;
+            exit
+            # shift 2;;
+            ;;
+
+        --) shift ; break ;;
+        *) echo "Internal error!" ; exit 1 ;;
+    esac
+done
+
+# Set defaults in case optional parameters have not been set.
+if [ -z "${DOTENV_FILE}" ]; then 
+    DOTENV_FILE=.env
+fi
+if [ -z "${LOG_FILE}" ]; then 
+    LOG_FILE=/dev/null
+fi
+
 # Check dependencies
 checkDependencies;
-
 
 # Display welcome message
 welcomeMessage
@@ -319,4 +385,4 @@ welcomeMessage
 determineDotEnvFile
 
 # Run the main program.
-main
+mainLoop

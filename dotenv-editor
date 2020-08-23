@@ -144,6 +144,7 @@ function detectFullKeyOrCategory () {
         REST=`echo $i | awk -F"_" '{print $2}'`
    
         MENU_LIST="$MENU_LIST $PREFIX >more "
+        echo "SOME ITEM: ${!PREFIX}" 
         # MENU_LIST="$MENU_LIST $i \"$VALUE\" "
         # echo "- $i => $VALUE"
     done
@@ -330,11 +331,14 @@ function main() {
 
                     CNT_ITEMS=`cat $DOTENV_FILE | grep "$i=" | wc -l`
                     echo "ITEMS: $CNT_ITEMS"
-                    if [ $CNT_ITEMS > 1 ]; then
-                        MENU_LIST="$MENU_LIST $PREFIX More "
-                    else
-                        VALUE=`./bin/dotenv.sh get $i | sed -e 's/^"//' -e 's/"$//'`
+                    if [ "$CNT_ITEMS" == "1" ]; then
+                        # VALUE=`./bin/dotenv.sh get $i | sed -e 's/^"//' -e 's/"$//'`
+                        VALUE=${!i}
+                        echo "- Show value: $VALUE"
                         MENU_LIST="$MENU_LIST $PREFIX $VALUE "
+                    else
+                        echo "- Show more"
+                        MENU_LIST="$MENU_LIST $PREFIX More "
                     fi
               
                     # MENU_LIST="$MENU_LIST $i \"$VALUE\" "

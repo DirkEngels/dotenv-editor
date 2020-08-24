@@ -5,7 +5,9 @@
 - Option to specify .env file to use
 - Flag to write directly in stead of temp file
 
-
+### Removed
+- Unrelevant log messages
+- Clean up comments
 
 
 # Todo for future version
@@ -26,5 +28,3 @@
 ### Improvements
 - Improve layout for menu list (more space)
 - After asking for input return to the previous menu, not the main menu.
-
-

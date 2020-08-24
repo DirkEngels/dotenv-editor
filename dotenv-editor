@@ -360,7 +360,7 @@ fi
 checkDependencies;
 
 # Display welcome message
-welcomeMessage
+#welcomeMessage
 
 # Select .env file (or copy from a sample file)
 determineDotEnvFile

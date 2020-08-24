@@ -250,7 +250,6 @@ function mainLoop() {
                     fi
 
                     CNT_ITEMS=`cat $DOTENV_FILE | grep "$i=" | wc -l`
-                    echo "ITEMS: $CNT_ITEMS" >> $LOG_FILE;
                     if [ "$CNT_ITEMS" == "1" ]; then
                         VALUE=${!i}
                         echo "- Show value: $VALUE" >> $LOG_FILE;

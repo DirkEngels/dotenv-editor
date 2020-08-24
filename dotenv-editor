@@ -1,8 +1,14 @@
 #!/bin/bash
 
+###
+# Release version & libraries too check
+###
+VERSION="0.2.1"
+TEST_DEPENDENCIES="sed awk sort uniq grep"
+TEST_UI_LIBS="whiptail dialog"
 
 ###
-# Global Config
+# Global variables
 ###
 DIALOG=""
 MENU_LIST=""
@@ -11,15 +17,14 @@ DOTENV_FILE=".env"
 SELECTED_ITEM=""
 CURRENT=""
 
-VERSION="0.2.1"
-
+###
+# Console color variables
+###
 COLOR_RED='\033[0;31m'
 COLOR_GREEN='\033[0;32m'
 COLOR_ORANGE='\033[0;33m'
 COLOR_NONE='\033[0m' # No Color
 
-TEST_DEPENDENCIES="sed awk sort uniq grep"
-TEST_UI_LIBS="whiptail dialog"
 
 ###
 # Check if all required dependencies have been installed. 
@@ -39,7 +44,6 @@ function checkDependencies() {
     echo ""
 
     echo "Checking if one of the UI libraries ($TEST_UI_LIBS) is available"
-    # DIALOG=""
     UI_LIBS_AVAILABLE=""
     for UI_LIB in $TEST_UI_LIBS; do
         if ! [ -x "$(command -v $UI_LIB)" ]; then

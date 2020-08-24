@@ -5,7 +5,7 @@
 ###
 VERSION="0.2.1"
 TEST_DEPENDENCIES="sed awk sort uniq grep"
-TEST_UI_LIBS="whiptail dialog"
+TEST_UI_LIBS="dialog whiptail"
 
 ###
 # Global variables

@@ -2,6 +2,18 @@
 All notable changes to this project will be documented in this file.
 
 
+## 0.2.2 (2020-08-25)
+
+### Added
++ Support multiple libraries (dialog/whiptail/zenity/whatever)
++ Specify log output (to file or use /dev/null by default)
++ Option to specify .env file to use
+
+### Removed
++ Unrelevant log messages
++ Clean up comments
+
+
 ## 0.2.1 (2020-08-24)
 Various bugfixes and improvements.
 

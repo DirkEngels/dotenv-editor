@@ -27,7 +27,7 @@ TEST_UI_LIBS="whiptail dialog"
 function checkDependencies() {
     ERROR=""
 
-    echo "Checking if required dependencies are available" > $LOG_FILE
+    echo "Checking if required dependencies are available" >> $LOG_FILE
     for COMMAND in $TEST_DEPENDENCIES; do
         if ! [ -x "$(command -v $COMMAND)" ]; then
             echo -e " ${COLOR_RED}ERR${COLOR_NONE} : $COMMAND is not installed!" >&2
@@ -88,9 +88,9 @@ function welcomeMessage() {
 # .env-* files as a starting point.
 ###
 function determineDotEnvFile() {
-    echo "Check of existing .env file: $DOTENV_FILE\n" > $LOG_FILE;
+    echo "Check of existing .env file: $DOTENV_FILE\n" >> $LOG_FILE;
     if [ -f $DOTENV_FILE ]; then
-        echo "-> file exists: $DOTENV_FILE\n" > $LOG_FILE;
+        echo "-> file exists: $DOTENV_FILE\n" >> $LOG_FILE;
         source .env
         return $DOTENV_FILE;
     fi
@@ -132,7 +132,7 @@ function updateVariable() {
         # --title "Configuration - $KEY" \
 
     if [ "$OLD" != "$NEW" ]; then
-        echo "Updating $KEY: $OLD => $NEW" > $LOG_FILE;
+        echo "Updating $KEY: $OLD => $NEW" >> $LOG_FILE;
 
         # echo "Replacing key: $VAR => $VALUE"
         sed -i "s/$KEY=.*/$KEY=\"$NEW\"/" $DOTENV_FILE
@@ -141,7 +141,7 @@ function updateVariable() {
         source $DOTENV_FILE
 
     else
-        echo "No change $KEY: $OLD => $NEW" > $LOG_FILE;
+        echo "No change $KEY: $OLD => $NEW" >> $LOG_FILE;
     fi
 }
 
@@ -214,7 +214,7 @@ function mainLoop() {
             # echo "GROUPS: $CNT_GROUPS"
             # echo "CURRENT: $SELECTED_ITEM => $CNT_MATCHES"
             if [ $CNT_MATCHES == 1 ]; then
-                echo "MATCH: $SELECTED_ITEM => ${!SELECTED_ITEM}" > $LOG_FILE;
+                echo "MATCH: $SELECTED_ITEM => ${!SELECTED_ITEM}" >> $LOG_FILE;
                 updateVariable $SELECTED_ITEM
                 SELECTED_ITEM=""
                 CURRENT=""
@@ -272,14 +272,14 @@ function mainLoop() {
                     fi
 
                     CNT_ITEMS=`cat $DOTENV_FILE | grep "$i=" | wc -l`
-                    echo "ITEMS: $CNT_ITEMS" > $LOG_FILE;
+                    echo "ITEMS: $CNT_ITEMS" >> $LOG_FILE;
                     if [ "$CNT_ITEMS" == "1" ]; then
                         VALUE=${!i}
-                        echo "- Show value: $VALUE" > $LOG_FILE;
+                        echo "- Show value: $VALUE" >> $LOG_FILE;
                         MENU_LIST="$MENU_LIST $PREFIX  $VALUE "
                     else
                         echo "- Show more"
-                        MENU_LIST="$MENU_LIST $PREFIX More " > $LOG_FILE;
+                        MENU_LIST="$MENU_LIST $PREFIX More " >> $LOG_FILE;
                     fi
               
                     # MENU_LIST="$MENU_LIST $i \"$VALUE\" "

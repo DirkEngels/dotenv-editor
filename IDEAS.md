@@ -3,8 +3,7 @@
 ### Added
 + Support multiple libraries (dialog/whiptail/zenity/whatever)
 + Specify log output (to file or use /dev/null by default)
-- Option to specify .env file to use
-- Flag to write directly in stead of temp file
++ Option to specify .env file to use
 
 ### Removed
 + Unrelevant log messages

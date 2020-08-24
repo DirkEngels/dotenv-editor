@@ -99,9 +99,6 @@ function determineDotEnvFile() {
     SAMPLE_FILES=`ls .env-*`
     MENU_LIST=""
     for FILE in $SAMPLE_FILES; do
-        # echo "$FILE"
-        # PREFIX=`echo $i | awk -F"_" '{print $1}'`
-        # REST=`echo $i | awk -F"_" '{print $2}'`   
         MENU_LIST="$MENU_LIST $FILE $FILE ";
     done
     menu;
@@ -191,16 +188,6 @@ function mainLoop() {
             exit;
             ;;
 
-        # $CURRENT)
-        #     echo "CURRENT!! WHOOAAAAHHH"
-        #     ;;
-
-        # Back)
-        #     echo "RESETTING CURRENT"
-        #     CURRENT=""
-        #     # menu
-        #     ;;
-
         *)
             if [ "$SELECTED_ITEM" == "Back" ]; then
                 # CURRENT="";
@@ -211,8 +198,6 @@ function mainLoop() {
             # Check if a single option has been chosen
             CNT_MATCHES=`cat $DOTENV_FILE | grep "$SELECTED_ITEM=" | wc -l`
             CNT_GROUPS=`cat $DOTENV_FILE | grep $SELECTED_ITEM"_" | wc -l`
-            # echo "GROUPS: $CNT_GROUPS"
-            # echo "CURRENT: $SELECTED_ITEM => $CNT_MATCHES"
             if [ $CNT_MATCHES == 1 ]; then
                 echo "MATCH: $SELECTED_ITEM => ${!SELECTED_ITEM}" >> $LOG_FILE;
                 updateVariable $SELECTED_ITEM
@@ -225,17 +210,11 @@ function mainLoop() {
                 MENU_LIST=""
                 VARIABLE_GROUP=""
 
-                # echo "CURRENT: $CURRENT"
-                # COUNT_UNDERSCORES=`echo $CURRENT | sed -e 's/\(.\)/\n/g' | grep '_' | wc -l`;
-                # DEPTH_LEVEL=0;
-                # if [ $COUNT_UNDERSCORES > 0 ]; then
-                # fi
                 DEPTH_LEVEL=`echo "$CURRENT" | grep -o \_  | wc -l`
                 if [ "$CURRENT" != "" ]; then
                     ((DEPTH_LEVEL=DEPTH_LEVEL+1))
                 fi
 
-                # echo "DEPTH: $DEPTH_LEVEL"
                 if [ "$CURRENT" == "" ]; then
                     VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE  | grep -v '^#' | grep -v '^$' | awk -F"_" '{print $1}' | sort | uniq`
                     if [ $DEPTH_LEVEL == 1 ]; then
@@ -248,6 +227,7 @@ function mainLoop() {
                     VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE  | grep -v '^#' | grep "^"$CURRENT"_" | grep -v '^$' | awk -F"_" '{print $1 "_" $2}' | sort | uniq`
                     # echo "GRGOUP: $VARIABLE_GROUP"
                 fi
+
                 for i in $VARIABLE_GROUP; do
                     # @todo: fix this copy@paste stuff
                     if [ $DEPTH_LEVEL == 0 ]; then
@@ -260,11 +240,6 @@ function mainLoop() {
                         REST=`echo $i | awk -F"_" '{print $3}'`
                         # MENU_LIST="$MENU_LIST $PREFIX More "
                     fi
-#                    if [ $DEPTH_LEVEL == 2 ]; then
-#                        PREFIX=`echo $i | awk -F"_" '{print $1 "_" $2 "_" $3}'`
-#                        REST=`echo $i | awk -F"_" '{print $4}'`
-##                        # MENU_LIST="$MENU_LIST $PREFIX More "
-#                    fi
                     if [ $DEPTH_LEVEL == 3 ]; then
                         PREFIX=`echo $i | awk -F"_" '{print $1 "_" $2 "_" $3 "_" $4}'`
                         REST=`echo $i | awk -F"_" '{print $5}'`
@@ -282,21 +257,8 @@ function mainLoop() {
                         MENU_LIST="$MENU_LIST $PREFIX More " >> $LOG_FILE;
                     fi
               
-                    # MENU_LIST="$MENU_LIST $i \"$VALUE\" "
-                    # echo "- $i => $VALUE"
                 done
-                # if [ $DEPTH_LEVEL == 0 ]; then
-                #     if [ "$CURRENT" == "" ]; then
-                #         # MENU_LIST="$MENU_LIST \"\" Back "
-                #         MENU_LIST="$MENU_LIST Back Back "
-                #     else
-                #         MENU_LIST="$MENU_LIST Back Back "
-                #     fi
-                # fi
-                # MENU_LIST="$MENU_LIST \"\" "
-                # MENU_LIST="$MENU_LIST Back Back "
 
-                # exit;
                 menu
             fi
 
@@ -362,13 +324,11 @@ while true ; do
         -h|--help)
             showHelp;
             exit
-            # shift 2;;
             ;;
 
         -v|--version)
             showVersion;
             exit
-            # shift 2;;
             ;;
 
         --dialog)

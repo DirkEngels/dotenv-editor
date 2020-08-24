@@ -82,7 +82,6 @@ function welcomeMessage() {
 }
 
 
-
 ### 
 # Determine if .env file exists or create a new file by copying one of the 
 # .env-* files as a starting point.
@@ -111,10 +110,6 @@ function determineDotEnvFile() {
 
     source $DOTENV_FILE
 }
-
-
-
-
 
 
 ###
@@ -162,8 +157,6 @@ function menu() {
         TITLE_SELECTED=" - $SELECTED_ITEM"
         EXIT_OR_GO_BACK="Back"
     fi
-
-
 
     SELECTED_ITEM=$($DIALOG \
         --cancel-button "$EXIT_OR_GO_BACK" \

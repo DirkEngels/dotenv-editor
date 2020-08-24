@@ -77,7 +77,6 @@ function checkDependencies() {
 ###
 function welcomeMessage() {
     $($DIALOG \
-        --clear \
         --title "Dotenv Editor - Welcome" \
         --clear \
         --msgbox "$APP_TITLE\n\nThis setup will guide you through configuring all the existing variables.\n\nTheir defaults are already prefilled, so hit ENTER to go the next one." \

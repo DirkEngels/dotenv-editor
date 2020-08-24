@@ -18,6 +18,8 @@ COLOR_GREEN='\033[0;32m'
 COLOR_ORANGE='\033[0;33m'
 COLOR_NONE='\033[0m' # No Color
 
+TEST_DEPENDENCIES="sed awk sort uniq grep"
+TEST_UI_LIBS="whiptail dialog"
 
 ###
 # Check if all required dependencies have been installed. 
@@ -25,9 +27,8 @@ COLOR_NONE='\033[0m' # No Color
 function checkDependencies() {
     ERROR=""
 
-    DEPENDENCIES="sed awk sort uniq grep"
     echo "Checking if required dependencies are available" > $LOG_FILE
-    for COMMAND in $DEPENDENCIES; do
+    for COMMAND in $TEST_DEPENDENCIES; do
         if ! [ -x "$(command -v $COMMAND)" ]; then
             echo -e " ${COLOR_RED}ERR${COLOR_NONE} : $COMMAND is not installed!" >&2
             ERROR="$COMMAND is not installed!"
@@ -37,20 +38,21 @@ function checkDependencies() {
     done
     echo ""
 
-    UI_LIBRARIES="whiptail dialog"
-    echo "Checking if one of the UI libraries is available"
-    DIALOG=""
-    for UI_LIB in $UI_LIBRARIES; do
+    echo "Checking if one of the UI libraries ($TEST_UI_LIBS) is available"
+    # DIALOG=""
+    UI_LIBS_AVAILABLE=""
+    for UI_LIB in $TEST_UI_LIBS; do
         if ! [ -x "$(command -v $UI_LIB)" ]; then
             echo -e " ${COLOR_RED}ERR${COLOR_NONE} : $UI_LIB is not installed!" >&2
             ERROR="$UI_LIB is not available!"
         else
-            if [ "$UI_SELECTED" == "" ]; then
+            if [ "$DIALOG" == "" ]; then
                 echo -e " ${COLOR_GREEN}OK${COLOR_NONE}  : $UI_LIB is selected." >&2
                 DIALOG=$UI_LIB
             else
                 echo -e " ${COLOR_ORANGE}OK${COLOR_NONE}  : $UI_LIB is available." >&2
             fi
+            UI_LIBS_AVAILABLE="$UI_LIBS_AVAILABLE $UI_LIB"
         fi
     done
     echo ""
@@ -61,9 +63,8 @@ function checkDependencies() {
     fi
 
     echo "All required dependencies are available!"
-    echo "Using the UI library: $UI_SELECTED"
+    echo "Using the UI library: $DIALOG"
     echo ""
-
 }
 
 
@@ -311,11 +312,20 @@ function mainLoop() {
 function showHelp {
     echo "Usage: dotenv-editor [OPTION...]"
     echo ""
+    echo "Command options:"
     echo "  -f, --file=FILE            use this dotenv configuration file (default: .env)"
     echo "  -l, --log=FILE             use this file for (debug) logging (default: /dev/null)"
     echo "  -v, --version              print program version"
     echo ""
+    echo "Specify UI library:"
 
+#if [[ " ${UI_LIBS_AVAILABLE} " =~ " dialog " ]]; then
+    echo "  --dialog                   Use the original dialog library"
+#fi    
+    echo "  --whiptail                 Use the newer whiptail library"
+    # echo "  --kdialog                  Use the graphical library for KDE"
+    # echo "  --gdialog                  Use the graphical library for Gnome"
+    echo ""
 }
 
 
@@ -332,7 +342,7 @@ function showVersion {
 ###
 
 # read the options
-TEMP=`getopt -n "$0" -o f::l::h::v:: --long "+env-file,+log-file,help::,version::" -- "$@"`
+TEMP=`getopt -n "$0" -o f::l::h::v:: --long "+env-file,+log-file,help::,version::,dialog::,whiptail::" -- "$@"`
 eval set -- "$TEMP"
 
 # FROM https://www.tutorialspoint.com/unix_commands/getopt.htm
@@ -360,6 +370,18 @@ while true ; do
             exit
             # shift 2;;
             ;;
+
+        --dialog)
+            TEST_UI_LIBS="dialog $TEST_UI_LIBS"
+            echo "- selected UI lib: dialog";
+            DIALOG="dialog"
+            shift 2 ;;
+
+        --whiptail)
+            TEST_UI_LIBS="whiptail $TEST_UI_LIBS"
+            echo "- selected UI lib: whiptail";
+            DIALOG="whiptail"
+            shift 2 ;;
 
         --) shift ; break ;;
         *) echo "Internal error!" ; exit 1 ;;

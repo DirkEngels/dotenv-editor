@@ -1,4 +1,7 @@
+# Project files
 .env
 .gitignore
-dotenv-editor.sublime-project
-dotenv-editor.sublime-workspace
+
+# Editor specific files
+*.sublime-project
+*.sublime-workspace

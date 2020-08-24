@@ -86,6 +86,33 @@ function welcomeMessage() {
 }
 
 
+###
+# Menu: Display a menu using dialog/whiptail with the provided options. The
+# return value is the selected item.
+###
+function menu() {
+    # MENU_LIST= $1
+    TITLE_SELECTED=""
+    EXIT_OR_GO_BACK="Exit"
+    if [ "$SELECTED_ITEM" != "" ]; then
+        TITLE_SELECTED=" - $SELECTED_ITEM"
+        EXIT_OR_GO_BACK="Back"
+    fi
+
+    SELECTED_ITEM=$($DIALOG \
+        --cancel-button "$EXIT_OR_GO_BACK" \
+        --title "Dotenv Editor $TITLE_SELECTED " \
+        --menu "Choose an option" \
+        20 80 12 \
+        $MENU_LIST \
+        3>&1 1>&2 2>&3)
+    EXIT_STATUS=$?
+    [[ "$EXIT_STATUS" = 1 ]] && [[ "$EXIT_OR_GO_BACK" == "Exit" ]] && clear && exit;    #test if exit button is pressed
+
+    # return '$SELECTED_ITEM';
+}
+
+
 ### 
 # Determine if .env file exists or create a new file by copying one of the 
 # .env-* files as a starting point.
@@ -143,33 +170,6 @@ function updateVariable() {
     else
         echo "No change $KEY: $OLD => $NEW" >> $LOG_FILE;
     fi
-}
-
-
-###
-# Menu: Display a menu using dialog/whiptail with the provided options. The
-# return value is the selected item.
-###
-function menu() {
-    # MENU_LIST= $1
-    TITLE_SELECTED=""
-    EXIT_OR_GO_BACK="Exit"
-    if [ "$SELECTED_ITEM" != "" ]; then
-        TITLE_SELECTED=" - $SELECTED_ITEM"
-        EXIT_OR_GO_BACK="Back"
-    fi
-
-    SELECTED_ITEM=$($DIALOG \
-        --cancel-button "$EXIT_OR_GO_BACK" \
-        --title "Dotenv Editor $TITLE_SELECTED " \
-        --menu "Choose an option" \
-        20 80 12 \
-        $MENU_LIST \
-        3>&1 1>&2 2>&3)
-    EXIT_STATUS=$?
-    [[ "$EXIT_STATUS" = 1 ]] && [[ "$EXIT_OR_GO_BACK" == "Exit" ]] && clear && exit;    #test if exit button is pressed
-
-    # return '$SELECTED_ITEM';
 }
 
 

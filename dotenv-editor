@@ -272,7 +272,7 @@ function mainLoop() {
 # Display the help for this command.
 ###
 function showHelp {
-    echo "Usage: dotenv-editor [OPTION...]"
+    echo "Usage: dotenv-editor [DIR]"
     echo ""
     echo "Command options:"
     echo "  -f, --file=FILE            use this dotenv configuration file (default: .env)"

@@ -5,6 +5,7 @@
 ### Fixes
 - Displaying menu with items with depth > 2
 - Error when variable value contains spaces
+- Use current working directory to search for .env files
 
 ### Improvements
 - After asking for input return to the previous menu, not the main menu.

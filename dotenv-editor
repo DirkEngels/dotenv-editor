@@ -105,6 +105,7 @@ function menu() {
         --menu "Choose an option" \
         20 80 12 \
         $MENU_LIST \
+        " " " " "Back          " "Back" \
         3>&1 1>&2 2>&3)
     EXIT_STATUS=$?
     [[ "$EXIT_STATUS" = 1 ]] && [[ "$EXIT_OR_GO_BACK" == "Exit" ]] && clear && exit;    #test if exit button is pressed

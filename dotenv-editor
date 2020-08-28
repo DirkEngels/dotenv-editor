@@ -122,7 +122,7 @@ function determineDotEnvFile() {
     if [ -f $DOTENV_FILE ]; then
         echo "-> file exists: $DOTENV_FILE\n" >> $LOG_FILE;
         source .env
-        return $DOTENV_FILE;
+        return 1
     fi
 
     # Detect .env-* files

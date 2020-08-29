@@ -1,4 +1,4 @@
-# Dot Env Editor
+# Dotenv Editor
 Many project nowadays use a .env file for defining its configuration.
 I guess it started with docker, but many other project adopt it as well.
 Afterall it is a commonly used technique (https://en.wikipedia.org/wiki/Env)

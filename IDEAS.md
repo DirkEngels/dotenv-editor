@@ -13,6 +13,7 @@
   list with items to select, which will be used to filter upon.
 
 ### Added
++ Compatibility mode to quote string variables
 - Flag to group variables (like the current version does)
 - Flag to hide intro
 

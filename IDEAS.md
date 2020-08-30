@@ -1,10 +1,17 @@
-# Next release 0.2.3
+# Next release 0.3.0
+
+### Fixes
+- Displaying menu with items with depth > 2
+
+### Added
+- Flag to group variables (like the previous version did already). This could
+  also be implemented as a maximum depth level to group upon.
+
 
 # Todo for future version
 
 ### Fixes
 - Displaying menu with items with depth > 2
-+ Error when variable value contains spaces
 - Use current working directory to search for .env files
 
 ### Improvements
@@ -13,7 +20,6 @@
   list with items to select, which will be used to filter upon.
 
 ### Added
-+ Compatibility mode to quote string variables
 - Flag to group variables (like the current version does)
 - Flag to hide intro
 
@@ -23,9 +29,5 @@
 ### Fixes
 - Do not create a file called 1 (a bug)
 
-### Removed
-+ Removed screenshot image from the git repo (moved to github pages).
-
 ### Improvements
-- Improve layout for menu list (more space)
 - After asking for input return to the previous menu, not the main menu.

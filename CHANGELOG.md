@@ -2,6 +2,19 @@
 All notable changes to this project will be documented in this file.
 
 
+## 0.2.3 (2020-08-30)
+
+### Fixes
++ Error when variable value contains spaces
++ Improve layout for menu list (more space)
+
+### Added
++ Compatibility mode to quote string variables
+
+### Removed
++ Removed screenshot image from the git repo (moved to github pages).
+
+
 ## 0.2.2 (2020-08-25)
 
 ### Added

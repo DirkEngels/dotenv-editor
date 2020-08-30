@@ -212,7 +212,9 @@ function mainLoop() {
         *)
             if [ "$SELECTED_ITEM" == "Back" ]; then
                 # CURRENT="";
-                SELECTED_ITEM="";
+                # SELECTED_ITEM="";
+                CURRENT=`echo "${CURRENT}_${SELECTED_ITEM}" | cut --delimiter='_' --fields=-$DEPTH_LEVEL`
+                SELECTED_ITEM=$CURRENT
             fi
 
     
@@ -225,8 +227,17 @@ function mainLoop() {
                 echo "FULL: $FULL_NAME"
                 # exit;
                 updateVariable $FULL_NAME
-                SELECTED_ITEM=""
-                CURRENT=""
+
+                echo "CURRENT: $CURRENT";
+                echo "SELECTED_ITEM: $SELECTED_ITEM";
+                 
+                # SELECTED_ITEM=""
+                CURRENT=`echo "${CURRENT}_${SELECTED_ITEM}" | cut --delimiter='_' --fields=-$DEPTH_LEVEL`
+                SELECTED_ITEM=$CURRENT
+
+                echo "NEW CURRENT: $CURRENT";
+                # exit;
+
 
             else
                 # echo $SELECTED_ITEM

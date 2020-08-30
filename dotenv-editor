@@ -79,6 +79,33 @@ function checkDependencies() {
 }
 
 
+### 
+# Determine if .env file exists or create a new file by copying one of the 
+# .env-* files as a starting point.
+###
+function determineDotEnvFile() {
+    echo "Check of existing .env file: $DOTENV_FILE\n" >> $LOG_FILE;
+    if [ -f $DOTENV_FILE ]; then
+        echo "-> file exists: $DOTENV_FILE\n" >> $LOG_FILE;
+        source .env
+        return 1
+    fi
+
+    # Detect .env-* files
+    SAMPLE_FILES=`ls .env-*`
+    MENU_LIST=""
+    for FILE in $SAMPLE_FILES; do
+        MENU_LIST="$MENU_LIST $FILE $FILE ";
+    done
+    menu;
+
+    DOTENV_FILE=$SELECTED_ITEM
+    SELECTED_ITEM=""
+
+    source $DOTENV_FILE
+}
+
+
 ###
 # Welcome: display a nice and warm welcome message.
 ###
@@ -119,33 +146,6 @@ function menu() {
     [[ "$EXIT_STATUS" = 1 ]] && [[ "$EXIT_OR_GO_BACK" == "Exit" ]] && clear && exit;    #test if exit button is pressed
 
     # return '$SELECTED_ITEM';
-}
-
-
-### 
-# Determine if .env file exists or create a new file by copying one of the 
-# .env-* files as a starting point.
-###
-function determineDotEnvFile() {
-    echo "Check of existing .env file: $DOTENV_FILE\n" >> $LOG_FILE;
-    if [ -f $DOTENV_FILE ]; then
-        echo "-> file exists: $DOTENV_FILE\n" >> $LOG_FILE;
-        source .env
-        return 1
-    fi
-
-    # Detect .env-* files
-    SAMPLE_FILES=`ls .env-*`
-    MENU_LIST=""
-    for FILE in $SAMPLE_FILES; do
-        MENU_LIST="$MENU_LIST $FILE $FILE ";
-    done
-    menu;
-
-    DOTENV_FILE=$SELECTED_ITEM
-    SELECTED_ITEM=""
-
-    source $DOTENV_FILE
 }
 
 

@@ -221,7 +221,10 @@ function mainLoop() {
             CNT_GROUPS=`cat $DOTENV_FILE | grep $SELECTED_ITEM"_" | wc -l`
             if [ $CNT_MATCHES == 1 ]; then
                 echo "MATCH: $SELECTED_ITEM => ${!SELECTED_ITEM}" >> $LOG_FILE;
-                updateVariable $SELECTED_ITEM
+                local FULL_NAME="${CURRENT}_${SELECTED_ITEM}"
+                echo "FULL: $FULL_NAME"
+                # exit;
+                updateVariable $FULL_NAME
                 SELECTED_ITEM=""
                 CURRENT=""
 
@@ -305,6 +308,7 @@ function mainLoop() {
                 echo "CURRENT: $CURRENT";
                 echo "DEPTH_LEVEL: $DEPTH_LEVEL";
                 echo "GROUP MAX DEPTH: $GROUP_MAX_DEPTH";
+                echo "GROUP: $VARIABLE_GROUP"
                 echo ""
 
                 for i in $VARIABLE_GROUP; do
@@ -367,9 +371,18 @@ function mainLoop() {
                         # echo ""
                         # echo "VARIABLE_GROUP: $VARIABLE_GROUP"
 
-                        CNT_ITEMS=`cat $DOTENV_FILE | grep "$i=" | wc -l`
+                        echo "CURRENT: $CURRENT";
+                        echo "PREFIX: $PREFIX";
+                        CMD_TMP="cat $DOTENV_FILE | grep "$i=" | wc -l";
+                        echo $CMD_TMP;
+                        local FULL_NAME="${CURRENT}_${i}"
+                        echo "FULL: $FULL_NAME"
+                        # if [[ "$CURRENT" != "" ]]; then
+                        # exit;
+                        # fi
+                        CNT_ITEMS=`cat $DOTENV_FILE | grep "$FULL_NAME=" | wc -l`
                         if [ "$CNT_ITEMS" == "1" ]; then
-                            VALUE=${!i}
+                            VALUE=${!FULL_NAME}
                             MENU_LIST_ITEMS="$MENU_LIST_ITEMS $i \"$VALUE\" "
                         else
                             # echo "sdf"
@@ -403,6 +416,8 @@ function mainLoop() {
                 fi
 
                 MENU_LIST="$MENU_LIST $MENU_LIST_ITEMS "
+
+
 # echo $MENU_LIST;
 # exit;
                 menu

@@ -217,10 +217,12 @@ function mainLoop() {
                 SELECTED_ITEM=$CURRENT
             fi
 
-    
+            local FULL_SELECT="${CURRENT}_${SELECTED_ITEM}"
+            echo "FULL SELECT: $FULL_SELECT"
+
             # Check if a single option has been chosen
-            CNT_MATCHES=`cat $DOTENV_FILE | grep "$SELECTED_ITEM=" | wc -l`
-            CNT_GROUPS=`cat $DOTENV_FILE | grep $SELECTED_ITEM"_" | wc -l`
+            CNT_MATCHES=`cat $DOTENV_FILE | grep "$FULL_SELECT=" | wc -l`
+            CNT_GROUPS=`cat $DOTENV_FILE | grep $FULL_SELECT"_" | wc -l`
             if [ $CNT_MATCHES == 1 ]; then
                 echo "MATCH: $SELECTED_ITEM => ${!SELECTED_ITEM}" >> $LOG_FILE;
                 local FULL_NAME="${CURRENT}_${SELECTED_ITEM}"

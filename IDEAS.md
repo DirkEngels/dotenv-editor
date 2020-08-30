@@ -9,6 +9,8 @@
 
 ### Improvements
 - After asking for input return to the previous menu, not the main menu.
+- Add -e option to group enable variables (*_ENABLED). It display a checkbox
+  list with items to select, which will be used to filter upon.
 
 ### Added
 - Flag to group variables (like the current version does)

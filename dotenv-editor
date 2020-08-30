@@ -99,14 +99,15 @@ function menu() {
         EXIT_OR_GO_BACK="Back"
     fi
 
-    SELECTED_ITEM=$($DIALOG \
-        --cancel-button "$EXIT_OR_GO_BACK" \
-        --title "Dotenv Editor $TITLE_SELECTED " \
-        --menu "Choose an option" \
-        20 80 12 \
-        $MENU_LIST \
-        " " " " "Back          " "Back" \
-        3>&1 1>&2 2>&3)
+    MENU_COMMAND="$DIALOG --cancel-button \"$EXIT_OR_GO_BACK\" --title \"Dotenv Editor $TITLE_SELECTED \" --menu \"Choose an option\" 20 80 12 $MENU_LIST 3>&1 1>&2 2>&3"
+    SELECTED_ITEM=$(eval $MENU_COMMAND);
+    # SELECTED_ITEM=$($DIALOG \
+    #     --cancel-button "$EXIT_OR_GO_BACK" \
+    #     --title "Dotenv Editor $TITLE_SELECTED " \
+    #     --menu "Choose an option" \
+    #     20 80 12 \
+    #     $MENU_LIST \
+    #     3>&1 1>&2 2>&3)
     EXIT_STATUS=$?
     [[ "$EXIT_STATUS" = 1 ]] && [[ "$EXIT_OR_GO_BACK" == "Exit" ]] && clear && exit;    #test if exit button is pressed
 

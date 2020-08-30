@@ -28,7 +28,10 @@ Command options:
   -h, --help                 print help info (this screen)
 
 Compatibility modes:
-  -q, --quote                quote variables with a '"'  (unimplemented)
+  -q, --quote                quote variables with a '"'
+
+UI features:
+  -g, --group                enable grouping variables by separator
 
 Specify UI library:
   --dialog                   Use the original dialog library

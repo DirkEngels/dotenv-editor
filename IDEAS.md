@@ -23,6 +23,9 @@
 ### Fixes
 - Do not create a file called 1 (a bug)
 
+### Removed
++ Removed screenshot image from the git repo (moved to github pages).
+
 ### Improvements
 - Improve layout for menu list (more space)
 - After asking for input return to the previous menu, not the main menu.

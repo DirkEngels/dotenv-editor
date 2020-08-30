@@ -4,7 +4,7 @@ I guess it started with docker, but many other project adopt it as well.
 Afterall it is a commonly used technique (https://en.wikipedia.org/wiki/Env)
 This tools make it easier for users to setup and configure an application.
 
-[![solarized dualmode](https://github.com/DirkEngels/dotenv-editor/raw/master/img/dotenv-editor-screenshot.png)](#screenshot)
+![dotenv-editor-screenshot](https://user-images.githubusercontent.com/503929/91663533-bd27c080-eae9-11ea-9d1d-9e2196b23b11.png)
 
 ### Usage
 Start the application by running the script:

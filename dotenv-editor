@@ -25,6 +25,7 @@ COLOR_GREEN='\033[0;32m'
 COLOR_ORANGE='\033[0;33m'
 COLOR_NONE='\033[0m' # No Color
 
+COMPAT_QUOTE="0"
 
 ###
 # Check if all required dependencies have been installed. 
@@ -164,7 +165,13 @@ function updateVariable() {
         echo "Updating $KEY: $OLD => $NEW" >> $LOG_FILE;
 
         # echo "Replacing key: $VAR => $VALUE"
-        sed -i "s/$KEY=.*/$KEY=\"$NEW\"/" $DOTENV_FILE
+        if [[ "$COMPAT_QUOTE" == "1" ]]; then
+            sed -i "s/$KEY=.*/$KEY=\"$NEW\"/" $DOTENV_FILE
+        elif [[ $NEW = *\ * ]]; then
+            sed -i "s/$KEY=.*/$KEY=\"$NEW\"/" $DOTENV_FILE
+        else
+            sed -i "s/$KEY=.*/$KEY=$NEW/" $DOTENV_FILE
+        fi
 
         # Resource the file to update the global variables
         source $DOTENV_FILE
@@ -282,6 +289,10 @@ function showHelp {
     echo "  -v, --version              print program version"
     echo "  -h, --help                 print help info (this screen)"
     echo ""
+    echo "Compatibility modes:"
+    echo -e "  -q, --quote                quote variables with a '\"'  (${COLOR_RED}unimplemented${COLOR_NONE})"
+    # echo -e "  -c, --checkbox             use checkbox for 0/1 values (${COLOR_RED}unimplemented${COLOR_NONE})"
+    echo ""
     echo "Specify UI library:"
 
 #if [[ " ${UI_LIBS_AVAILABLE} " =~ " dialog " ]]; then
@@ -307,7 +318,7 @@ function showVersion {
 ###
 
 # read the options
-TEMP=`getopt -n "$0" -o f::l::h::v:: --long "+env-file,+log-file,help::,version::,dialog::,whiptail::" -- "$@"`
+TEMP=`getopt -n "$0" -o f::l::h::v::q:: --long "+env-file,+log-file,help::,version::,quote::,dialog::,whiptail::" -- "$@"`
 eval set -- "$TEMP"
 
 # FROM https://www.tutorialspoint.com/unix_commands/getopt.htm
@@ -333,6 +344,11 @@ while true ; do
             showVersion;
             exit
             ;;
+
+        -q|--quote)
+            echo "- enabling compat mode --quote";
+            COMPAT_QUOTE="1"
+            shift 2 ;;
 
         --dialog)
             TEST_UI_LIBS="dialog $TEST_UI_LIBS"

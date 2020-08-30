@@ -25,7 +25,13 @@ COLOR_GREEN='\033[0;32m'
 COLOR_ORANGE='\033[0;33m'
 COLOR_NONE='\033[0m' # No Color
 
+# UI modes
+MODE_GROUP="0"
+MODE_CHECKBOX="0"
+
+# Compatibility modes
 COMPAT_QUOTE="0"
+
 
 ###
 # Check if all required dependencies have been installed. 
@@ -290,9 +296,24 @@ function showHelp {
     echo "  -h, --help                 print help info (this screen)"
     echo ""
     echo "Compatibility modes:"
-    echo -e "  -q, --quote                quote variables with a '\"'  (${COLOR_RED}unimplemented${COLOR_NONE})"
-    # echo -e "  -c, --checkbox             use checkbox for 0/1 values (${COLOR_RED}unimplemented${COLOR_NONE})"
+    echo -e "  -q, --quote                quote variables with a '\"'"
+    # echo -e "  -k, --keep-comments        keep comments"
     echo ""
+    echo "UI features:"
+    echo "  -g, --group                enable grouping variables by separator"
+    echo "  -c, --checkbox             enable checkboxes for variables called *ENABLED* or"
+    echo "                             have a 0 or 1 value"
+    echo ""
+    # echo "Group mode options:"
+    # echo "  -g, --group                enable grouping variables by separator"
+    # echo "  -d, --depth=2              stops grouping variables after this depth"
+    # echo "  -s, --seperator=_          use a different separator (default: '_')"
+    # echo ""
+    # echo "Checkbox mode options:"
+    # echo "  -c, --checkbox             enable checkboxes for variables called *ENABLED* or"
+    # echo "                             have a 0 or 1 value."
+    # echo "  -e, --enabled              show checkbox for ENABLE_ variables (set --checkbox to 1)"
+    # echo ""
     echo "Specify UI library:"
 
 #if [[ " ${UI_LIBS_AVAILABLE} " =~ " dialog " ]]; then
@@ -345,6 +366,18 @@ while true ; do
             exit
             ;;
 
+        # UI modes
+        -g|--group)
+            echo "- enabling ui mode --group";
+            MODE_GROUP="1"
+            shift 2 ;;
+
+        -c|--checkbox)
+            echo "- enabling ui mode --checkbox";
+            MODE_CHECKBOX="1"
+            shift 2 ;;
+
+        # Compatibility modes
         -q|--quote)
             echo "- enabling compat mode --quote";
             COMPAT_QUOTE="1"

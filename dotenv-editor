@@ -254,7 +254,7 @@ function mainLoop() {
                     CNT_ITEMS=`cat $DOTENV_FILE | grep "$i=" | wc -l`
                     if [ "$CNT_ITEMS" == "1" ]; then
                         VALUE=${!i}
-                        MENU_LIST="$MENU_LIST $PREFIX  $VALUE "
+                        MENU_LIST="$MENU_LIST $PREFIX \"$VALUE\" "
                     else
                         MENU_LIST="$MENU_LIST $PREFIX More " >> $LOG_FILE;
                     fi

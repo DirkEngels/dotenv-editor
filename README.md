@@ -16,6 +16,25 @@ It will display a list of all variables defined in the existing .env file (or
 .env.sample file). It tries to group elements by prefix to improve user
 experience in case of larger or more complex .env files.
 
+
+### Options
+```
+Usage: dotenv-editor [DIR]
+
+Command options:
+  -f, --file=FILE            use this dotenv configuration file (default: .env)
+  -l, --log=FILE             use this file for (debug) logging (default: /dev/null)
+  -v, --version              print program version
+  -h, --help                 print help info (this screen)
+
+Compatibility modes:
+  -q, --quote                quote variables with a '"'  (unimplemented)
+
+Specify UI library:
+  --dialog                   Use the original dialog library
+  --whiptail                 Use the newer whiptail library
+```
+
 If no file parameter (-f) is provided it wil look like for the .env file. In
 case the .env does not exists it wil check for any .env-* file to use as an
 example to start from after which it will be copied to the .env file.

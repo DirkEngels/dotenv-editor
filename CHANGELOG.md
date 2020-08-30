@@ -3,6 +3,7 @@ All notable changes to this project will be documented in this file.
 
 
 ## 0.2.3 (2020-08-30)
+Various UI fixes
 
 ### Fixes
 + Error when variable value contains spaces
@@ -16,6 +17,7 @@ All notable changes to this project will be documented in this file.
 
 
 ## 0.2.2 (2020-08-25)
+Support multiple libraries and various fixes.
 
 ### Added
 + Support multiple libraries (dialog/whiptail/zenity/whatever)

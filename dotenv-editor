@@ -239,6 +239,12 @@ function mainLoop() {
             exit;
             ;;
 
+        *RESET) # Reset changes
+            cp $DOTENV_FILE_ORIG $DOTENV_FILE_TMP
+            source $DOTENV_FILE_TMP
+            SELECTED_ITEM=""
+            ;;
+
         *SETTINGS) # Reset changes
             MENU_LIST="$MENU_LIST GROUP enable\ grouping\ variables\ by\ separator ON "
             viewSettings

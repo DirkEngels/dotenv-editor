@@ -239,6 +239,14 @@ function mainLoop() {
             exit;
             ;;
 
+        *VIEW_DIFF) #Exit the dotenv editor application
+            # clear;
+            diff --color $DOTENV_FILE_ORIG $DOTENV_FILE_TMP > $DOTENV_FILE_TMP.diff
+            BLA=$(dialog --scrollbar --textbox $DOTENV_FILE_TMP.diff 30 80 3>&1 1>&2 2>&3)
+            rm "$DOTENV_FILE_TMP.diff"
+            SELECTED_ITEM=""
+            ;;
+
         *RESET) # Reset changes
             cp $DOTENV_FILE_ORIG $DOTENV_FILE_TMP
             source $DOTENV_FILE_TMP

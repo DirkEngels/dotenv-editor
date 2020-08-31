@@ -155,7 +155,6 @@ function menu() {
 function updateVariable() {
     # Parameters
     KEY=$1
-
     OLD=${!KEY}
 
     # Show dialog
@@ -315,18 +314,19 @@ function mainLoop() {
                 SELECTED_ITEM=$CURRENT
             fi
 
-            local FULL_SELECT="${CURRENT}_${SELECTED_ITEM}"
-            echo "FULL SELECT: $FULL_SELECT"
+            local FULL_SELECT="${SELECTED_ITEM}"
+            if [[ "$CURRENT" != "" ]]; then
+                FULL_SELECT="${CURRENT}_${SELECTED_ITEM}"
+            fi
 
             # Check if a single option has been chosen
             CNT_MATCHES=`cat $DOTENV_FILE_ORIG | grep "$FULL_SELECT=" | wc -l`
             CNT_GROUPS=`cat $DOTENV_FILE_ORIG | grep $FULL_SELECT"_" | wc -l`
             if [ $CNT_MATCHES == 1 ]; then
                 # echo "MATCH: $SELECTED_ITEM => ${!SELECTED_ITEM}" >> $LOG_FILE;
-                local FULL_NAME="${CURRENT}_${SELECTED_ITEM}"
                 # echo "FULL: $FULL_NAME"
                 # exit;
-                updateVariable $FULL_NAME
+                updateVariable $FULL_SELECT
 
                 # echo "CURRENT: $CURRENT";
                 # echo "SELECTED_ITEM: $SELECTED_ITEM";

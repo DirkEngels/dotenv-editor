@@ -2,6 +2,18 @@
 All notable changes to this project will be documented in this file.
 
 
+## 0.3.0 (2020-08-31)
+Group variables by prefix in menus.
+
+### Fixes
++ Do not create a file called 1 (a bug)
++ After asking for input return to the previous menu, not the main menu.
+
+### Added
++ Flag to group variables (like the previous version did already). This could
+  also be implemented as a maximum depth level to group upon.
+
+
 ## 0.2.3 (2020-08-30)
 Various UI fixes
 

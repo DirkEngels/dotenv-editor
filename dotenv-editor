@@ -186,6 +186,21 @@ function updateVariable() {
 }
 
 
+function viewSettings() {
+    FEATURES=$($DIALOG \
+        --title "Settings" \
+        --checklist \
+        --output-fd 1 \
+        "Modify settings according to your preferences" 20 78 4 \
+        "-\>GROUP" "Enable grouping variables by separator (_)" $MODE_GROUP \
+        "-\>CHECKBOX" "Allow connections from other hosts" $MODE_CHECKBOX \
+        "-\>QUOTE" "Quote variables with a '\"'" ON \
+        "-\>REMOTE_MOUNT" "Allow mounting of remote devices" OFF )
+    RETVAT=$?
+    CHOICE_PACKAGES=$RETVAL;
+
+}
+
 ###
 # Main: show the main menu of (grouped) topics based on the select prefix. The
 # main program keeps running until the user has selected a topic or exited the
@@ -201,6 +216,13 @@ function mainLoop() {
             # clear;
             exit;
             ;;
+
+        *SETTINGS) # Reset changes
+            MENU_LIST="$MENU_LIST GROUP enable\ grouping\ variables\ by\ separator ON "
+            viewSettings
+            SELECTED_ITEM=""
+            ;;
+
 
         *)
             if [ "$SELECTED_ITEM" == "Back" ]; then

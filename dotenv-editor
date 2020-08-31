@@ -13,7 +13,8 @@ TEST_UI_LIBS="dialog whiptail"
 DIALOG=""
 MENU_LIST=""
 MENU_OPTIONS=""
-DOTENV_FILE=".env"
+DOTENV_FILE_ORIG=".env"
+DOTENV_FILE_TMP="/tmp/dotenv-editor-$$"
 SELECTED_ITEM=""
 CURRENT=""
 
@@ -87,10 +88,12 @@ function checkDependencies() {
 # .env-* files as a starting point.
 ###
 function determineDotEnvFile() {
-    echo "Check of existing .env file: $DOTENV_FILE\n" >> $LOG_FILE;
-    if [ -f $DOTENV_FILE ]; then
-        echo "-> file exists: $DOTENV_FILE\n" >> $LOG_FILE;
-        source .env
+
+    echo "Check of existing .env file: $DOTENV_FILE_ORIG\n" >> $LOG_FILE;
+    if [ -f $DOTENV_FILE_ORIG ]; then
+        echo "-> file exists: $DOTENV_FILE_ORIG\n" >> $LOG_FILE;
+        cp $DOTENV_FILE_ORIG $DOTENV_FILE_TMP;
+        source $DOTENV_FILE_TMP
         return 1
     fi
 
@@ -102,10 +105,11 @@ function determineDotEnvFile() {
     done
     menu;
 
-    DOTENV_FILE=$SELECTED_ITEM
+    DOTENV_FILE_ORIG=$SELECTED_ITEM
+    cp $SELECTED_ITEM $DOTENV_FILE_TMP;
     SELECTED_ITEM=""
 
-    source $DOTENV_FILE
+    source $DOTENV_FILE_TMP
 }
 
 
@@ -165,16 +169,16 @@ function updateVariable() {
         echo "Updating $KEY: $OLD => $NEW" >> $LOG_FILE;
 
         # echo "Replacing key: $VAR => $VALUE"
-        if [[ "$COMPAT_QUOTE" == "1" ]]; then
-            sed -i "s/$KEY=.*/$KEY=\"$NEW\"/" $DOTENV_FILE
+        if [[ "$COMPAT_QUOTE" == "ON" ]]; then
+            sed -i "s/$KEY=.*/$KEY=\"$NEW\"/" $DOTENV_FILE_ORIG
         elif [[ $NEW = *\ * ]]; then
-            sed -i "s/$KEY=.*/$KEY=\"$NEW\"/" $DOTENV_FILE
+            sed -i "s/$KEY=.*/$KEY=\"$NEW\"/" $DOTENV_FILE_ORIG
         else
-            sed -i "s/$KEY=.*/$KEY=$NEW/" $DOTENV_FILE
+            sed -i "s/$KEY=.*/$KEY=$NEW/" $DOTENV_FILE_ORIG
         fi
 
         # Resource the file to update the global variables
-        source $DOTENV_FILE
+        source $DOTENV_FILE_ORIG
 
     else
         echo "No change $KEY: $OLD => $NEW" >> $LOG_FILE;
@@ -208,8 +212,8 @@ function mainLoop() {
             echo "FULL SELECT: $FULL_SELECT"
 
             # Check if a single option has been chosen
-            CNT_MATCHES=`cat $DOTENV_FILE | grep "$FULL_SELECT=" | wc -l`
-            CNT_GROUPS=`cat $DOTENV_FILE | grep $FULL_SELECT"_" | wc -l`
+            CNT_MATCHES=`cat $DOTENV_FILE_ORIG | grep "$FULL_SELECT=" | wc -l`
+            CNT_GROUPS=`cat $DOTENV_FILE_ORIG | grep $FULL_SELECT"_" | wc -l`
             if [ $CNT_MATCHES == 1 ]; then
                 # echo "MATCH: $SELECTED_ITEM => ${!SELECTED_ITEM}" >> $LOG_FILE;
                 local FULL_NAME="${CURRENT}_${SELECTED_ITEM}"
@@ -241,17 +245,17 @@ function mainLoop() {
                 if [[ "$MODE_GROUP" == "1" ]]; then
                     echo "GROUP MODE ENABBLED";
                     if [[ $DEPTH_LEVEL -ge $GROUP_MAX_DEPTH ]]; then
-                        VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE  | grep -v '^#' | grep -v '^$' | grep '^'$CURRENT | cut --delimiter='_' --fields=$((DEPTH_LEVEL+1)) | sort | uniq`
+                        VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE_ORIG  | grep -v '^#' | grep -v '^$' | grep '^'$CURRENT | cut --delimiter='_' --fields=$((DEPTH_LEVEL+1)) | sort | uniq`
 
                     elif [[ $DEPTH_LEVEL -gt 0 ]]; then
-                        VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE  | grep -v '^#' | grep -v '^$' | grep '^'$CURRENT | cut --delimiter='_' --fields=2 | sort | uniq`
+                        VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE_ORIG  | grep -v '^#' | grep -v '^$' | grep '^'$CURRENT | cut --delimiter='_' --fields=2 | sort | uniq`
 
                     else 
-                        VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE  | grep -v '^#' | grep -v '^$' | cut --delimiter='_' --fields=1 | sort | uniq`
+                        VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE_ORIG  | grep -v '^#' | grep -v '^$' | cut --delimiter='_' --fields=1 | sort | uniq`
                     fi
 
                 else
-                    VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE  | grep -v '^#' | grep -v '^$' | sort | uniq`
+                    VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE_ORIG  | grep -v '^#' | grep -v '^$' | sort | uniq`
                 fi;
 
                 # Loop over the matched variables (in case of grouping).
@@ -268,10 +272,10 @@ function mainLoop() {
                             MENU_KEY=`echo $i | awk -F"_" '{print $2}'`
                         fi                        
 
-                        CMD_TMP="cat $DOTENV_FILE | grep "$i=" | wc -l";
+                        CMD_TMP="cat $DOTENV_FILE_ORIG | grep "$i=" | wc -l";
                         local FULL_NAME="${CURRENT}_${i}"
 
-                        CNT_ITEMS=`cat $DOTENV_FILE | grep "$FULL_NAME=" | wc -l`
+                        CNT_ITEMS=`cat $DOTENV_FILE_ORIG | grep "$FULL_NAME=" | wc -l`
                         if [ "$CNT_ITEMS" == "1" ]; then
                             VALUE=${!FULL_NAME}
                             MENU_LIST_ITEMS="$MENU_LIST_ITEMS $i \"$VALUE\" "
@@ -286,7 +290,7 @@ function mainLoop() {
                         # MENU_LIST="$MENU_LIST $i \"$VALUE\" "
                     fi
 
-                    # CNT_ITEMS=`cat $DOTENV_FILE | grep "$i=" | wc -l`
+                    # CNT_ITEMS=`cat $DOTENV_FILE_ORIG | grep "$i=" | wc -l`
                     # if [ "$CNT_ITEMS" == "1" ]; then
                     #     VALUE=${!i}
                     #     MENU_LIST="$MENU_LIST $i \"$VALUE\" "
@@ -374,8 +378,8 @@ eval set -- "$TEMP"
 while true ; do
     case "$1" in
         -f|--env-file)
-            DOTENV_FILE=${2#=}
-            echo "- receiving option --env-file: $DOTENV_FILE";
+            DOTENV_FILE_ORIG=${2#=}
+            echo "- receiving option --env-file: $DOTENV_FILE_ORIG";
             shift 2 ;;
 
         -l|--log-file)
@@ -429,8 +433,8 @@ while true ; do
 done
 
 # Set defaults in case optional parameters have not been set.
-if [ -z "${DOTENV_FILE}" ]; then 
-    DOTENV_FILE=.env
+if [ -z "${DOTENV_FILE_ORIG}" ]; then 
+    DOTENV_FILE_ORIG=.env
 fi
 if [ -z "${LOG_FILE}" ]; then 
     LOG_FILE=/dev/null

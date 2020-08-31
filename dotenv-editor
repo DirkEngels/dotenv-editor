@@ -143,7 +143,7 @@ function menu() {
     MENU_COMMAND="$DIALOG --cancel-button \"$EXIT_OR_GO_BACK\" --title \"Dotenv Editor $TITLE_SELECTED \" --menu \"Choose an option\" 20 80 12 $MENU_LIST 3>&1 1>&2 2>&3"
     SELECTED_ITEM=$(eval $MENU_COMMAND);
     EXIT_STATUS=$?
-    [[ "$EXIT_STATUS" = 1 ]] && [[ "$EXIT_OR_GO_BACK" == "Exit" ]] && exit;    #test if exit button is pressed
+    [[ "$EXIT_STATUS" = 1 ]] && [[ "$EXIT_OR_GO_BACK" == "Exit" ]] && saveChangesOrExit;    #test if exit button is pressed
 
     # return '$SELECTED_ITEM';
 }
@@ -194,8 +194,8 @@ function viewSettings() {
         "Modify settings according to your preferences" 20 78 4 \
         "-\>GROUP" "Enable grouping variables by separator (_)" $MODE_GROUP \
         "-\>CHECKBOX" "Allow connections from other hosts" $MODE_CHECKBOX \
-        "-\>QUOTE" "Quote variables with a '\"'" ON \
-        "-\>REMOTE_MOUNT" "Allow mounting of remote devices" OFF )
+        "-\>QUOTE" "Quote variables with a '\"'" $COMPAT_QUOTE \
+        )
     RETVAT=$?
     CHOICE_PACKAGES=$RETVAL;
 
@@ -223,6 +223,47 @@ function viewSettings() {
     done;
 }
 
+
+function saveChangesOrExit() {
+    # Check if tmp file differs from orig file.
+    diffTmpVsOrigFile;
+    if [ -s $DOTENV_FILE_TMP.diff ]; then
+        dialog --title "Dotenv Editor - Save Changes?" \
+            --yesno "Are you sure you want to save the changes to \"$DOTENV_FILE_ORIG\"?" 7 60
+
+        # Get exit status
+        # 0 means user hit [yes] button.
+        # 1 means user hit [no] button.
+        # 255 means user hit [Esc] key.
+        response=$?
+        case $response in
+           0)
+                echo "Overwriting original file with changes.";
+                cp $DOTENV_FILE_TMP $DOTENV_FILE_ORIG
+                ;;
+           1)
+                echo "Changes discarded.";
+
+                ;;
+           255)
+                echo "[ESC] key pressed."
+                ;;
+        esac
+    fi
+
+
+    rm $DOTENV_FILE_TMP;
+
+    # Exit application
+    exit;
+}
+
+
+function diffTmpVsOrigFile () {
+    diff --color $DOTENV_FILE_ORIG $DOTENV_FILE_TMP > $DOTENV_FILE_TMP.diff
+}
+
+
 ###
 # Main: show the main menu of (grouped) topics based on the select prefix. The
 # main program keeps running until the user has selected a topic or exited the
@@ -236,7 +277,7 @@ function mainLoop() {
     case $SELECTED_ITEM in
         Exit) #Exit the dotenv editor application
             # clear;
-            exit;
+            saveChangesOrExit
             ;;
 
         *SAVE) # Save the   
@@ -249,7 +290,7 @@ function mainLoop() {
 
         *VIEW_DIFF) #Exit the dotenv editor application
             # clear;
-            diff --color $DOTENV_FILE_ORIG $DOTENV_FILE_TMP > $DOTENV_FILE_TMP.diff
+            diffTmpVsOrigFile
             BLA=$(dialog --scrollbar --textbox $DOTENV_FILE_TMP.diff 30 80 3>&1 1>&2 2>&3)
             rm "$DOTENV_FILE_TMP.diff"
             SELECTED_ITEM=""

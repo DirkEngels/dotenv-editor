@@ -138,13 +138,6 @@ function menu() {
 
     MENU_COMMAND="$DIALOG --cancel-button \"$EXIT_OR_GO_BACK\" --title \"Dotenv Editor $TITLE_SELECTED \" --menu \"Choose an option\" 20 80 12 $MENU_LIST 3>&1 1>&2 2>&3"
     SELECTED_ITEM=$(eval $MENU_COMMAND);
-    # SELECTED_ITEM=$($DIALOG \
-    #     --cancel-button "$EXIT_OR_GO_BACK" \
-    #     --title "Dotenv Editor $TITLE_SELECTED " \
-    #     --menu "Choose an option" \
-    #     20 80 12 \
-    #     $MENU_LIST \
-    #     3>&1 1>&2 2>&3)
     EXIT_STATUS=$?
     [[ "$EXIT_STATUS" = 1 ]] && [[ "$EXIT_OR_GO_BACK" == "Exit" ]] && exit;    #test if exit button is pressed
 
@@ -161,14 +154,12 @@ function updateVariable() {
 
     OLD=${!KEY}
 
-    # echo "ASKING INPUT FOR KEY: $KEY ($OLD)"
     # Show dialog
     NEW=$($DIALOG \
         --clear \
         --inputbox "$KEY" \
         8 80 "$OLD" \
         3>&1 1>&2 2>&3)
-        # --title "Configuration - $KEY" \
 
     if [ "$OLD" != "$NEW" ]; then
         echo "Updating $KEY: $OLD => $NEW" >> $LOG_FILE;
@@ -203,16 +194,12 @@ function mainLoop() {
 
     case $SELECTED_ITEM in
         Exit) #Exit the dotenv editor application
-            # echo "1 => Aap"
-            # clear;
             # clear;
             exit;
             ;;
 
         *)
             if [ "$SELECTED_ITEM" == "Back" ]; then
-                # CURRENT="";
-                # SELECTED_ITEM="";
                 CURRENT=`echo "${CURRENT}_${SELECTED_ITEM}" | cut --delimiter='_' --fields=-$DEPTH_LEVEL`
                 SELECTED_ITEM=$CURRENT
             fi
@@ -224,22 +211,18 @@ function mainLoop() {
             CNT_MATCHES=`cat $DOTENV_FILE | grep "$FULL_SELECT=" | wc -l`
             CNT_GROUPS=`cat $DOTENV_FILE | grep $FULL_SELECT"_" | wc -l`
             if [ $CNT_MATCHES == 1 ]; then
-                echo "MATCH: $SELECTED_ITEM => ${!SELECTED_ITEM}" >> $LOG_FILE;
+                # echo "MATCH: $SELECTED_ITEM => ${!SELECTED_ITEM}" >> $LOG_FILE;
                 local FULL_NAME="${CURRENT}_${SELECTED_ITEM}"
-                echo "FULL: $FULL_NAME"
+                # echo "FULL: $FULL_NAME"
                 # exit;
                 updateVariable $FULL_NAME
 
-                echo "CURRENT: $CURRENT";
-                echo "SELECTED_ITEM: $SELECTED_ITEM";
+                # echo "CURRENT: $CURRENT";
+                # echo "SELECTED_ITEM: $SELECTED_ITEM";
                  
                 # SELECTED_ITEM=""
                 CURRENT=`echo "${CURRENT}_${SELECTED_ITEM}" | cut --delimiter='_' --fields=-$DEPTH_LEVEL`
                 SELECTED_ITEM=$CURRENT
-
-                echo "NEW CURRENT: $CURRENT";
-                # exit;
-
 
             else
                 # echo $SELECTED_ITEM
@@ -255,101 +238,25 @@ function mainLoop() {
                     ((DEPTH_LEVEL=DEPTH_LEVEL+1))
                 fi
 
-                echo "CURRENT: $CURRENT";
-                echo "DEPTH_LEVEL: $DEPTH_LEVEL";
-                echo "GROUP MAX DEPTH: $GROUP_MAX_DEPTH";
-
                 if [[ "$MODE_GROUP" == "1" ]]; then
                     echo "GROUP MODE ENABBLED";
                     if [[ $DEPTH_LEVEL -ge $GROUP_MAX_DEPTH ]]; then
-
-                        echo "DEPTH REACH LIMIT";
-
-                        # VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE  | grep -v '^#' | grep -v '^$' | awk -F"_" '{print substr($0,index($0, "_")+$GROUP_MAX_DEPTH)}' | sort | uniq`
                         VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE  | grep -v '^#' | grep -v '^$' | grep '^'$CURRENT | cut --delimiter='_' --fields=$((DEPTH_LEVEL+1)) | sort | uniq`
 
-                        # echo "VARIABLE_GROUP: $VARIABLE_GROUP"
-                        # exit;
-
                     elif [[ $DEPTH_LEVEL -gt 0 ]]; then
-                        echo "YEAH: DEPTH: $DEPTH_LEVEL"
-                        echo "VARIABLE_GROUP: $VARIABLE_GROUP"
-
                         VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE  | grep -v '^#' | grep -v '^$' | grep '^'$CURRENT | cut --delimiter='_' --fields=2 | sort | uniq`
-# echo "CURRENT: $CURRENT"
-#                 echo "$VARIABLE_GROUP"
 
-                        # exit;
                     else 
-                        echo "ELSE";
                         VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE  | grep -v '^#' | grep -v '^$' | cut --delimiter='_' --fields=1 | sort | uniq`
-                    #     local INDEX=${DEPTH_LEVEL}
-                    #     INDEX=$((${DEPTH_LEVEL}+2))
-                    #     # INDEX=$((${DEPTH_LEVEL}))
-                    #     if [[ $INDEX -le "0" ]]; then
-                    #         INDEX=1;
-                    #     fi
-                    #     echo "INDEX: $INDEX"
-                    #     VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE  | grep -v '^#' | grep -v '^$' | awk -v depth="$DEPTH_LEVEL" -v current="$INDEX" -F"_" '{print $current substr($0, index($0, "_")+$depth)}' | sort | uniq`
-                        echo "OK";
                     fi
-                        # exit;
-                    # echo ""
 
                 else
                     VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE  | grep -v '^#' | grep -v '^$' | sort | uniq`
                 fi;
-# echo "CURRENT: $CURRENT"
-#                 echo "$VARIABLE_GROUP"
-#                 exit;
 
-
-                # if [ "$CURRENT" == "" ]; then
-                #     VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE  | grep -v '^#' | grep -v '^$' | awk -F"_" '{print $1}' | sort | uniq`
-                #     if [ $DEPTH_LEVEL == 1 ]; then
-                #         VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE  | grep -v '^#' | grep -v '^$' | awk -F"_" '{print $1 " " $2}' | sort | uniq`
-                #     fi
-                #     if [ $DEPTH_LEVEL == 2 ]; then
-                #         VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE  | grep -v '^#' | grep -v '^$' | awk -F"_" '{print $1 " " $2 " " $3}' | sort | uniq`
-                #     fi
-                # else 
-                #     VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE  | grep -v '^#' | grep "^"$CURRENT"_" | grep -v '^$' | awk -F"_" '{print $1 "_" $2}' | sort | uniq`
-                #     # echo "GRGOUP: $VARIABLE_GROUP"
-                # fi
-
-
-                echo "CURRENT: $CURRENT";
-                echo "DEPTH_LEVEL: $DEPTH_LEVEL";
-                echo "GROUP MAX DEPTH: $GROUP_MAX_DEPTH";
-                echo "GROUP: $VARIABLE_GROUP"
-                echo ""
-
+                # Loop over the matched variables (in case of grouping).
                 for i in $VARIABLE_GROUP; do
-                        # PREFIX=`echo $i | awk -F"_" '{print $1}'`
-                        # REST=`echo $i | awk -F"_" '{print $2}'`
-
-                    # @todo: fix this copy@paste stuff
-                    # if [ $DEPTH_LEVEL == 0 ]; then
-                    #     PREFIX=`echo $i | awk -F"_" '{print $1}'`
-                    #     # PREFIX=$CURRENT"_"$PREFIX 
-                    #     REST=`echo $i | awk -F"_" '{print $2}'`
-                    # fi
-                    # if [ $DEPTH_LEVEL == 1 ]; then
-                    #     PREFIX=`echo $i | awk -F"_" '{print $1 "_" $2}'`
-                    #     REST=`echo $i | awk -F"_" '{print $3}'`
-                    #     # MENU_LIST="$MENU_LIST $PREFIX More "
-                    # fi
-                    # if [ $DEPTH_LEVEL == 3 ]; then
-                    #     PREFIX=`echo $i | awk -F"_" '{print $1 "_" $2 "_" $3 "_" $4}'`
-                    #     REST=`echo $i | awk -F"_" '{print $5}'`
-                    #     # MENU_LIST="$MENU_LIST $PREFIX More "
-                    # fi
-
-
                     if [[ "$MODE_GROUP" == "1" ]]; then
-
-
-                        # ITEM_PREFIX = `echo "SOME_VARIABLE_NAME" | awk -v b=2 -v e=7 'BEGIN{FS=OFS="_"} {for (i=b;i<=e;i++) printf "%s", $i, (i<e ? OFS : ORS)}'`
 
                         local NUMBER_OF_UNDERSCORES=`echo "$i" | grep -o \_  | wc -l`
                         echo "$i => $NUMBER_OF_UNDERSCORES";
@@ -361,49 +268,16 @@ function mainLoop() {
                             MENU_KEY=`echo $i | awk -F"_" '{print $2}'`
                         fi                        
 
-                        # if [[ $DEPTH_LEVEL -ge $GROUP_MAX_DEPTH ]]; then
-                        # else
-                        # fi
-
-                        # echo "GROUP MODE ENABBLED";
-                        # if [[ $DEPTH_LEVEL -ge $GROUP_MAX_DEPTH ]]; then
-                        #     # echo "DEPTH REACH LIMIT";
-                        #     # exit;
-                        #     VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE  | grep -v '^#' | grep -v '^$' | awk -F"_" '{print substr($0, index($0, "_")+$GROUP_MAX_DEPTH)}' | sort | uniq`
-                        # else 
-
-                        #     local INDEX=${DEPTH_LEVEL}
-                        #     INDEX=$((${DEPTH_LEVEL}))
-                        #     if [[ $INDEX -le "0" ]]; then
-                        #         INDEX=1;
-                        #     fi
-                        #     # echo "INDEX: $INDEX"
-                        #     VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE  | grep -v '^#' | grep -v '^$' | awk -v depth="$DEPTH_LEVEL" -v current="$INDEX" -F"_" '{print $current substr($0, index($0, "_")+$depth)}' | sort | uniq`
-                        #     # echo "OK";
-                        # fi
-                        # echo ""
-                        # echo "VARIABLE_GROUP: $VARIABLE_GROUP"
-
-                        echo "CURRENT: $CURRENT";
-                        echo "PREFIX: $PREFIX";
                         CMD_TMP="cat $DOTENV_FILE | grep "$i=" | wc -l";
-                        echo $CMD_TMP;
                         local FULL_NAME="${CURRENT}_${i}"
-                        echo "FULL: $FULL_NAME"
-                        # if [[ "$CURRENT" != "" ]]; then
-                        # exit;
-                        # fi
+
                         CNT_ITEMS=`cat $DOTENV_FILE | grep "$FULL_NAME=" | wc -l`
                         if [ "$CNT_ITEMS" == "1" ]; then
                             VALUE=${!FULL_NAME}
                             MENU_LIST_ITEMS="$MENU_LIST_ITEMS $i \"$VALUE\" "
                         else
-                            # echo "sdf"
-                            # echo "I: $i"
                             MENU_LIST_MORE="$MENU_LIST_MORE $i =\>\ more " >> $LOG_FILE;
                         fi
-                        # echo MENU_LIST_ITEMS
-                        # exit;
 
                     else
                         # Default mode: list all variables
@@ -411,7 +285,6 @@ function mainLoop() {
                         MENU_LIST_ITEMS="$MENU_LIST_ITEMS $i \"$VALUE\" "
                         # MENU_LIST="$MENU_LIST $i \"$VALUE\" "
                     fi
-
 
                     # CNT_ITEMS=`cat $DOTENV_FILE | grep "$i=" | wc -l`
                     # if [ "$CNT_ITEMS" == "1" ]; then
@@ -422,17 +295,13 @@ function mainLoop() {
                     # fi
               
                 done
-                echo $MENU_LIST_ITEMS;
-# exit;
+
                 if [[ "$MENU_LIST_MORE" != "" ]]; then
                     MENU_LIST="$MENU_LIST $MENU_LIST_MORE "
                 fi
 
                 MENU_LIST="$MENU_LIST $MENU_LIST_ITEMS "
 
-
-# echo $MENU_LIST;
-# exit;
                 menu
             fi
 
@@ -464,7 +333,6 @@ function showHelp {
     echo "                             have a 0 or 1 value"
     echo ""
     # echo "Group mode options:"
-    # echo "  -g, --group                enable grouping variables by separator"
     # echo "  -d, --depth=2              stops grouping variables after this depth"
     # echo "  -s, --seperator=_          use a different separator (default: '_')"
     # echo ""

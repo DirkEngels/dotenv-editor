@@ -27,14 +27,14 @@ COLOR_ORANGE='\033[0;33m'
 COLOR_NONE='\033[0m' # No Color
 
 # UI modes
-MODE_GROUP="0"
-MODE_CHECKBOX="0"
+MODE_GROUP="OFF"
+MODE_CHECKBOX="OFF"
 
 # Group specific options
 GROUP_MAX_DEPTH=0
 
 # Compatibility modes
-COMPAT_QUOTE="0"
+COMPAT_QUOTE="OFF"
 
 
 ###
@@ -242,7 +242,7 @@ function mainLoop() {
                     ((DEPTH_LEVEL=DEPTH_LEVEL+1))
                 fi
 
-                if [[ "$MODE_GROUP" == "1" ]]; then
+                if [[ "$MODE_GROUP" == "ON" ]]; then
                     echo "GROUP MODE ENABBLED";
                     if [[ $DEPTH_LEVEL -ge $GROUP_MAX_DEPTH ]]; then
                         VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE_ORIG  | grep -v '^#' | grep -v '^$' | grep '^'$CURRENT | cut --delimiter='_' --fields=$((DEPTH_LEVEL+1)) | sort | uniq`
@@ -260,7 +260,7 @@ function mainLoop() {
 
                 # Loop over the matched variables (in case of grouping).
                 for i in $VARIABLE_GROUP; do
-                    if [[ "$MODE_GROUP" == "1" ]]; then
+                    if [[ "$MODE_GROUP" == "ON" ]]; then
 
                         local NUMBER_OF_UNDERSCORES=`echo "$i" | grep -o \_  | wc -l`
                         echo "$i => $NUMBER_OF_UNDERSCORES";
@@ -400,19 +400,19 @@ while true ; do
         # UI modes
         -g|--group)
             echo "- enabling ui mode --group";
-            MODE_GROUP="1"
+            MODE_GROUP="ON"
             GROUP_MAX_DEPTH="2"
             shift 2 ;;
 
         -c|--checkbox)
             echo "- enabling ui mode --checkbox";
-            MODE_CHECKBOX="1"
+            MODE_CHECKBOX="ON"
             shift 2 ;;
 
         # Compatibility modes
         -q|--quote)
             echo "- enabling compat mode --quote";
-            COMPAT_QUOTE="1"
+            COMPAT_QUOTE="ON"
             shift 2 ;;
 
         --dialog)

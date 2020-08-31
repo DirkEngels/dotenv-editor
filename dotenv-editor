@@ -199,6 +199,28 @@ function viewSettings() {
     RETVAT=$?
     CHOICE_PACKAGES=$RETVAL;
 
+    # Reset all features to defaults
+    MODE_GROUP="OFF"
+    MODE_CHECKBOX="OFF"
+    COMPAT_QUOTE="OFF"
+
+    # Update features with selected op tions
+    for FEATURE in $FEATURES; do
+        echo "FEATURE: $FEATURE";
+        if [[ $FEATURE = *GROUP* ]]; then
+        # if [[ "$FEATURE" == "-\>GROUP" ]]; then
+            echo "ENABLING GROUPING!";
+            MODE_GROUP="ON"
+        fi
+        if [[ $FEATURE = *CHECKBOX* ]]; then
+            echo "ENABLING CHECKBOX!";
+            MODE_CHECKBOX="ON"
+        fi
+        if [[ $FEATURE = *QUOTE* ]]; then
+            echo "ENABLING QUOTE!";
+            COMPAT_QUOTE="ON"
+        fi
+    done;
 }
 
 ###

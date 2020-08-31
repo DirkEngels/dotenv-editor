@@ -239,6 +239,14 @@ function mainLoop() {
             exit;
             ;;
 
+        *SAVE) # Save the   
+            # clear;
+            echo "Saving tmp file to orig file";
+            cp $DOTENV_FILE_TMP $DOTENV_FILE_ORIG
+            source $DOTENV_FILE_ORIG
+            SELECTED_ITEM=""
+            ;;
+
         *VIEW_DIFF) #Exit the dotenv editor application
             # clear;
             diff --color $DOTENV_FILE_ORIG $DOTENV_FILE_TMP > $DOTENV_FILE_TMP.diff

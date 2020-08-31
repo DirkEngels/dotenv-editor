@@ -306,6 +306,12 @@ function mainLoop() {
 
                 MENU_LIST="$MENU_LIST $MENU_LIST_ITEMS "
 
+                # MENU_LIST=""
+                # if [[ "$MENU_LIST_MAIN" != "" ]]; then
+                    MENU_LIST="$MENU_LIST \"------------\" \"\" "
+                    MENU_LIST="$MENU_LIST *SETTINGS \"View current options and/or preferences \" "
+                # fi
+
                 menu
             fi
 

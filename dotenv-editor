@@ -309,6 +309,11 @@ function mainLoop() {
                 # MENU_LIST=""
                 # if [[ "$MENU_LIST_MAIN" != "" ]]; then
                     MENU_LIST="$MENU_LIST \"------------\" \"\" "
+                    if [[ `diff --color $DOTENV_FILE_ORIG $DOTENV_FILE_TMP` ]]; then
+                        MENU_LIST="$MENU_LIST *VIEW_DIFF \"View differences\" "
+                        MENU_LIST="$MENU_LIST *SAVE \"Save changes\" "
+                        MENU_LIST="$MENU_LIST *RESET \"Reset changes\" "
+                    fi
                     MENU_LIST="$MENU_LIST *SETTINGS \"View current options and/or preferences \" "
                 # fi
 

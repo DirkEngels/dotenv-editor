@@ -264,6 +264,7 @@ function saveChangesOrExit() {
     rm /tmp/dotenv-editor-*
 
     # Exit application
+    clear;
     exit;
 }
 

@@ -38,6 +38,16 @@ COMPAT_QUOTE="OFF"
 
 
 ###
+# Read preferences from ~/.dotenv-editor file
+###
+function readPreferences() {
+    if [ -s ~/.dotenv-editor ]; then
+        source ~/.dotenv-editor;
+    fi
+}
+
+
+###
 # Check if all required dependencies have been installed. 
 ###
 function checkDependencies() {
@@ -557,6 +567,9 @@ fi
 if [ -z "${LOG_FILE}" ]; then 
     LOG_FILE=/dev/null
 fi
+
+# Read preferences from ~/.dotenv-editor file
+readPreferences;
 
 # Check dependencies
 checkDependencies;

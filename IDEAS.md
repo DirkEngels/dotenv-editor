@@ -1,5 +1,9 @@
 # Next release 0.3.2
 
+### Added
+- Store preferences in ~/.dotenv-editor
+
+
 # Todo for future version
 
 ### Fixes
@@ -9,9 +13,6 @@
 ### Improvements
 - Add -e option to group enable variables (*_ENABLED). It display a checkbox
   list with items to select, which will be used to filter upon.
-
-### Added
-- Store preferences in ~/.dotenv-editor
 
 ### Ideas
 - Create new variable

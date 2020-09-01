@@ -105,7 +105,7 @@ function determineDotEnvFile() {
     done
     menu;
 
-    DOTENV_FILE_ORIG=.env
+    DOTENV_FILE_ORIG=$SELECTED_ITEM
     cp $SELECTED_ITEM $DOTENV_FILE_TMP;
     SELECTED_ITEM=""
 

@@ -11,5 +11,6 @@
   list with items to select, which will be used to filter upon.
 
 ### Ideas
+- Create new variable
 - Delete variable in case a variable is empty after asking input.
 

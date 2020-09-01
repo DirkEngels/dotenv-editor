@@ -1,12 +1,14 @@
-# Next release 0.3.0
-
-### Fixes
-+ Do not create a file called 1 (a bug)
-+ After asking for input return to the previous menu, not the main menu.
+# Next release 0.3.1
 
 ### Added
-+ Flag to group variables (like the previous version did already). This could
-  also be implemented as a maximum depth level to group upon.
++ Add main menu with options to change / save preferences, create new item, view diff.
++ Copy .env file to tmp file and ask before saving.
++ Ask to save changes before exiting
++ Show differences in a textbox
+
+
+### Fixes
++ Bug selecting variable in simple (non-group) mode
 
 
 # Todo for future version
@@ -19,5 +21,6 @@
 - Add -e option to group enable variables (*_ENABLED). It display a checkbox
   list with items to select, which will be used to filter upon.
 
-### Changes
-- Copy .env file to tmp file and ask before saving.
+### Ideas
+- Delete variable in case a variable is empty after asking input.
+

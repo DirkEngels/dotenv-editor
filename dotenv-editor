@@ -105,7 +105,7 @@ function determineDotEnvFile() {
     done
     menu;
 
-    DOTENV_FILE_ORIG=$SELECTED_ITEM
+    DOTENV_FILE_ORIG=.env
     cp $SELECTED_ITEM $DOTENV_FILE_TMP;
     SELECTED_ITEM=""
 
@@ -169,15 +169,15 @@ function updateVariable() {
 
         # echo "Replacing key: $VAR => $VALUE"
         if [[ "$COMPAT_QUOTE" == "ON" ]]; then
-            sed -i "s/$KEY=.*/$KEY=\"$NEW\"/" $DOTENV_FILE_ORIG
+            sed -i "s/$KEY=.*/$KEY=\"$NEW\"/" $DOTENV_FILE_TMP
         elif [[ $NEW = *\ * ]]; then
-            sed -i "s/$KEY=.*/$KEY=\"$NEW\"/" $DOTENV_FILE_ORIG
+            sed -i "s/$KEY=.*/$KEY=\"$NEW\"/" $DOTENV_FILE_TMP
         else
-            sed -i "s/$KEY=.*/$KEY=$NEW/" $DOTENV_FILE_ORIG
+            sed -i "s/$KEY=.*/$KEY=$NEW/" $DOTENV_FILE_TMP
         fi
 
         # Resource the file to update the global variables
-        source $DOTENV_FILE_ORIG
+        source $DOTENV_FILE_TMP
 
     else
         echo "No change $KEY: $OLD => $NEW" >> $LOG_FILE;
@@ -320,8 +320,8 @@ function mainLoop() {
             fi
 
             # Check if a single option has been chosen
-            CNT_MATCHES=`cat $DOTENV_FILE_ORIG | grep "$FULL_SELECT=" | wc -l`
-            CNT_GROUPS=`cat $DOTENV_FILE_ORIG | grep $FULL_SELECT"_" | wc -l`
+            CNT_MATCHES=`cat $DOTENV_FILE_TMP | grep "$FULL_SELECT=" | wc -l`
+            CNT_GROUPS=`cat $DOTENV_FILE_TMP | grep $FULL_SELECT"_" | wc -l`
             if [ $CNT_MATCHES == 1 ]; then
                 # echo "MATCH: $SELECTED_ITEM => ${!SELECTED_ITEM}" >> $LOG_FILE;
                 # echo "FULL: $FULL_NAME"
@@ -352,17 +352,17 @@ function mainLoop() {
                 if [[ "$MODE_GROUP" == "ON" ]]; then
                     echo "GROUP MODE ENABBLED";
                     if [[ $DEPTH_LEVEL -ge $GROUP_MAX_DEPTH ]]; then
-                        VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE_ORIG  | grep -v '^#' | grep -v '^$' | grep '^'$CURRENT | cut --delimiter='_' --fields=$((DEPTH_LEVEL+1)) | sort | uniq`
+                        VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE_TMP  | grep -v '^#' | grep -v '^$' | grep '^'$CURRENT | cut --delimiter='_' --fields=$((DEPTH_LEVEL+1)) | sort | uniq`
 
                     elif [[ $DEPTH_LEVEL -gt 0 ]]; then
-                        VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE_ORIG  | grep -v '^#' | grep -v '^$' | grep '^'$CURRENT | cut --delimiter='_' --fields=2 | sort | uniq`
+                        VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE_TMP  | grep -v '^#' | grep -v '^$' | grep '^'$CURRENT | cut --delimiter='_' --fields=2 | sort | uniq`
 
                     else 
-                        VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE_ORIG  | grep -v '^#' | grep -v '^$' | cut --delimiter='_' --fields=1 | sort | uniq`
+                        VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE_TMP  | grep -v '^#' | grep -v '^$' | cut --delimiter='_' --fields=1 | sort | uniq`
                     fi
 
                 else
-                    VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE_ORIG  | grep -v '^#' | grep -v '^$' | sort | uniq`
+                    VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE_TMP  | grep -v '^#' | grep -v '^$' | sort | uniq`
                 fi;
 
                 # Loop over the matched variables (in case of grouping).
@@ -379,10 +379,10 @@ function mainLoop() {
                             MENU_KEY=`echo $i | awk -F"_" '{print $2}'`
                         fi                        
 
-                        CMD_TMP="cat $DOTENV_FILE_ORIG | grep "$i=" | wc -l";
+                        CMD_TMP="cat $DOTENV_FILE_TMP | grep "$i=" | wc -l";
                         local FULL_NAME="${CURRENT}_${i}"
 
-                        CNT_ITEMS=`cat $DOTENV_FILE_ORIG | grep "$FULL_NAME=" | wc -l`
+                        CNT_ITEMS=`cat $DOTENV_FILE_TMP | grep "$FULL_NAME=" | wc -l`
                         if [ "$CNT_ITEMS" == "1" ]; then
                             VALUE=${!FULL_NAME}
                             MENU_LIST_ITEMS="$MENU_LIST_ITEMS $i \"$VALUE\" "
@@ -397,7 +397,7 @@ function mainLoop() {
                         # MENU_LIST="$MENU_LIST $i \"$VALUE\" "
                     fi
 
-                    # CNT_ITEMS=`cat $DOTENV_FILE_ORIG | grep "$i=" | wc -l`
+                    # CNT_ITEMS=`cat $DOTENV_FILE_TMP | grep "$i=" | wc -l`
                     # if [ "$CNT_ITEMS" == "1" ]; then
                     #     VALUE=${!i}
                     #     MENU_LIST="$MENU_LIST $i \"$VALUE\" "

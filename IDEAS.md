@@ -1,15 +1,4 @@
-# Next release 0.3.1
-
-### Added
-+ Add main menu with options to change / save preferences, create new item, view diff.
-+ Copy .env file to tmp file and ask before saving.
-+ Ask to save changes before exiting
-+ Show differences in a textbox
-
-
-### Fixes
-+ Bug selecting variable in simple (non-group) mode
-
+# Next release 0.3.2
 
 # Todo for future version
 

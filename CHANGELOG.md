@@ -2,6 +2,19 @@
 All notable changes to this project will be documented in this file.
 
 
+## 0.3.1 (2020-09-01)
+Main menu for common tasks (reset, save, view changes) and ask before saving changes.
+
+### Added
++ Add main menu with options to change / save preferences, create new item, view diff.
++ Copy .env file to tmp file and ask before saving.
++ Ask to save changes before exiting
++ Show differences in a textbox
+
+### Fixes
++ Bug selecting variable in simple (non-group) mode
+
+
 ## 0.3.0 (2020-08-31)
 Group variables by prefix in menus.
 

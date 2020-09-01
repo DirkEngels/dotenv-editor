@@ -250,8 +250,8 @@ function saveChangesOrExit() {
         esac
     fi
 
-
-    rm $DOTENV_FILE_TMP;
+    # Cleann up any other tmp files
+    rm /tmp/dotenv-editor-*
 
     # Exit application
     exit;

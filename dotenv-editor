@@ -201,9 +201,9 @@ function viewSettings() {
         --checklist \
         --output-fd 1 \
         "Modify settings according to your preferences" 20 78 4 \
-        "-\>GROUP" "Enable grouping variables by separator (_)" $MODE_GROUP \
-        "-\>CHECKBOX" "Allow connections from other hosts" $MODE_CHECKBOX \
-        "-\>QUOTE" "Quote variables with a '\"'" $COMPAT_QUOTE \
+        "MODE_GROUP" "Enable grouping variables by separator (_)" $MODE_GROUP \
+        "MODE_CHECKBOX" "Allow connections from other hosts" $MODE_CHECKBOX \
+        "COMPAT_QUOTE" "Quote variables with a '\"'" $COMPAT_QUOTE \
         )
     RETVAT=$?
     CHOICE_PACKAGES=$RETVAL;
@@ -216,16 +216,16 @@ function viewSettings() {
     # Update features with selected op tions
     for FEATURE in $FEATURES; do
         echo "FEATURE: $FEATURE";
-        if [[ $FEATURE = *GROUP* ]]; then
+        if [[ $FEATURE = *MODE_GROUP* ]]; then
         # if [[ "$FEATURE" == "-\>GROUP" ]]; then
             echo "ENABLING GROUPING!";
             MODE_GROUP="ON"
         fi
-        if [[ $FEATURE = *CHECKBOX* ]]; then
+        if [[ $FEATURE = *MODE_CHECKBOX* ]]; then
             echo "ENABLING CHECKBOX!";
             MODE_CHECKBOX="ON"
         fi
-        if [[ $FEATURE = *QUOTE* ]]; then
+        if [[ $FEATURE = *COMPAT_QUOTE* ]]; then
             echo "ENABLING QUOTE!";
             COMPAT_QUOTE="ON"
         fi

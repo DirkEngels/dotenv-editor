@@ -1,7 +1,7 @@
 # Next release 0.3.2
 
 ### Added
-- Store preferences in ~/.dotenv-editor
++ Store preferences in ~/.dotenv-editor
 
 
 # Todo for future version

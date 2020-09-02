@@ -9,6 +9,7 @@
 ### Fixes
 - Displaying menu with items with depth > 2
 - Use current working directory to search for .env files
+- Do not quote integer values
 
 ### Improvements
 - Add -e option to group enable variables (*_ENABLED). It display a checkbox

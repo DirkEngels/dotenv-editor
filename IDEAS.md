@@ -4,7 +4,7 @@
 + Store preferences in ~/.dotenv-editor
 - Displaying menu with items with depth > 2
 - Do not quote integer values
-
++ Makefile for (un)installing
 
 # Todo for future version
 

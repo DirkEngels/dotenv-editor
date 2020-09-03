@@ -430,7 +430,12 @@ function mainLoop() {
                         fi                        
 
                         CMD_TMP="cat $DOTENV_FILE_TMP | grep "$i=" | wc -l";
-                        local FULL_NAME="${CURRENT}_${i}"
+                        local FULL_NAME=""
+                        if [[ "$CURRENT" == "" ]]; then
+                            FULL_NAME="${i}"
+                        else
+                            FULL_NAME="${CURRENT}_${i}"
+                        fi
 
                         CNT_ITEMS=`cat $DOTENV_FILE_TMP | grep "$FULL_NAME=" | wc -l`
                         if [ "$CNT_ITEMS" == "1" ]; then

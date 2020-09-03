@@ -541,6 +541,13 @@ function showVersion {
 TEMP=`getopt -n "$0" -o f::l::h::v::q::g::c:: --long "+env-file,+log-file,help::,version::group::,checkbox::,,quote::,dialog::,whiptail::" -- "$@"`
 eval set -- "$TEMP"
 
+# Read preferences from ~/.dotenv-editor file
+readPreferences;
+
+# Check dependencies
+checkDependencies;
+
+
 # FROM https://www.tutorialspoint.com/unix_commands/getopt.htm
 # extract options and their arguments into variables.
 while true ; do
@@ -607,12 +614,6 @@ fi
 if [ -z "${LOG_FILE}" ]; then 
     LOG_FILE=/dev/null
 fi
-
-# Read preferences from ~/.dotenv-editor file
-readPreferences;
-
-# Check dependencies
-checkDependencies;
 
 # Display welcome message
 #welcomeMessage

@@ -399,7 +399,7 @@ function mainLoop() {
                 fi
 
                 if [[ "$MODE_GROUP" == "ON" ]]; then
-                    echo "GROUP MODE ENABBLED";
+                    echo "GROUP MODE ENABLED";
                     if [[ $DEPTH_LEVEL -ge $GROUP_MAX_DEPTH ]]; then
                         VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE_TMP  | grep -v '^#' | grep -v '^$' | grep '^'$CURRENT | cut --delimiter='_' --fields=$((DEPTH_LEVEL+1)) | sort | uniq`
 

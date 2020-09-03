@@ -218,9 +218,15 @@ function newVariable() {
         8 80 "$OLD" \
         3>&1 1>&2 2>&3)
 
+    local FULL_NAME=""
+    if [[ "$CURRENT" == "" ]]; then
+        FULL_NAME="${NAME}"
+    else
+        FULL_NAME="${CURRENT}_${NAME}"
+    fi
     echo "" >> $DOTENV_FILE_TMP
     echo "# $DESCRIPTION" >> $DOTENV_FILE_TMP
-    echo "$NAME=$VALUE" | tr a-z A-Z >> $DOTENV_FILE_TMP
+    echo "$FULL_NAME=\"$VALUE\"" | tr a-z A-Z >> $DOTENV_FILE_TMP
 }
 
 

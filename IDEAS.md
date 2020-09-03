@@ -2,14 +2,14 @@
 
 ### Added
 + Store preferences in ~/.dotenv-editor
+- Displaying menu with items with depth > 2
+- Do not quote integer values
 
 
 # Todo for future version
 
 ### Fixes
-- Displaying menu with items with depth > 2
 - Use current working directory to search for .env files
-- Do not quote integer values
 
 ### Improvements
 - Add -e option to group enable variables (*_ENABLED). It display a checkbox
@@ -18,4 +18,12 @@
 ### Ideas
 - Create new variable
 - Delete variable in case a variable is empty after asking input.
+- Add meta description for each variable by appending a # at the end of each
+  line OR use the previous line (depending on how dotenv readers have been
+  implemented)
+
+
+- Flag/ option to group *enabled* services together
+- Extract comments before a variable to display.
+- Create debian package
 

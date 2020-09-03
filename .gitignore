@@ -14,7 +14,8 @@ logs
 *.log
 
 # Ignore the build directory
-/build
+build/
+dist/
 
 # The file containing environment variables 
 .env

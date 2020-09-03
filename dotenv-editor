@@ -17,6 +17,7 @@ DOTENV_FILE_ORIG=".env"
 DOTENV_FILE_TMP="/tmp/dotenv-editor-$$"
 SELECTED_ITEM=""
 CURRENT=""
+LOG_FILE=""
 
 ###
 # Console color variables
@@ -544,9 +545,6 @@ eval set -- "$TEMP"
 # Read preferences from ~/.dotenv-editor file
 readPreferences;
 
-# Check dependencies
-checkDependencies;
-
 
 # Set defaults in case optional parameters have not been set.
 if [ -z "${DOTENV_FILE_ORIG}" ]; then 
@@ -556,19 +554,18 @@ if [ -z "${LOG_FILE}" ]; then
     LOG_FILE=/dev/null
 fi
 
-
 # FROM https://www.tutorialspoint.com/unix_commands/getopt.htm
 # extract options and their arguments into variables.
 while true ; do
     case "$1" in
         -f|--file)
             DOTENV_FILE_ORIG=${2#=}
-            echo "- receiving option --file: $DOTENV_FILE_ORIG";
+            echo "- receiving option --file: $DOTENV_FILE_ORIG" >> $LOG_FILE;
             shift 2 ;;
 
         -l|--log)
             LOG_FILE=${2#=}
-            echo "- receiving option --log: $LOG_FILE";
+            echo "- receiving option --log: $LOG_FILE" >> $LOG_FILE;
             shift 2 ;;
 
         -h|--help)
@@ -578,12 +575,12 @@ while true ; do
 
         -v|--version)
             showVersion;
-            exit
+            exit;
             ;;
 
         # UI modes
         -g|--group)
-            echo "- enabling ui mode --group";
+            echo "- enabling ui mode --group" >> $LOG_FILE;
             MODE_GROUP="ON"
             GROUP_MAX_DEPTH="2"
             shift 2 ;;
@@ -615,6 +612,9 @@ while true ; do
         *) echo "Internal error!" ; exit 1 ;;
     esac
 done
+
+# Check dependencies
+checkDependencies;
 
 
 # Display welcome message

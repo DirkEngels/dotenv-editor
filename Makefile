@@ -50,3 +50,16 @@ install:										# Clean build stuff
 uninstall:										# Clean build stuff
     @echo "$(COLOR_ORANGE)Un-installing dotenv-editor (removing from /usr/bin)$(COLOR_RESET)";
     rm $(DEST_DIR)$(BIN_DIR)/dotenv-editor
+
+
+###
+# Deb: Create a debian package
+###
+VERSION ?= test
+deb:                                                                                    # Build debian package
+    @echo "$(COLOR_ORANGE)Building a debian package$(COLOR_RESET)";
+    mkdir -p build/usr/bin
+    mkdir -p dist
+    cp dotenv-editor build/usr/bin
+    dpkg-deb -b build dist/dotenv-editor-${VERSION}.deb
+

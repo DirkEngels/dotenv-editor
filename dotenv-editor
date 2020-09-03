@@ -250,18 +250,18 @@ function viewSettings() {
 
     # Update features with selected op tions
     for FEATURE in $FEATURES; do
-        echo "FEATURE: $FEATURE";
+        echo "FEATURE: $FEATURE" >> $LOG_FILE;
         if [[ $FEATURE = *MODE_GROUP* ]]; then
         # if [[ "$FEATURE" == "-\>GROUP" ]]; then
-            echo "ENABLING GROUPING!";
+            echo "ENABLING GROUPING!" >> $LOG_FILE;
             MODE_GROUP="ON"
         fi
         if [[ $FEATURE = *MODE_CHECKBOX* ]]; then
-            echo "ENABLING CHECKBOX!";
+            echo "ENABLING CHECKBOX!" >> $LOG_FILE;
             MODE_CHECKBOX="ON"
         fi
         if [[ $FEATURE = *COMPAT_QUOTE* ]]; then
-            echo "ENABLING QUOTE!";
+            echo "ENABLING QUOTE!" >> $LOG_FILE;
             COMPAT_QUOTE="ON"
         fi
     done;
@@ -282,15 +282,15 @@ function saveChangesOrExit() {
         response=$?
         case $response in
            0)
-                echo "Overwriting original file with changes.";
+                echo "Overwriting original file with changes." >> $LOG_FILE;
                 cp $DOTENV_FILE_TMP $DOTENV_FILE_ORIG
                 ;;
            1)
-                echo "Changes discarded.";
+                echo "Changes discarded." >> $LOG_FILE;
 
                 ;;
            255)
-                echo "[ESC] key pressed."
+                echo "[ESC] key pressed. >> $LOG_FILE"
                 ;;
         esac
     fi
@@ -330,7 +330,7 @@ function mainLoop() {
 
         *SAVE) # Save the   
             # clear;
-            echo "Saving tmp file to orig file";
+            echo "Saving tmp file to orig file" >> $LOG_FILE;
             cp $DOTENV_FILE_TMP $DOTENV_FILE_ORIG
             source $DOTENV_FILE_ORIG
             SELECTED_ITEM=""
@@ -406,7 +406,7 @@ function mainLoop() {
                 fi
 
                 if [[ "$MODE_GROUP" == "ON" ]]; then
-                    echo "GROUP MODE ENABLED";
+                    echo "GROUP MODE ENABLED" >> $LOG_FILE;
                     if [[ $DEPTH_LEVEL -ge $GROUP_MAX_DEPTH ]]; then
                         VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE_TMP  | grep -v '^#' | grep -v '^$' | grep '^'$CURRENT | cut --delimiter='_' --fields=$((DEPTH_LEVEL+1)) | sort | uniq`
 
@@ -426,7 +426,7 @@ function mainLoop() {
                     if [[ "$MODE_GROUP" == "ON" ]]; then
 
                         local NUMBER_OF_UNDERSCORES=`echo "$i" | grep -o \_  | wc -l`
-                        echo "$i => $NUMBER_OF_UNDERSCORES";
+                        echo "$i => $NUMBER_OF_UNDERSCORES" >> $LOG_FILE;
 
                         local MENU_KEY=""
                         if [[ $NUMBER_OF_UNDERSCORES -gt $GROUP_MAX_DEPTH ]]; then
@@ -597,30 +597,32 @@ while true ; do
             shift 2 ;;
 
         -c|--checkbox)
-            echo "- enabling ui mode --checkbox";
+            echo "- enabling ui mode --checkbox" >> $LOG_FILE;
             MODE_CHECKBOX="ON"
             shift 2 ;;
 
         # Compatibility modes
         -q|--quote)
-            echo "- enabling compat mode --quote";
+            echo "- enabling compat mode --quote" >> $LOG_FILE;
             COMPAT_QUOTE="ON"
             shift 2 ;;
 
         --dialog)
             TEST_UI_LIBS="dialog $TEST_UI_LIBS"
-            echo "- selected UI lib: dialog";
+            echo "- selected UI lib: dialog" >> $LOG_FILE;
             DIALOG="dialog"
             shift 2 ;;
 
         --whiptail)
             TEST_UI_LIBS="whiptail $TEST_UI_LIBS"
-            echo "- selected UI lib: whiptail";
+            echo "- selected UI lib: whiptail" >> $LOG_FILE;
             DIALOG="whiptail"
             shift 2 ;;
 
         --) shift ; break ;;
-        *) echo "Internal error!" ; exit 1 ;;
+        *)
+            echo "Internal error!" >> $LOG_FILE;
+            exit 1 ;;
     esac
 done
 

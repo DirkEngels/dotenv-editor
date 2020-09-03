@@ -21,9 +21,11 @@ help:                                                                           
         @echo "";
         @echo "$(COLOR_ORANGE)Targets:$(COLOR_RESET)"
         @echo "  $(COLOR_GREEN)install$(COLOR_RESET)         Install package"
-        @echo "  $(COLOR_GREEN)debian$(COLOR_RESET)          Build debian/ubuntu package"
-        @echo "  $(COLOR_GREEN)clean$(COLOR_RESET)           Clean up stuff created during build process"
         @echo "  $(COLOR_GREEN)uninstall$(COLOR_RESET)       Uninstall this package"
+        @echo "";
+        @echo "$(COLOR_ORANGE)Developer:$(COLOR_RESET)"
+        @echo "  $(COLOR_GREEN)deb$(COLOR_RESET)             Build debian/ubuntu package"
+        @echo "  $(COLOR_GREEN)clean$(COLOR_RESET)           Clean up stuff created during build process"
         @echo "";
 
 

@@ -195,6 +195,34 @@ function updateVariable() {
 }
 
 
+function newVariable() {
+    NAME=$($DIALOG \
+        --clear \
+        --title "New variable: NAME" \
+        --inputbox "Enter the name of the variable" \
+        8 80 "$OLD" \
+        3>&1 1>&2 2>&3)
+
+    VALUE=$($DIALOG \
+        --clear \
+        --title "New variable: VALUE" \
+        --inputbox "Enter the value of the variable" \
+        8 80 "$OLD" \
+        3>&1 1>&2 2>&3)
+
+    DESCRIPTION=$($DIALOG \
+        --clear \
+        --title "New variable: DESCRIPTION" \
+        --inputbox "Enter a description for the variable" \
+        8 80 "$OLD" \
+        3>&1 1>&2 2>&3)
+
+    echo "" >> $DOTENV_FILE_TMP
+    echo "# $DESCRIPTION" >> $DOTENV_FILE_TMP
+    echo "$NAME=$VALUE" | tr a-z A-Z >> $DOTENV_FILE_TMP
+}
+
+
 function viewSettings() {
     FEATURES=$($DIALOG \
         --title "Settings" \
@@ -315,8 +343,15 @@ function mainLoop() {
             SELECTED_ITEM=""
             ;;
 
+        *NEW) # Reset changes
+            # MENU_LIST="$MENU_LIST GROUP enable\ grouping\ variables\ by\ separator ON "
+            newVariable
+            SELECTED_ITEM=""
+            ;;
+
+
         *SETTINGS) # Reset changes
-            MENU_LIST="$MENU_LIST GROUP enable\ grouping\ variables\ by\ separator ON "
+            # MENU_LIST="$MENU_LIST GROUP enable\ grouping\ variables\ by\ separator ON "
             viewSettings
             SELECTED_ITEM=""
             ;;
@@ -435,7 +470,8 @@ function mainLoop() {
                         MENU_LIST="$MENU_LIST *SAVE \"Save changes\" "
                         MENU_LIST="$MENU_LIST *RESET \"Reset changes\" "
                     fi
-                    MENU_LIST="$MENU_LIST *SETTINGS \"View current options and/or preferences \" "
+                    MENU_LIST="$MENU_LIST *NEW \"Add a new variable\" "
+                    MENU_LIST="$MENU_LIST *SETTINGS \"View current options and/or preferences\" "
                 # fi
 
                 menu

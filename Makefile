@@ -30,14 +30,6 @@ help:                                                                           
 
 
 ###
-# Clean: Clean up stuff created during a build. (although it is just a single script)
-###
-clean:										# Clean build stuff
-    @echo "$(COLOR_ORANGE)Removing tmp files$(COLOR_RESET)";
-    @rm -f /tmp/dotenv-editor-*
-
-
-###
 # Install: Install the script (copy to /usr/bin)
 ###
 install:										# Clean build stuff
@@ -55,11 +47,27 @@ uninstall:										# Clean build stuff
 ###
 # Deb: Create a debian package
 ###
-VERSION ?= test
+VERSION ?= "0.1.2.3.4-test"
 deb:                                                                                    # Build debian package
     @echo "$(COLOR_ORANGE)Building a debian package$(COLOR_RESET)";
+
+    mkdir -p build/DEBIAN
+    echo "Package: dotenv-editor\nVersion: ${VERSION}\nArchitecture: all\nMaintainer: Dirk Engels <d.engels@dirkengels.com>\nDepends:\nDescription: Dotenv Editor" > build/DEBIAN/control
+
     mkdir -p build/usr/bin
-    mkdir -p dist
     cp dotenv-editor build/usr/bin
+
+    mkdir -p dist
     dpkg-deb -b build dist/dotenv-editor-${VERSION}.deb
+
+
+###
+# Clean: Clean up stuff created during a build. (although it is just a single script)
+###
+clean:										# Clean build stuff
+    @echo "$(COLOR_ORANGE)Removing tmp files$(COLOR_RESET)";
+    @rm -f /tmp/dotenv-editor-*
+    rm -fr build/
+    rm -fr dist/
+
 

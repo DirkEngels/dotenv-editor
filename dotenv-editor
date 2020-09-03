@@ -538,7 +538,7 @@ function showVersion {
 ###
 
 # read the options
-TEMP=`getopt -n "$0" -o f::l::h::v::q::g::c:: --long "+env-file,+log-file,help::,version::group::,checkbox::,,quote::,dialog::,whiptail::" -- "$@"`
+TEMP=`getopt -n "$0" -o "f::l::h::v::q::g::c::" --long "file:,log:,help::,version::group::,checkbox::,,quote::,dialog::,whiptail::" -- "$@"`
 eval set -- "$TEMP"
 
 # Read preferences from ~/.dotenv-editor file
@@ -548,18 +548,27 @@ readPreferences;
 checkDependencies;
 
 
+# Set defaults in case optional parameters have not been set.
+if [ -z "${DOTENV_FILE_ORIG}" ]; then 
+    DOTENV_FILE_ORIG=.env
+fi
+if [ -z "${LOG_FILE}" ]; then 
+    LOG_FILE=/dev/null
+fi
+
+
 # FROM https://www.tutorialspoint.com/unix_commands/getopt.htm
 # extract options and their arguments into variables.
 while true ; do
     case "$1" in
-        -f|--env-file)
+        -f|--file)
             DOTENV_FILE_ORIG=${2#=}
-            echo "- receiving option --env-file: $DOTENV_FILE_ORIG";
+            echo "- receiving option --file: $DOTENV_FILE_ORIG";
             shift 2 ;;
 
-        -l|--log-file)
+        -l|--log)
             LOG_FILE=${2#=}
-            echo "- receiving option --log-file: $LOG_FILE";
+            echo "- receiving option --log: $LOG_FILE";
             shift 2 ;;
 
         -h|--help)
@@ -607,13 +616,6 @@ while true ; do
     esac
 done
 
-# Set defaults in case optional parameters have not been set.
-if [ -z "${DOTENV_FILE_ORIG}" ]; then 
-    DOTENV_FILE_ORIG=.env
-fi
-if [ -z "${LOG_FILE}" ]; then 
-    LOG_FILE=/dev/null
-fi
 
 # Display welcome message
 #welcomeMessage

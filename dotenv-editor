@@ -178,11 +178,15 @@ function updateVariable() {
     if [ "$OLD" != "$NEW" ]; then
         echo "Updating $KEY: $OLD => $NEW" >> $LOG_FILE;
 
-        # echo "Replacing key: $VAR => $VALUE"
+        # When quotes are enabled
         if [[ "$COMPAT_QUOTE" == "ON" ]]; then
             sed -i "s/$KEY=.*/$KEY=\"$NEW\"/" $DOTENV_FILE_TMP
+
+        # When there are spaces found in the value
         elif [[ $NEW = *\ * ]]; then
             sed -i "s/$KEY=.*/$KEY=\"$NEW\"/" $DOTENV_FILE_TMP
+
+        # Otherwise do not quote values
         else
             sed -i "s/$KEY=.*/$KEY=$NEW/" $DOTENV_FILE_TMP
         fi

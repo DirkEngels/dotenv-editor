@@ -39,7 +39,7 @@ install:										# Clean build stuff
 ###
 # Uninstall: Unnstall the script (remove /usr/bin/dotenv-editor)
 ###
-uninstall:										# Clean build stuff
+uninstall: $(DEST_DIR)$(BIN_DIR)/dotenv-editor  					# Clean build stuff
     @echo "$(COLOR_ORANGE)Un-installing dotenv-editor (removing from /usr/bin)$(COLOR_RESET)";
     rm $(DEST_DIR)$(BIN_DIR)/dotenv-editor
 

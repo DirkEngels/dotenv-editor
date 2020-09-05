@@ -450,6 +450,12 @@ SERVICES_FILTER=""
 function buildServicesListAndFilter() {
     echo "Building services list (*_ENABLED)" >> $LOG_FILE
     SERVICES_LIST=""
+
+    if [[ "${MODE_CHECKBOX}" == "OFF" ]]; then
+        echo "- Checkboxes disabled => no filtering" >> $LOG_FILE
+        return;
+    fi
+
     for SERVICE in `cat .env | grep '_ENABLED=' | rev | cut --delimiter='_' --fields=2- | rev`; do
         VARNAME="${SERVICE}_ENABLED"
 
@@ -796,8 +802,10 @@ function buildMenuSelection {
         done
 
         # Build menu list out of MORE (sub items) and ITEMS (modify).
-        MENU_LIST="$MENU_LIST *SERVICES \"Enable/disable services\" "
-        MENU_LIST="$MENU_LIST \"------------\" \"\" "
+        if [[ "${MODE_CHECKBOX}" == "ON" ]]; then
+            MENU_LIST="$MENU_LIST *SERVICES \"Enable/disable services\" "
+            MENU_LIST="$MENU_LIST \"------------\" \"\" "
+        fi
 
         if [[ "$MENU_LIST_MORE" != "" ]]; then
             MENU_LIST="$MENU_LIST $MENU_LIST_MORE "

@@ -507,137 +507,143 @@ function mainLoop() {
 
 
         *)
-
-            echo "Menu item selection" >> $LOG_FILE
-
-            if [ "$SELECTED_ITEM" == "Back" ]; then
-                CURRENT=`echo "${CURRENT}_${SELECTED_ITEM}" | cut --delimiter='_' --fields=-$DEPTH_LEVEL`
-                SELECTED_ITEM=$CURRENT
-            fi
-
-            local FULL_SELECT="${SELECTED_ITEM}"
-            if [[ "$CURRENT" != "" ]]; then
-                FULL_SELECT="${CURRENT}_${SELECTED_ITEM}"
-            fi
-
-            # Check if a single option has been chosen
-            CNT_MATCHES=`cat $DOTENV_FILE_TMP | grep "$FULL_SELECT=" | wc -l`
-            CNT_GROUPS=`cat $DOTENV_FILE_TMP | grep $FULL_SELECT"_" | wc -l`
-            if [ $CNT_MATCHES == 1 ]; then
-                # echo "MATCH: $SELECTED_ITEM => ${!SELECTED_ITEM}" >> $LOG_FILE;
-                # echo "FULL: $FULL_NAME"
-                # exit;
-                updateVariable $FULL_SELECT
-
-                # echo "CURRENT: $CURRENT";
-                # echo "SELECTED_ITEM: $SELECTED_ITEM";
-                 
-                # SELECTED_ITEM=""
-                CURRENT=`echo "${CURRENT}_${SELECTED_ITEM}" | cut --delimiter='_' --fields=-$DEPTH_LEVEL`
-                SELECTED_ITEM=$CURRENT
-
-            else
-                # echo $SELECTED_ITEM
-                CURRENT=$SELECTED_ITEM
-                MENU_LIST_GROUPS=""
-                MENU_LIST_ITEMS=""
-                MENU_LIST_MORE=""
-                MENU_LIST=""
-                VARIABLE_GROUP=""
-
-                DEPTH_LEVEL=`echo "$CURRENT" | grep -o \_  | wc -l`
-                if [ "$CURRENT" != "" ]; then
-                    ((DEPTH_LEVEL=DEPTH_LEVEL+1))
-                fi
-
-                if [[ "$MODE_GROUP" == "ON" ]]; then
-                    echo "-> GROUP MODE ENABLED" >> $LOG_FILE;
-                    echo "" >> $LOG_FILE;
-                    if [[ $DEPTH_LEVEL -ge $GROUP_MAX_DEPTH ]]; then
-                        VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE_TMP  | grep -v '^#' | grep -v '^$' | grep '^'$CURRENT | cut --delimiter='_' --fields=$((DEPTH_LEVEL+1)) | sort | uniq`
-
-                    elif [[ $DEPTH_LEVEL -gt 0 ]]; then
-                        VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE_TMP  | grep -v '^#' | grep -v '^$' | grep '^'$CURRENT | cut --delimiter='_' --fields=2 | sort | uniq`
-
-                    else 
-                        VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE_TMP  | grep -v '^#' | grep -v '^$' | cut --delimiter='_' --fields=1 | sort | uniq`
-                    fi
-
-                else
-                    VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE_TMP  | grep -v '^#' | grep -v '^$' | sort | uniq`
-                fi;
-
-                # Loop over the matched variables (in case of grouping).
-                for i in $VARIABLE_GROUP; do
-                    if [[ "$MODE_GROUP" == "ON" ]]; then
-
-                        local NUMBER_OF_UNDERSCORES=`echo "$i" | grep -o \_  | wc -l`
-                        echo "- $i => $NUMBER_OF_UNDERSCORES" >> $LOG_FILE;
-
-                        local MENU_KEY=""
-                        if [[ $NUMBER_OF_UNDERSCORES -gt $GROUP_MAX_DEPTH ]]; then
-                            MENU_KEY=`echo $i | awk -F"_" '{print substr($0, index($0, "_"))}'`
-                        else
-                            MENU_KEY=`echo $i | awk -F"_" '{print $2}'`
-                        fi                        
-
-                        CMD_TMP="cat $DOTENV_FILE_TMP | grep "$i=" | wc -l";
-                        local FULL_NAME=""
-                        if [[ "$CURRENT" == "" ]]; then
-                            FULL_NAME="${i}"
-                        else
-                            FULL_NAME="${CURRENT}_${i}"
-                        fi
-
-                        CNT_ITEMS=`cat $DOTENV_FILE_TMP | grep "$FULL_NAME=" | wc -l`
-                        if [ "$CNT_ITEMS" == "1" ]; then
-                            VALUE=${!FULL_NAME}
-                            MENU_LIST_ITEMS="$MENU_LIST_ITEMS $i \"$VALUE\" "
-                        else
-                            MENU_LIST_MORE="$MENU_LIST_MORE $i =\>\ more " >> $LOG_FILE;
-                        fi
-
-                    else
-                        # Default mode: list all variables
-                        VALUE=${!i}
-                        MENU_LIST_ITEMS="$MENU_LIST_ITEMS $i \"$VALUE\" "
-                        # MENU_LIST="$MENU_LIST $i \"$VALUE\" "
-                    fi
-
-                    # CNT_ITEMS=`cat $DOTENV_FILE_TMP | grep "$i=" | wc -l`
-                    # if [ "$CNT_ITEMS" == "1" ]; then
-                    #     VALUE=${!i}
-                    #     MENU_LIST="$MENU_LIST $i \"$VALUE\" "
-                    # else
-                    #     MENU_LIST="$MENU_LIST $i More " >> $LOG_FILE;
-                    # fi
-              
-                done
-
-                if [[ "$MENU_LIST_MORE" != "" ]]; then
-                    MENU_LIST="$MENU_LIST $MENU_LIST_MORE "
-                fi
-
-                MENU_LIST="$MENU_LIST $MENU_LIST_ITEMS "
-
-                # MENU_LIST=""
-                # if [[ "$MENU_LIST_MAIN" != "" ]]; then
-                    MENU_LIST="$MENU_LIST \"------------\" \"\" "
-                    if [[ `diff --color $DOTENV_FILE_ORIG $DOTENV_FILE_TMP` ]]; then
-                        MENU_LIST="$MENU_LIST *VIEW_DIFF \"View differences\" "
-                        MENU_LIST="$MENU_LIST *SAVE \"Save changes\" "
-                        MENU_LIST="$MENU_LIST *RESET \"Reset changes\" "
-                    fi
-                    MENU_LIST="$MENU_LIST *NEW \"Add a new variable\" "
-                    MENU_LIST="$MENU_LIST *SETTINGS \"View current options and/or preferences\" "
-                # fi
-
-                menu
-            fi
-            echo "" >> $LOG_FILE
+            buildMenuSelection
             ;;
     esac
     mainLoop
+}
+
+
+function buildMenuSelection {
+    echo "Menu item selection" >> $LOG_FILE
+
+    # Go back one level (update current / selected item)
+    if [ "$SELECTED_ITEM" == "Back" ]; then
+        CURRENT=`echo "${CURRENT}_${SELECTED_ITEM}" | cut --delimiter='_' --fields=-$DEPTH_LEVEL`
+        SELECTED_ITEM=$CURRENT
+    fi
+
+    # Determine full name of a selected item. (as the menu only shows the last part)
+    local FULL_SELECT="${SELECTED_ITEM}"
+    if [[ "$CURRENT" != "" ]]; then
+        FULL_SELECT="${CURRENT}_${SELECTED_ITEM}"
+    fi
+
+    # Check if a single option has been chosen
+    CNT_MATCHES=`cat $DOTENV_FILE_TMP | grep "$FULL_SELECT=" | wc -l`
+    CNT_GROUPS=`cat $DOTENV_FILE_TMP | grep $FULL_SELECT"_" | wc -l`
+    if [ $CNT_MATCHES == 1 ]; then
+        # echo "MATCH: $SELECTED_ITEM => ${!SELECTED_ITEM}" >> $LOG_FILE;
+        # echo "FULL: $FULL_NAME"
+        # exit;
+        updateVariable $FULL_SELECT
+
+        # echo "CURRENT: $CURRENT";
+        # echo "SELECTED_ITEM: $SELECTED_ITEM";
+         
+        # SELECTED_ITEM=""
+        CURRENT=`echo "${CURRENT}_${SELECTED_ITEM}" | cut --delimiter='_' --fields=-$DEPTH_LEVEL`
+        SELECTED_ITEM=$CURRENT
+
+    else
+        # echo $SELECTED_ITEM
+        CURRENT=$SELECTED_ITEM
+        MENU_LIST_GROUPS=""
+        MENU_LIST_ITEMS=""
+        MENU_LIST_MORE=""
+        MENU_LIST=""
+        VARIABLE_GROUP=""
+
+        DEPTH_LEVEL=`echo "$CURRENT" | grep -o \_  | wc -l`
+        if [ "$CURRENT" != "" ]; then
+            ((DEPTH_LEVEL=DEPTH_LEVEL+1))
+        fi
+
+        if [[ "$MODE_GROUP" == "ON" ]]; then
+            echo "-> GROUP MODE ENABLED" >> $LOG_FILE;
+            echo "" >> $LOG_FILE;
+            if [[ $DEPTH_LEVEL -ge $GROUP_MAX_DEPTH ]]; then
+                VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE_TMP  | grep -v '^#' | grep -v '^$' | grep '^'$CURRENT | cut --delimiter='_' --fields=$((DEPTH_LEVEL+1)) | sort | uniq`
+
+            elif [[ $DEPTH_LEVEL -gt 0 ]]; then
+                VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE_TMP  | grep -v '^#' | grep -v '^$' | grep '^'$CURRENT | cut --delimiter='_' --fields=2 | sort | uniq`
+
+            else 
+                VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE_TMP  | grep -v '^#' | grep -v '^$' | cut --delimiter='_' --fields=1 | sort | uniq`
+            fi
+
+        else
+            VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE_TMP  | grep -v '^#' | grep -v '^$' | sort | uniq`
+        fi;
+
+        # Loop over the matched variables (in case of grouping).
+        for i in $VARIABLE_GROUP; do
+            if [[ "$MODE_GROUP" == "ON" ]]; then
+
+                local NUMBER_OF_UNDERSCORES=`echo "$i" | grep -o \_  | wc -l`
+                echo "- $i => $NUMBER_OF_UNDERSCORES" >> $LOG_FILE;
+
+                local MENU_KEY=""
+                if [[ $NUMBER_OF_UNDERSCORES -gt $GROUP_MAX_DEPTH ]]; then
+                    MENU_KEY=`echo $i | awk -F"_" '{print substr($0, index($0, "_"))}'`
+                else
+                    MENU_KEY=`echo $i | awk -F"_" '{print $2}'`
+                fi                        
+
+                CMD_TMP="cat $DOTENV_FILE_TMP | grep "$i=" | wc -l";
+                local FULL_NAME=""
+                if [[ "$CURRENT" == "" ]]; then
+                    FULL_NAME="${i}"
+                else
+                    FULL_NAME="${CURRENT}_${i}"
+                fi
+
+                CNT_ITEMS=`cat $DOTENV_FILE_TMP | grep "$FULL_NAME=" | wc -l`
+                if [ "$CNT_ITEMS" == "1" ]; then
+                    VALUE=${!FULL_NAME}
+                    MENU_LIST_ITEMS="$MENU_LIST_ITEMS $i \"$VALUE\" "
+                else
+                    MENU_LIST_MORE="$MENU_LIST_MORE $i =\>\ more " >> $LOG_FILE;
+                fi
+
+            else
+                # Default mode: list all variables
+                VALUE=${!i}
+                MENU_LIST_ITEMS="$MENU_LIST_ITEMS $i \"$VALUE\" "
+                # MENU_LIST="$MENU_LIST $i \"$VALUE\" "
+            fi
+
+            # CNT_ITEMS=`cat $DOTENV_FILE_TMP | grep "$i=" | wc -l`
+            # if [ "$CNT_ITEMS" == "1" ]; then
+            #     VALUE=${!i}
+            #     MENU_LIST="$MENU_LIST $i \"$VALUE\" "
+            # else
+            #     MENU_LIST="$MENU_LIST $i More " >> $LOG_FILE;
+            # fi
+      
+        done
+
+        if [[ "$MENU_LIST_MORE" != "" ]]; then
+            MENU_LIST="$MENU_LIST $MENU_LIST_MORE "
+        fi
+
+        MENU_LIST="$MENU_LIST $MENU_LIST_ITEMS "
+
+        # MENU_LIST=""
+        # if [[ "$MENU_LIST_MAIN" != "" ]]; then
+            MENU_LIST="$MENU_LIST \"------------\" \"\" "
+            if [[ `diff --color $DOTENV_FILE_ORIG $DOTENV_FILE_TMP` ]]; then
+                MENU_LIST="$MENU_LIST *VIEW_DIFF \"View differences\" "
+                MENU_LIST="$MENU_LIST *SAVE \"Save changes\" "
+                MENU_LIST="$MENU_LIST *RESET \"Reset changes\" "
+            fi
+            MENU_LIST="$MENU_LIST *NEW \"Add a new variable\" "
+            MENU_LIST="$MENU_LIST *SETTINGS \"View current options and/or preferences\" "
+        # fi
+
+        menu
+    fi
+    echo "" >> $LOG_FILE
 }
 
 

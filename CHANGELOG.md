@@ -2,6 +2,23 @@
 All notable changes to this project will be documented in this file.
 
 
+## 0.3.3 (2020-09-06)
+Menu for enable/disable services. Also various fixes and improvements.
+
+### Added
++ Add -e option to group enable variables (*_ENABLED). It display a checkbox
+  list with items to select, which will be used to filter upon.
++ Parameter --depth to limit the depth for grouping (enables group mode)
++ Create debian package
+
+### Fixes
++ Cancel button for preferences resets the variables
++ Only make variable name uppercase when creating a new variable
++ Go back to previous menu after using settings, save, reset or new variable
++ Improve log messages (make it more human readable)
++ Displaying menu with items with depth > 2
+
+
 ## 0.3.2 (2020-09-05)
 Create and delete variables.
 

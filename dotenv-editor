@@ -135,17 +135,57 @@ function determineDotEnvFile() {
     fi
 
     # Detect .env-* files
-    SAMPLE_FILES=`ls .env-*`
-    MENU_LIST=""
-    for FILE in $SAMPLE_FILES; do
-        MENU_LIST="$MENU_LIST $FILE $FILE ";
-    done
-    menu;
+    SAMPLE_FILES=`ls .env-*` 2&> /dev/null
+    if [[ "$SAMPLE_FILES" != "" ]]; then
+        echo "-> samples found: ask user to select one" >> $LOG_FILE;
 
-    DOTENV_FILE_ORIG=$SELECTED_ITEM
-    cp $SELECTED_ITEM $DOTENV_FILE_TMP;
-    SELECTED_ITEM=""
+        # Build menu list file found files
+        MENU_LIST=""
+        for FILE in $SAMPLE_FILES; do
+            MENU_LIST="$MENU_LIST $FILE $FILE ";
+        done
+        menu;
 
+        # Use selected file as original
+        echo "-> user selected: $SELECTED_ITEM" >> $LOG_FILE;
+        DOTENV_FILE_ORIG=$SELECTED_ITEM
+        cp $SELECTED_ITEM $DOTENV_FILE_TMP;
+        SELECTED_ITEM=""
+
+        echo "" >> $LOG_FILE;
+        return 1;
+    fi
+
+    echo "-> no .env files found: creating empty one" >> $LOG_FILE
+
+    $DIALOG --title "Create new file" \
+    --clear \
+    --yesno "No .env file found! Do you want to create a new empty one?" 7 60
+
+    # Get exit status
+    # 0 means user hit [yes] button.
+    # 1 means user hit [no] button.
+    # 255 means user hit [Esc] key.
+    response=$?
+    case $response in
+       0)
+            touch $DOTENV_FILE_ORIG
+            cp $DOTENV_FILE_ORIG $DOTENV_FILE_TMP;
+            source $DOTENV_FILE_TMP
+            echo "" >> $LOG_FILE;
+            return 1
+            ;;
+       1|255)
+            echo "User didn't want to create an empty file => exiting." >> $LOG_FILE
+            clear
+            echo ""
+            echo -e "${COLOR_RED}No .env file found!${COLOR_NONE}"
+            echo ""
+            exit;
+            ;;
+    esac
+
+    # Re-source .env file
     source $DOTENV_FILE_TMP
 
     echo "" >> $LOG_FILE;

@@ -445,26 +445,41 @@ function viewSettings() {
     echo "" >> $LOG_FILE
 }
 
+SERVICES_FILTER=""
+
+function buildServicesListAndFilter() {
+    echo "Building services list (*_ENABLED)" >> $LOG_FILE
+    SERVICES_LIST=""
+    for SERVICE in `cat .env | grep '_ENABLED=' | rev | cut --delimiter='_' --fields=2- | rev`; do
+        VARNAME="${SERVICE}_ENABLED"
+
+        VALUE=${!VARNAME}
+        # echo "VALUE: $VALUE"
+
+        if [[ $VALUE == "1" || $VALUE == 1 ]]; then
+            SERVICES_LIST="$SERVICES_LIST ${SERVICE} ${SERVICE} ON "
+        else
+            SERVICES_LIST="$SERVICES_LIST ${SERVICE} ${SERVICE} OFF "
+            if [[ $SERVICES_FILTER == "" ]]; then
+                SERVICES_FILTER="${SERVICE}_"
+            else
+                SERVICES_FILTER="${SERVICES_FILTER}\|${SERVICE}_"
+            fi
+        fi;
+    done;
+
+    echo "- SERVICES_FILTER: ${SERVICES_FILTER}" >> $LOG_FILE
+    echo "- SERVICES_LIST: ${SERVICES_LIST}" >> $LOG_FILE
+    echo "" >> $LOG_FILE
+}
+
 function dialogEnableServices() {
     echo "Showing dialog for enabling/disabling services" >> $LOG_FILE
 
     # Duplicate file descriptor 1 on descriptor 3
     exec 3>&1
      
-    SERVICES_LIST=""
-    for SERVICE in `cat .env | grep '_ENABLED=' | cut --delimiter='_' --fields=1`; do
-        VARNAME="${SERVICE}_ENABLED"
-        # echo "VAR_NAME: $VARNAME"
-
-        VALUE=${!VARNAME}
-        # echo "VALUE: $VALUE"
-
-        if [[ $VALUE == "1" ]]; then
-            SERVICES_LIST="$SERVICES_LIST ${SERVICE} ${SERVICE} ON "
-        else
-            SERVICES_LIST="$SERVICES_LIST ${SERVICE} ${SERVICE} OFF "
-        fi;
-    done;
+    buildServicesListAndFilter
 
     # Generate the dialog box
     SERVICES=$($DIALOG --title "INPUT BOX" \
@@ -703,7 +718,7 @@ function buildMenuSelection {
 
             if [[ $DEPTH_LEVEL -ge $GROUP_MAX_DEPTH ]]; then
                 echo "=> Max reached" >> $LOG_FILE;
-                VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE_TMP  | grep -v '^#' | grep -v '^$' | grep '^'$CURRENT | cut --delimiter='_' --fields=$FIELD_DEPTH- | sort | uniq`
+                VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE_TMP | grep -v '^#' | grep -v '^$' | grep '^'$CURRENT | cut --delimiter='_' --fields=$FIELD_DEPTH- | sort | uniq`
                 CMD="awk -F= '{print $1 }' $DOTENV_FILE_TMP  | grep -v '^#' | grep -v '^$' | grep '^'$CURRENT | cut --delimiter='_' --fields=$FIELD_DEPTH | sort | uniq"
 
             elif [[ $DEPTH_LEVEL -gt 0 ]]; then
@@ -717,8 +732,8 @@ function buildMenuSelection {
 
             else 
                 echo "=> Noting selected" >> $LOG_FILE;
-                VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE_TMP  | grep -v '^#' | grep -v '^$' | cut --delimiter='_' --fields=1 | sort | uniq`
-                CMD="awk -F= '{print $1 }' $DOTENV_FILE_TMP  | grep -v '^#' | grep -v '^$' | cut --delimiter='_' --fields=1 | sort | uniq"
+                VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE_TMP | grep -v ${SERVICES_FILTER} | grep -v '^#' | grep -v '^$' | cut --delimiter='_' --fields=1 | sort | uniq`
+                CMD="awk -F= '{print $1 }' $DOTENV_FILE_TMP | grep -v '${SERVICES_FILTER}' | grep -v '^#' | grep -v '^$' | cut --delimiter='_' --fields=1 | sort | uniq"
             fi
 
         else
@@ -727,8 +742,8 @@ function buildMenuSelection {
             CMD="awk -F= '{print $1 }' $DOTENV_FILE_TMP  | grep -v '^#' | grep -v '^$' | sort | uniq"
         fi;
 
-        # echo "- CMD: $CMD" >> $LOG_FILE;
-        # echo "- VAR_GROUP: $VARIABLE_GROUP" >> $LOG_FILE;
+        echo "- CMD: $CMD" >> $LOG_FILE;
+        echo "- VAR_GROUP: $VARIABLE_GROUP" >> $LOG_FILE;
         echo "" >> $LOG_FILE;
 
 
@@ -748,7 +763,7 @@ function buildMenuSelection {
                     MENU_KEY=`echo $i | awk -F"_" '{print $2}'`
                 fi                        
 
-                CMD_TMP="cat $DOTENV_FILE_TMP | grep "$i=" | wc -l";
+                # CMD_TMP="cat $DOTENV_FILE_TMP | grep "$i=" | wc -l";
                 local FULL_NAME=""
                 if [[ "$CURRENT" == "" ]]; then
                     FULL_NAME="${i}"
@@ -941,12 +956,14 @@ done
 # Check dependencies
 checkDependencies;
 
-
 # Display welcome message
 #welcomeMessage
 
 # Select .env file (or copy from a sample file)
 determineDotEnvFile
+
+# Build services list and filter
+buildServicesListAndFilter
 
 # Run the main program.
 mainLoop

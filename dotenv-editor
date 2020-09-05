@@ -353,7 +353,7 @@ function viewSettings() {
     FEATURES=$($DIALOG --title "INPUT BOX" \
         --clear  \
         --checklist \
-        "Modify settings according to your preferences" 20 78 4 \
+        "Modify settings according to your preferences" 20 78 6 \
         "MODE_GROUP" "Enable grouping variables by separator (_)" $MODE_GROUP \
         "MODE_CHECKBOX" "Allow connections from other hosts" $MODE_CHECKBOX \
         "COMPAT_QUOTE" "Quote variables with a '\"'" $COMPAT_QUOTE \
@@ -445,6 +445,85 @@ function viewSettings() {
     echo "" >> $LOG_FILE
 }
 
+function dialogEnableServices() {
+    echo "Showing dialog for enabling/disabling services" >> $LOG_FILE
+
+    # Duplicate file descriptor 1 on descriptor 3
+    exec 3>&1
+     
+    SERVICES_LIST=""
+    for SERVICE in `cat .env | grep '_ENABLED=' | cut --delimiter='_' --fields=1`; do
+        VARNAME="${SERVICE}_ENABLED"
+        # echo "VAR_NAME: $VARNAME"
+
+        VALUE=${!VARNAME}
+        # echo "VALUE: $VALUE"
+
+        if [[ $VALUE == "1" ]]; then
+            SERVICES_LIST="$SERVICES_LIST ${SERVICE} ${SERVICE} ON "
+        else
+            SERVICES_LIST="$SERVICES_LIST ${SERVICE} ${SERVICE} OFF "
+        fi;
+    done;
+
+    # Generate the dialog box
+    SERVICES=$($DIALOG --title "INPUT BOX" \
+        --clear  \
+        --checklist \
+        "Enable/disable services" 20 78 10 \
+        "COMPAT_QUOTE" "Quote variables with a '\"'" $COMPAT_QUOTE \
+        $SERVICES_LIST \
+        2>&1 1>&3)
+
+    # Get dialog's exit status
+    return_value=$?
+
+    # Close file descriptor 3
+    exec 3>&-
+
+    # Act on the exit status
+    case $return_value in
+        $DIALOG_OK)
+            echo "SERVICES: $SERVICES" >> $LOG_FILE
+
+            # # Update features with selected op tions
+            # for SERVICE in $SERVICES; do
+            #     echo "SERVICE: $SERVICE" >> $LOG_FILE;
+            #     if [[ $FEATURE = *COMPAT_QUOTE* ]]; then
+            #         echo "ENABLING QUOTE!" >> $LOG_FILE;
+            #         COMPAT_QUOTE="ON"
+            #     fi
+            # done;
+
+            ;;
+
+        $DIALOG_CANCEL)
+            echo "Cancel pressed." >> $LOG_FILE
+            ;;
+
+        $DIALOG_HELP)
+            echo "Help pressed." >> $LOG_FILE
+            ;;
+
+        $DIALOG_EXTRA)
+            echo "Extra button pressed." >> $LOG_FILE
+            ;;
+
+        $DIALOG_ITEM_HELP)
+            echo "Item-help button pressed." >> $LOG_FILE
+            ;;
+
+        $DIALOG_ESC)
+            if test -n "$FEATURES" ; then
+                echo "ESC pressed." >> $LOG_FILE
+            else
+                echo "ESC pressed." >> $LOG_FILE
+            fi
+            ;;
+    esac
+    echo "" >> $LOG_FILE
+}
+
 
 function saveChangesOrExit() {
     echo "Save changes or exit" >> $LOG_FILE
@@ -520,6 +599,12 @@ function mainLoop() {
             source $DOTENV_FILE_ORIG
             SELECTED_ITEM=$CURRENT
             ;;
+
+        *SERVICES)
+            dialogEnableServices
+            SELECTED_ITEM=$CURRENT
+            ;;
+
 
         *VIEW_DIFF) #Exit the dotenv editor application
             # clear;
@@ -687,6 +772,9 @@ function buildMenuSelection {
         done
 
         # Build menu list out of MORE (sub items) and ITEMS (modify).
+        MENU_LIST="$MENU_LIST *SERVICES \"Enable/disable services\" "
+        MENU_LIST="$MENU_LIST \"------------\" \"\" "
+
         if [[ "$MENU_LIST_MORE" != "" ]]; then
             MENU_LIST="$MENU_LIST $MENU_LIST_MORE "
         fi

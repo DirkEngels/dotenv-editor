@@ -52,6 +52,7 @@ COMPAT_QUOTE="OFF"
 ###
 function readPreferences() {
     if [ -s ~/.dotenv-editor ]; then
+        echo "- preferences found: ~/.dotenv-editor" >> $LOG_FILE;
         source ~/.dotenv-editor;
     fi
 }
@@ -63,6 +64,7 @@ function readPreferences() {
 function checkDependencies() {
     ERROR=""
 
+    echo "" >> $LOG_FILE
     echo "Checking if required dependencies are available" >> $LOG_FILE
     for COMMAND in $TEST_DEPENDENCIES; do
         if ! [ -x "$(command -v $COMMAND)" ]; then
@@ -109,11 +111,12 @@ function checkDependencies() {
 ###
 function determineDotEnvFile() {
 
-    echo "Check of existing .env file: $DOTENV_FILE_ORIG\n" >> $LOG_FILE;
+    echo "Checking for existing .env file: $DOTENV_FILE_ORIG" >> $LOG_FILE;
     if [ -f $DOTENV_FILE_ORIG ]; then
-        echo "-> file exists: $DOTENV_FILE_ORIG\n" >> $LOG_FILE;
+        echo "-> file exists: $DOTENV_FILE_ORIG" >> $LOG_FILE;
         cp $DOTENV_FILE_ORIG $DOTENV_FILE_TMP;
         source $DOTENV_FILE_TMP
+        echo "" >> $LOG_FILE;
         return 1
     fi
 
@@ -130,6 +133,8 @@ function determineDotEnvFile() {
     SELECTED_ITEM=""
 
     source $DOTENV_FILE_TMP
+
+    echo "" >> $LOG_FILE;
 }
 
 
@@ -178,6 +183,7 @@ function updateVariable() {
     OLD=${!KEY}
 
     # Show dialog
+    echo "Showing dialog for updating variable: ${KEY}" >> $LOG_FILE
     NEW=$($DIALOG \
         --clear \
         --inputbox "$KEY" \
@@ -239,10 +245,14 @@ function updateVariable() {
     else
         echo "No change $KEY: $OLD => $NEW" >> $LOG_FILE;
     fi
+
+    echo "" >> $LOG_FILE
 }
 
 
 function newVariable() {
+    echo "Showing dialog for creating a new variable" >> $LOG_FILE
+
     NAME=$($DIALOG \
         --clear \
         --title "New variable: NAME" \
@@ -273,6 +283,12 @@ function newVariable() {
     echo "" >> $DOTENV_FILE_TMP
     echo "# $DESCRIPTION" >> $DOTENV_FILE_TMP
     echo "${FULL_NAME^^}=\"$VALUE\"" >> $DOTENV_FILE_TMP
+
+    echo "- Name: ${FULL_NAME}" >> $LOG_FILE
+    echo "- Value: ${VALUE}" >> $LOG_FILE
+    echo "- Description: ${DESCRIPTION}" >> $LOG_FILE
+
+    echo "" >> $LOG_FILE
 }
 
 
@@ -285,6 +301,7 @@ function newVariable() {
 # @see: http://linuxcommand.org/lc3_adv_dialog.php
 ###
 function viewSettings() {
+    echo "Showing dialog for modifying settings" >> $LOG_FILE
 
     # Duplicate file descriptor 1 on descriptor 3
     exec 3>&1
@@ -382,13 +399,18 @@ function viewSettings() {
     #         echo "PACKAGES: $CHOICE_PACKAGES"
     #         exit;
 
+    echo "" >> $LOG_FILE
 }
 
 
 function saveChangesOrExit() {
+    echo "Save changes or exit" >> $LOG_FILE
+
     # Check if tmp file differs from orig file.
     diffTmpVsOrigFile;
     if [ -s $DOTENV_FILE_TMP.diff ]; then
+        echo "- Showing dialog asking to save changes" >> $LOG_FILE
+
         dialog --title "Dotenv Editor - Save Changes?" \
             --yesno "Are you sure you want to save the changes to \"$DOTENV_FILE_ORIG\"?" 7 60
 
@@ -399,23 +421,26 @@ function saveChangesOrExit() {
         response=$?
         case $response in
            0)
-                echo "Overwriting original file with changes." >> $LOG_FILE;
+                echo "-> Overwriting original file with changes." >> $LOG_FILE;
                 cp $DOTENV_FILE_TMP $DOTENV_FILE_ORIG
                 ;;
            1)
-                echo "Changes discarded." >> $LOG_FILE;
+                echo "-> Changes discarded." >> $LOG_FILE;
 
                 ;;
            255)
-                echo "[ESC] key pressed. >> $LOG_FILE"
+                echo "-> [ESC] key pressed. " >> $LOG_FILE
                 ;;
         esac
     fi
 
     # Cleann up any other tmp files
     rm /tmp/dotenv-editor-*
+    echo "" >> $LOG_FILE
 
     # Exit application
+    echo "Exiting dotenv-editor" >> $LOG_FILE
+    echo "" >> $LOG_FILE
     clear;
     exit;
 }
@@ -482,6 +507,9 @@ function mainLoop() {
 
 
         *)
+
+            echo "Menu item selection" >> $LOG_FILE
+
             if [ "$SELECTED_ITEM" == "Back" ]; then
                 CURRENT=`echo "${CURRENT}_${SELECTED_ITEM}" | cut --delimiter='_' --fields=-$DEPTH_LEVEL`
                 SELECTED_ITEM=$CURRENT
@@ -523,7 +551,8 @@ function mainLoop() {
                 fi
 
                 if [[ "$MODE_GROUP" == "ON" ]]; then
-                    echo "GROUP MODE ENABLED" >> $LOG_FILE;
+                    echo "-> GROUP MODE ENABLED" >> $LOG_FILE;
+                    echo "" >> $LOG_FILE;
                     if [[ $DEPTH_LEVEL -ge $GROUP_MAX_DEPTH ]]; then
                         VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE_TMP  | grep -v '^#' | grep -v '^$' | grep '^'$CURRENT | cut --delimiter='_' --fields=$((DEPTH_LEVEL+1)) | sort | uniq`
 
@@ -543,7 +572,7 @@ function mainLoop() {
                     if [[ "$MODE_GROUP" == "ON" ]]; then
 
                         local NUMBER_OF_UNDERSCORES=`echo "$i" | grep -o \_  | wc -l`
-                        echo "$i => $NUMBER_OF_UNDERSCORES" >> $LOG_FILE;
+                        echo "- $i => $NUMBER_OF_UNDERSCORES" >> $LOG_FILE;
 
                         local MENU_KEY=""
                         if [[ $NUMBER_OF_UNDERSCORES -gt $GROUP_MAX_DEPTH ]]; then
@@ -605,7 +634,7 @@ function mainLoop() {
 
                 menu
             fi
-
+            echo "" >> $LOG_FILE
             ;;
     esac
     mainLoop
@@ -693,6 +722,7 @@ while true ; do
 
         -l|--log)
             LOG_FILE=${2#=}
+            echo "Starting dotenv-editor" >> $LOG_FILE;
             echo "- receiving option --log: $LOG_FILE" >> $LOG_FILE;
             shift 2 ;;
 

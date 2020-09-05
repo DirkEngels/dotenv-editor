@@ -559,7 +559,7 @@ function saveChangesOrExit() {
     if [ -s $DOTENV_FILE_TMP.diff ]; then
         echo "- Showing dialog asking to save changes" >> $LOG_FILE
 
-        dialog --title "Dotenv Editor - Save Changes?" \
+        $DIALOG --title "Dotenv Editor - Save Changes?" \
             --yesno "Are you sure you want to save the changes to \"$DOTENV_FILE_ORIG\"?" 7 60
 
         # Get exit status

@@ -1,5 +1,7 @@
 # Next release 0.3.3
 
+### Fixes
++ Cancel button for preferences resets the variables
 
 # Todo for future version
 
@@ -7,7 +9,6 @@
 - Displaying menu with items with depth > 2
 - Do not quote integer values
 - Fix running the editor when there is not .env file in the current dir
-- Cancel button for preferences resets the variables
 
 ### Improvements
 - Add -e option to group enable variables (*_ENABLED). It display a checkbox

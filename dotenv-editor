@@ -37,6 +37,15 @@ GROUP_MAX_DEPTH=0
 # Compatibility modes
 COMPAT_QUOTE="OFF"
 
+# Define the dialog exit status codes
+# @see: http://linuxcommand.org/lc3_adv_dialog.php
+: ${DIALOG_OK=0}
+: ${DIALOG_CANCEL=1}
+: ${DIALOG_HELP=2}
+: ${DIALOG_EXTRA=3}
+: ${DIALOG_ITEM_HELP=4}
+: ${DIALOG_ESC=255}
+
 
 ###
 # Read preferences from ~/.dotenv-editor file
@@ -267,41 +276,112 @@ function newVariable() {
 }
 
 
+
+###
+# View & modify settings. It shows a checkbox list with options. These options
+# can also be enabled/disabled directly using the command options: --group,
+# --checkbox, --quote, etc.
+#
+# @see: http://linuxcommand.org/lc3_adv_dialog.php
+###
 function viewSettings() {
-    FEATURES=$($DIALOG \
-        --title "Settings" \
+
+    # Duplicate file descriptor 1 on descriptor 3
+    exec 3>&1
+     
+    # Generate the dialog box
+    FEATURES=$($DIALOG --title "INPUT BOX" \
+        --clear  \
         --checklist \
-        --output-fd 1 \
         "Modify settings according to your preferences" 20 78 4 \
         "MODE_GROUP" "Enable grouping variables by separator (_)" $MODE_GROUP \
         "MODE_CHECKBOX" "Allow connections from other hosts" $MODE_CHECKBOX \
         "COMPAT_QUOTE" "Quote variables with a '\"'" $COMPAT_QUOTE \
-        )
-    RETVAT=$?
-    CHOICE_PACKAGES=$RETVAL;
+        2>&1 1>&3)
 
-    # Reset all features to defaults
-    MODE_GROUP="OFF"
-    MODE_CHECKBOX="OFF"
-    COMPAT_QUOTE="OFF"
+    # Get dialog's exit status
+    return_value=$?
 
-    # Update features with selected op tions
-    for FEATURE in $FEATURES; do
-        echo "FEATURE: $FEATURE" >> $LOG_FILE;
-        if [[ $FEATURE = *MODE_GROUP* ]]; then
-        # if [[ "$FEATURE" == "-\>GROUP" ]]; then
-            echo "ENABLING GROUPING!" >> $LOG_FILE;
-            MODE_GROUP="ON"
-        fi
-        if [[ $FEATURE = *MODE_CHECKBOX* ]]; then
-            echo "ENABLING CHECKBOX!" >> $LOG_FILE;
-            MODE_CHECKBOX="ON"
-        fi
-        if [[ $FEATURE = *COMPAT_QUOTE* ]]; then
-            echo "ENABLING QUOTE!" >> $LOG_FILE;
-            COMPAT_QUOTE="ON"
-        fi
-    done;
+    # Close file descriptor 3
+    exec 3>&-
+
+    # Act on the exit status
+    case $return_value in
+        $DIALOG_OK)
+            echo "FEATURES: $FEATURES" >> $LOG_FILE
+
+            # Reset all features to defaults
+            MODE_GROUP="OFF"
+            MODE_CHECKBOX="OFF"
+            COMPAT_QUOTE="OFF"
+
+            # Update features with selected op tions
+            for FEATURE in $FEATURES; do
+                echo "FEATURE: $FEATURE" >> $LOG_FILE;
+                if [[ $FEATURE = *MODE_GROUP* ]]; then
+                # if [[ "$FEATURE" == "-\>GROUP" ]]; then
+                    echo "ENABLING GROUPING!" >> $LOG_FILE;
+                    MODE_GROUP="ON"
+                fi
+                if [[ $FEATURE = *MODE_CHECKBOX* ]]; then
+                    echo "ENABLING CHECKBOX!" >> $LOG_FILE;
+                    MODE_CHECKBOX="ON"
+                fi
+                if [[ $FEATURE = *COMPAT_QUOTE* ]]; then
+                    echo "ENABLING QUOTE!" >> $LOG_FILE;
+                    COMPAT_QUOTE="ON"
+                fi
+            done;
+
+            ;;
+
+        $DIALOG_CANCEL)
+            echo "Cancel pressed." >> $LOG_FILE
+            ;;
+
+        $DIALOG_HELP)
+            echo "Help pressed." >> $LOG_FILE
+            ;;
+
+        $DIALOG_EXTRA)
+            echo "Extra button pressed." >> $LOG_FILE
+            ;;
+
+        $DIALOG_ITEM_HELP)
+            echo "Item-help button pressed." >> $LOG_FILE
+            ;;
+
+        $DIALOG_ESC)
+            if test -n "$FEATURES" ; then
+                echo "ESC pressed." >> $LOG_FILE
+            else
+                echo "ESC pressed." >> $LOG_FILE
+            fi
+            ;;
+    esac
+    # exit;
+
+    # FEATURES=$($DIALOG \
+    #     --title "Settings" \
+    #     --checklist \
+    #     --output-fd 1 \
+    #     "Modify settings according to your preferences" 20 78 4 \
+    #     "MODE_GROUP" "Enable grouping variables by separator (_)" $MODE_GROUP \
+    #     "MODE_CHECKBOX" "Allow connections from other hosts" $MODE_CHECKBOX \
+    #     "COMPAT_QUOTE" "Quote variables with a '\"'" $COMPAT_QUOTE \
+    #     )
+    # RETVAT=$?
+    # CHOICE_PACKAGES=$RETVAL;
+
+    #     # Get exit status
+    #     # 0 means user hit [yes] button.
+    #     # 1 means user hit [no] button.
+    #     # 255 means user hit [Esc] key.
+    #         echo "FEATURES: $FEATURES"
+    #         echo "RETVAL: $RETVAL"
+    #         echo "PACKAGES: $CHOICE_PACKAGES"
+    #         exit;
+
 }
 
 

@@ -699,10 +699,6 @@ function showVersion {
 TEMP=`getopt -n "$0" -o "f::l::h::v::q::g::c::" --long "file:,log:,help::,version::,group::,checkbox::,,quote::,dialog::,whiptail::" -- "$@"`
 eval set -- "$TEMP"
 
-# Read preferences from ~/.dotenv-editor file
-readPreferences;
-
-
 # Set defaults in case optional parameters have not been set.
 if [ -z "${DOTENV_FILE_ORIG}" ]; then 
     DOTENV_FILE_ORIG=.env
@@ -710,6 +706,10 @@ fi
 if [ -z "${LOG_FILE}" ]; then 
     LOG_FILE=/dev/null
 fi
+
+# Read preferences from ~/.dotenv-editor file
+readPreferences;
+
 
 # FROM https://www.tutorialspoint.com/unix_commands/getopt.htm
 # extract options and their arguments into variables.

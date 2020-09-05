@@ -450,7 +450,7 @@ function mainLoop() {
             echo "Saving tmp file to orig file" >> $LOG_FILE;
             cp $DOTENV_FILE_TMP $DOTENV_FILE_ORIG
             source $DOTENV_FILE_ORIG
-            SELECTED_ITEM=""
+            SELECTED_ITEM=$CURRENT
             ;;
 
         *VIEW_DIFF) #Exit the dotenv editor application
@@ -458,26 +458,26 @@ function mainLoop() {
             diffTmpVsOrigFile
             BLA=$(dialog --scrollbar --textbox $DOTENV_FILE_TMP.diff 30 80 3>&1 1>&2 2>&3)
             rm "$DOTENV_FILE_TMP.diff"
-            SELECTED_ITEM=""
+            SELECTED_ITEM=$CURRENT
             ;;
 
         *RESET) # Reset changes
             cp $DOTENV_FILE_ORIG $DOTENV_FILE_TMP
             source $DOTENV_FILE_TMP
-            SELECTED_ITEM=""
+            SELECTED_ITEM=$CURRENT
             ;;
 
         *NEW) # Reset changes
             # MENU_LIST="$MENU_LIST GROUP enable\ grouping\ variables\ by\ separator ON "
             newVariable
-            SELECTED_ITEM=""
+            SELECTED_ITEM=$CURRENT
             ;;
 
 
         *SETTINGS) # Reset changes
             # MENU_LIST="$MENU_LIST GROUP enable\ grouping\ variables\ by\ separator ON "
             viewSettings
-            SELECTED_ITEM=""
+            SELECTED_ITEM=$CURRENT
             ;;
 
 

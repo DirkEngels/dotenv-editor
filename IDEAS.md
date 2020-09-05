@@ -6,6 +6,7 @@
 ### Fixes
 + Cancel button for preferences resets the variables
 + Only make variable name uppercase when creating a new variable
++ Go back to previous menu after using settings, save, reset or new variable
 
 # Todo for future version
 

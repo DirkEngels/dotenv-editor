@@ -14,6 +14,7 @@
 
 ### Fixes
 - Fix running the editor when there is not .env file in the current dir
+- Cancel button for preferences resets the variables
 
 ### Improvements
 - Add -e option to group enable variables (*_ENABLED). It display a checkbox

@@ -533,20 +533,11 @@ function buildMenuSelection {
     CNT_MATCHES=`cat $DOTENV_FILE_TMP | grep "$FULL_SELECT=" | wc -l`
     CNT_GROUPS=`cat $DOTENV_FILE_TMP | grep $FULL_SELECT"_" | wc -l`
     if [ $CNT_MATCHES == 1 ]; then
-        # echo "MATCH: $SELECTED_ITEM => ${!SELECTED_ITEM}" >> $LOG_FILE;
-        # echo "FULL: $FULL_NAME"
-        # exit;
         updateVariable $FULL_SELECT
-
-        # echo "CURRENT: $CURRENT";
-        # echo "SELECTED_ITEM: $SELECTED_ITEM";
-         
-        # SELECTED_ITEM=""
         CURRENT=`echo "${CURRENT}_${SELECTED_ITEM}" | cut --delimiter='_' --fields=-$DEPTH_LEVEL`
         SELECTED_ITEM=$CURRENT
 
     else
-        # echo $SELECTED_ITEM
         CURRENT=$SELECTED_ITEM
         MENU_LIST_GROUPS=""
         MENU_LIST_ITEMS=""
@@ -610,37 +601,27 @@ function buildMenuSelection {
                 # Default mode: list all variables
                 VALUE=${!i}
                 MENU_LIST_ITEMS="$MENU_LIST_ITEMS $i \"$VALUE\" "
-                # MENU_LIST="$MENU_LIST $i \"$VALUE\" "
             fi
-
-            # CNT_ITEMS=`cat $DOTENV_FILE_TMP | grep "$i=" | wc -l`
-            # if [ "$CNT_ITEMS" == "1" ]; then
-            #     VALUE=${!i}
-            #     MENU_LIST="$MENU_LIST $i \"$VALUE\" "
-            # else
-            #     MENU_LIST="$MENU_LIST $i More " >> $LOG_FILE;
-            # fi
-      
         done
 
+        # Build menu list out of MORE (sub items) and ITEMS (modify).
         if [[ "$MENU_LIST_MORE" != "" ]]; then
             MENU_LIST="$MENU_LIST $MENU_LIST_MORE "
         fi
-
         MENU_LIST="$MENU_LIST $MENU_LIST_ITEMS "
 
-        # MENU_LIST=""
-        # if [[ "$MENU_LIST_MAIN" != "" ]]; then
-            MENU_LIST="$MENU_LIST \"------------\" \"\" "
-            if [[ `diff --color $DOTENV_FILE_ORIG $DOTENV_FILE_TMP` ]]; then
-                MENU_LIST="$MENU_LIST *VIEW_DIFF \"View differences\" "
-                MENU_LIST="$MENU_LIST *SAVE \"Save changes\" "
-                MENU_LIST="$MENU_LIST *RESET \"Reset changes\" "
-            fi
-            MENU_LIST="$MENU_LIST *NEW \"Add a new variable\" "
-            MENU_LIST="$MENU_LIST *SETTINGS \"View current options and/or preferences\" "
-        # fi
+        # Main menu (after separator)
+        MENU_LIST="$MENU_LIST \"------------\" \"\" "
+        if [[ `diff --color $DOTENV_FILE_ORIG $DOTENV_FILE_TMP` ]]; then
+            # Optional options in case the .env file has been modified.
+            MENU_LIST="$MENU_LIST *VIEW_DIFF \"View differences\" "
+            MENU_LIST="$MENU_LIST *SAVE \"Save changes\" "
+            MENU_LIST="$MENU_LIST *RESET \"Reset changes\" "
+        fi
+        MENU_LIST="$MENU_LIST *NEW \"Add a new variable\" "
+        MENU_LIST="$MENU_LIST *SETTINGS \"View current options and/or preferences\" "
 
+        # Display menu
         menu
     fi
     echo "" >> $LOG_FILE

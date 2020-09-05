@@ -8,11 +8,12 @@
 + Only make variable name uppercase when creating a new variable
 + Go back to previous menu after using settings, save, reset or new variable
 + Improve log messages (make it more human readable)
++ Displaying menu with items with depth > 2
+
 
 # Todo for future version
 
 ### Fixes
-- Displaying menu with items with depth > 2
 - Do not quote integer values
 - Fix running the editor when there is not .env file in the current dir
 

@@ -111,7 +111,19 @@ function checkDependencies() {
 # Determine if .env file exists or create a new file by copying one of the 
 # .env-* files as a starting point.
 ###
+CMD_FILE_ARG=$1
 function determineDotEnvFile() {
+    if [ "$CMD_FILE_ARG" != "" ]; then
+        echo "Checking for argument file: $CMD_FILE_ARG" ;
+        if [ -f $CMD_FILE_ARG ]; then
+            DOTENV_FILE_ORIG=$CMD_FILE_ARG
+            echo "-> file exists: $DOTENV_FILE_ORIG" >> $LOG_FILE;
+            cp $DOTENV_FILE_ORIG $DOTENV_FILE_TMP;
+            source $DOTENV_FILE_TMP
+            echo "" >> $LOG_FILE;
+            return 1
+        fi
+    fi
 
     echo "Checking for existing .env file: $DOTENV_FILE_ORIG" >> $LOG_FILE;
     if [ -f $DOTENV_FILE_ORIG ]; then

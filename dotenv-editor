@@ -804,7 +804,7 @@ function buildMenuSelection {
         # Build menu list out of MORE (sub items) and ITEMS (modify).
         if [[ "${MODE_CHECKBOX}" == "ON" ]]; then
             MENU_LIST="$MENU_LIST *SERVICES \"Enable/disable services\" "
-            MENU_LIST="$MENU_LIST \"------------\" \"\" "
+            MENU_LIST="$MENU_LIST \" \" \"\" "
         fi
 
         if [[ "$MENU_LIST_MORE" != "" ]]; then
@@ -813,7 +813,7 @@ function buildMenuSelection {
         MENU_LIST="$MENU_LIST $MENU_LIST_ITEMS "
 
         # Main menu (after separator)
-        MENU_LIST="$MENU_LIST \"------------\" \"\" "
+        MENU_LIST="$MENU_LIST \" \" \"\" "
         if [[ `diff --color $DOTENV_FILE_ORIG $DOTENV_FILE_TMP` ]]; then
             # Optional options in case the .env file has been modified.
             MENU_LIST="$MENU_LIST *VIEW_DIFF \"View differences\" "

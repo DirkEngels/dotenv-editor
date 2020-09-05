@@ -473,6 +473,8 @@ function buildServicesListAndFilter() {
     echo "" >> $LOG_FILE
 }
 
+
+
 function dialogEnableServices() {
     echo "Showing dialog for enabling/disabling services" >> $LOG_FILE
 
@@ -486,7 +488,6 @@ function dialogEnableServices() {
         --clear  \
         --checklist \
         "Enable/disable services" 20 78 10 \
-        "COMPAT_QUOTE" "Quote variables with a '\"'" $COMPAT_QUOTE \
         $SERVICES_LIST \
         2>&1 1>&3)
 
@@ -501,15 +502,19 @@ function dialogEnableServices() {
         $DIALOG_OK)
             echo "SERVICES: $SERVICES" >> $LOG_FILE
 
-            # # Update features with selected op tions
-            # for SERVICE in $SERVICES; do
-            #     echo "SERVICE: $SERVICE" >> $LOG_FILE;
-            #     if [[ $FEATURE = *COMPAT_QUOTE* ]]; then
-            #         echo "ENABLING QUOTE!" >> $LOG_FILE;
-            #         COMPAT_QUOTE="ON"
-            #     fi
-            # done;
+            # Disable all services
+            for SERVICE in `cat .env | grep '_ENABLED=' | rev | cut --delimiter='_' --fields=2- | rev`; do
+                sed -i "s/${SERVICE}_ENABLED=.*/${SERVICE}_ENABLED=0/" $DOTENV_FILE_TMP
+            done
 
+            # Enable selected services
+            for SERVICE in $SERVICES; do
+                sed -i "s/${SERVICE}_ENABLED=.*/${SERVICE}_ENABLED=1/" $DOTENV_FILE_TMP
+            done;
+
+            # Source .env file and rebuild services list and filter.
+            source $DOTENV_FILE_TMP
+            buildServicesListAndFilter
             ;;
 
         $DIALOG_CANCEL)
@@ -731,8 +736,12 @@ function buildMenuSelection {
                 CMD="awk -F= '{print $1 }' $DOTENV_FILE_TMP  | grep -v '^#' | grep -v '^$' | grep '^${FULL_SELECT}' | cut --delimiter='_' --fields=$FIELD_DEPTH | sort | uniq"
 
             else 
-                echo "=> Noting selected" >> $LOG_FILE;
-                VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE_TMP | grep -v ${SERVICES_FILTER} | grep -v '^#' | grep -v '^$' | cut --delimiter='_' --fields=1 | sort | uniq`
+                echo "=> Nothing selected" >> $LOG_FILE;
+                if [[ "$SERVICES_FILTER" != "" ]]; then
+                    VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE_TMP | grep -v ${SERVICES_FILTER} | grep -v '^#' | grep -v '^$' | cut --delimiter='_' --fields=1 | sort | uniq`
+                else
+                    VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE_TMP | grep -v '^#' | grep -v '^$' | cut --delimiter='_' --fields=1 | sort | uniq`
+                fi
                 CMD="awk -F= '{print $1 }' $DOTENV_FILE_TMP | grep -v '${SERVICES_FILTER}' | grep -v '^#' | grep -v '^$' | cut --delimiter='_' --fields=1 | sort | uniq"
             fi
 

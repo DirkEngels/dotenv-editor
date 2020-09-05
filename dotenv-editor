@@ -34,7 +34,7 @@ MODE_GROUP="OFF"
 MODE_CHECKBOX="OFF"
 
 # Group specific options
-GROUP_MAX_DEPTH=6
+GROUP_MAX_DEPTH=2
 
 # Compatibility modes
 COMPAT_QUOTE="OFF"
@@ -606,7 +606,7 @@ function buildMenuSelection {
 
             if [[ $DEPTH_LEVEL -ge $GROUP_MAX_DEPTH ]]; then
                 echo "=> Max reached" >> $LOG_FILE;
-                VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE_TMP  | grep -v '^#' | grep -v '^$' | grep '^'$CURRENT | cut --delimiter='_' --fields=$FIELD_DEPTH | sort | uniq`
+                VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE_TMP  | grep -v '^#' | grep -v '^$' | grep '^'$CURRENT | cut --delimiter='_' --fields=$FIELD_DEPTH- | sort | uniq`
                 CMD="awk -F= '{print $1 }' $DOTENV_FILE_TMP  | grep -v '^#' | grep -v '^$' | grep '^'$CURRENT | cut --delimiter='_' --fields=$FIELD_DEPTH | sort | uniq"
 
             elif [[ $DEPTH_LEVEL -gt 0 ]]; then
@@ -755,7 +755,7 @@ function showVersion {
 ###
 
 # read the options
-TEMP=`getopt -n "$0" -o "f::l::h::v::q::g::c::" --long "file:,log:,help::,version::,group::,checkbox::,,quote::,dialog::,whiptail::" -- "$@"`
+TEMP=`getopt -n "$0" -o "f::l::h::v::q::g::d::c::" --long "file:,log:,help::,version::,group::,depth:,checkbox::,,quote::,dialog::,whiptail::" -- "$@"`
 eval set -- "$TEMP"
 
 # Set defaults in case optional parameters have not been set.
@@ -799,7 +799,13 @@ while true ; do
         -g|--group)
             echo "- enabling ui mode --group" >> $LOG_FILE;
             MODE_GROUP="ON"
-            GROUP_MAX_DEPTH="6"
+            GROUP_MAX_DEPTH="2"
+            shift 2 ;;
+
+        --depth)
+            echo "- setting group depth to " >> $LOG_FILE;
+            GROUP_MAX_DEPTH=${2#=}
+            MODE_GROUP="ON"
             shift 2 ;;
 
         -c|--checkbox)

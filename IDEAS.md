@@ -2,6 +2,7 @@
 
 ### Added
 + Create debian package
++ Parameter to limit the depth for grouping (enables group mode)
 
 ### Fixes
 + Cancel button for preferences resets the variables

@@ -22,28 +22,24 @@ Main menu for common tasks (reset, save, view changes) and ask before saving cha
 + Ask to save changes before exiting
 + Show differences in a textbox
 
-### Fixes
+### Fixed
 + Bug selecting variable in simple (non-group) mode
 
 
 ## 0.3.0 (2020-08-31)
 Group variables by prefix in menus.
 
-### Fixes
-+ Do not create a file called 1 (a bug)
-+ After asking for input return to the previous menu, not the main menu.
-
 ### Added
 + Flag to group variables (like the previous version did already). This could
   also be implemented as a maximum depth level to group upon.
 
+### Fixed
++ Do not create a file called 1 (a bug)
++ After asking for input return to the previous menu, not the main menu.
+
 
 ## 0.2.3 (2020-08-30)
-Various UI fixes
-
-### Fixes
-+ Error when variable value contains spaces
-+ Improve layout for menu list (more space)
+Various UI Fixed
 
 ### Added
 + Compatibility mode to quote string variables
@@ -51,9 +47,13 @@ Various UI fixes
 ### Removed
 + Removed screenshot image from the git repo (moved to github pages).
 
+### Fixed
++ Error when variable value contains spaces
++ Improve layout for menu list (more space)
+
 
 ## 0.2.2 (2020-08-25)
-Support multiple libraries and various fixes.
+Support multiple libraries and various Fixed.
 
 ### Added
 + Support multiple libraries (dialog/whiptail/zenity/whatever)
@@ -66,7 +66,7 @@ Support multiple libraries and various fixes.
 
 
 ## 0.2.1 (2020-08-24)
-Various bugfixes and improvements.
+Various bugFixed and improvements.
 
 ### Added
 + Check if required dependencies (sed, awk, dialog, whiptail, etc) exists.

@@ -704,7 +704,7 @@ function buildMenuSelection {
 # Display the help for this command.
 ###
 function showHelp {
-    echo "Usage: dotenv-editor [DIR]"
+    echo "Usage: dotenv-editor [FILE]"
     echo ""
     echo "Command options:"
     echo "  -f, --file=FILE            use this dotenv configuration file (default: .env)"

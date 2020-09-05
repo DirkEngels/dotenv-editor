@@ -162,7 +162,7 @@ function menu() {
     TITLE_SELECTED=""
     EXIT_OR_GO_BACK="Exit"
     if [ "$SELECTED_ITEM" != "" ]; then
-        TITLE_SELECTED=" - $SELECTED_ITEM"
+        TITLE_SELECTED=" - $FULL_SELECT"
         EXIT_OR_GO_BACK="Back"
     fi
 

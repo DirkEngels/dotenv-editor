@@ -3,7 +3,7 @@
 ###
 # Release version & libraries too check
 ###
-VERSION="0.3.1"
+VERSION="0.3.2"
 TEST_DEPENDENCIES="sed awk sort uniq grep"
 TEST_UI_LIBS="dialog whiptail"
 
@@ -667,7 +667,7 @@ function showVersion {
 ###
 
 # read the options
-TEMP=`getopt -n "$0" -o "f::l::h::v::q::g::c::" --long "file:,log:,help::,version::group::,checkbox::,,quote::,dialog::,whiptail::" -- "$@"`
+TEMP=`getopt -n "$0" -o "f::l::h::v::q::g::c::" --long "file:,log:,help::,version::,group::,checkbox::,,quote::,dialog::,whiptail::" -- "$@"`
 eval set -- "$TEMP"
 
 # Read preferences from ~/.dotenv-editor file

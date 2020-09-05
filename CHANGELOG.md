@@ -2,6 +2,17 @@
 All notable changes to this project will be documented in this file.
 
 
+## 0.3.2 (2020-09-05)
+Create and delete variables.
+
+### Added
++ Create new variable
++ Delete variable in case a variable is empty after asking input
++ Makefile for (un)installing
++ Store preferences in ~/.dotenv-editor
++ Use current working directory to search for .env files
+
+
 ## 0.3.1 (2020-09-01)
 Main menu for common tasks (reset, save, view changes) and ask before saving changes.
 

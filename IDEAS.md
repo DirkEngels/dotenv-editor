@@ -1,19 +1,11 @@
-# Next release 0.3.2
+# Next release 0.3.3
 
-### Added
-+ Store preferences in ~/.dotenv-editor
-+ Create new variable
-+ Makefile for (un)installing
-+ Use current working directory to search for .env files
-+ Delete variable in case a variable is empty after asking input.
-
-### Fixes
-- Displaying menu with items with depth > 2
-- Do not quote integer values
 
 # Todo for future version
 
 ### Fixes
+- Displaying menu with items with depth > 2
+- Do not quote integer values
 - Fix running the editor when there is not .env file in the current dir
 - Cancel button for preferences resets the variables
 

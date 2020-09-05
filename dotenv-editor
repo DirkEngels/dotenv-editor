@@ -272,7 +272,7 @@ function newVariable() {
     fi
     echo "" >> $DOTENV_FILE_TMP
     echo "# $DESCRIPTION" >> $DOTENV_FILE_TMP
-    echo "$FULL_NAME=\"$VALUE\"" | tr a-z A-Z >> $DOTENV_FILE_TMP
+    echo "${FULL_NAME^^}=\"$VALUE\"" >> $DOTENV_FILE_TMP
 }
 
 

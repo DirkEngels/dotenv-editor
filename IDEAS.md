@@ -1,11 +1,11 @@
 # Next release 0.3.3
 
 ### Added
-- Create debian package
++ Create debian package
 
 ### Fixes
 + Cancel button for preferences resets the variables
-
++ Only make variable name uppercase when creating a new variable
 
 # Todo for future version
 

@@ -47,10 +47,15 @@ uninstall: $(DEST_DIR)$(BIN_DIR)/dotenv-editor  					# Clean build stuff
 ###
 # Deb: Create a debian package
 ###
-VERSION ?= "0.1.2.3.4-test"
+VERSION ?= ""
 deb:                                                                                    # Build debian package
     @echo "$(COLOR_ORANGE)Building a debian package$(COLOR_RESET)";
 
+ifeq ($(VERSION),"")
+    @echo "ERROR: Specify the deb package version\n\n    VERSION=0.3.1 make deb\n"
+endif
+
+ifneq ($(VERSION),"")
     mkdir -p build/DEBIAN
     echo "Package: dotenv-editor\nVersion: ${VERSION}\nArchitecture: all\nMaintainer: Dirk Engels <d.engels@dirkengels.com>\nDepends:\nDescription: Dotenv Editor" > build/DEBIAN/control
 
@@ -59,6 +64,8 @@ deb:                                                                            
 
     mkdir -p dist
     dpkg-deb -b build dist/dotenv-editor-${VERSION}.deb
+    echo "\nPackage build: dist/dotenv-editor-${VERSION}.deb\n"
+endif
 
 
 ###

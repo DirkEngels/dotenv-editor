@@ -1,7 +1,11 @@
 # Next release 0.3.3
 
+### Added
+- Create debian package
+
 ### Fixes
 + Cancel button for preferences resets the variables
+
 
 # Todo for future version
 
@@ -16,10 +20,6 @@
 - Add meta description for each variable by appending a # at the end of each
   line OR use the previous line (depending on how dotenv readers have been
   implemented)
-
-### Ideas
-- Create debian package
-
 
 
 

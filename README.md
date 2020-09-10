@@ -40,6 +40,8 @@ Compatibility modes:
 
 UI features:
   -g, --group                enable grouping variables by separator
+  -c, --checkbox             enable checkboxes for variables called *ENABLED* or
+                             have a 0 or 1 value
 
 Specify UI library:
   --dialog                   Use the original dialog library

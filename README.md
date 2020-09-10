@@ -51,14 +51,10 @@ example to start from after which it will be copied to the .env file.
 
 
 ### Requirements
-The dotenv-editor has a couple of dependencies for rendering the interface
-besides the generally available cli tools (bash, grep, awk)
-
-* dialog
-* whiptail
-
-One of these libraries is required. The script will detect which library is
-available or ask you to install one.
+The dotenv-editor is a stand-alone tool and only uses basic unix tools (such as
+bash, grep, awk). The only requirement it to have at least one CLI UI rendering
+tool installed (such as dialog or whiptail). The script will detect which
+library is available or ask you to install one if none found.
 
 
 ### Contributing

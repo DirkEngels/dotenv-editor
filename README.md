@@ -74,6 +74,12 @@ In case you have an idea but you are unable to implement it, then add your idea 
 Once a feature/bug has been implemented/fixed it can be merged/pushed into the master branch. Once a release is made the implemented items from the [TODO](TODO.md) list will be moved to the [CHANGELOG](CHANGELOG.md) file.
 
 
+### Vision
+The goal for this project is to be a
+* simple tool (user-friendly)
+* using common unix tools (no other dependencies)
+* follow the .env file specification (use standard specs)
+
 ### Credits
 The following people get a free beer next time I see them in a bar as they contributed to this project:
 * [Eric Herman](https://github.com/ericherman)

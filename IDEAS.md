@@ -1,10 +1,16 @@
 # Next release 0.3.4
 
+### Added
++ Ask user to create a new file if no .env file can be found
+
+### Fixed
++ Fix running the editor when there is not .env file in the current dir
+
+
 # Todo for future version
 
 ### Fixes
 - Do not quote integer values
-- Fix running the editor when there is not .env file in the current dir
 
 ### Improvements
 - Add meta description for each variable by appending a # at the end of each

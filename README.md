@@ -1,10 +1,18 @@
 # Dotenv Editor
-Many project nowadays use a .env file for defining its configuration.
-I guess it started with docker, but many other project adopt it as well.
-Afterall it is a commonly used technique (https://en.wikipedia.org/wiki/Env)
-This tools make it easier for users to setup and configure an application.
+This tools make it easier for users to setup and configure an application
+which uses a dotenv file for its configuration.
 
 ![dotenv-editor-screenshot](https://user-images.githubusercontent.com/503929/91663533-bd27c080-eae9-11ea-9d1d-9e2196b23b11.png)
+
+Dotenv files (https://en.wikipedia.org/wiki/Env) are used by docker (compose).
+A lot of programming languages have libraries to handle .env files:
+* [Node.js](https://github.com/motdotla/dotenv)
+* [Go](https://github.com/joho/godotenv)
+* [Python](https://github.com/theskumar/python-dotenv)
+* [Ruby](https://github.com/bkeepers/dotenv)
+* [Java](https://github.com/cdimascio/java-dotenv)
+* [PHP](https://github.com/vlucas/phpdotenv)
+
 
 ### Usage
 Start the application by running the script:

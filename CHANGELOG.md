@@ -2,6 +2,16 @@
 All notable changes to this project will be documented in this file.
 
 
+## 0.3.4 (2020-09-10)
+Some small fixes and improvements to the README file.
+
+### Added
++ Ask user to create a new file if no .env file can be found
+
+### Fixed
++ Fix running the editor when there is not .env file in the current dir
+
+
 ## 0.3.3 (2020-09-06)
 Menu for enable/disable services. Also various fixes and improvements.
 

@@ -24,7 +24,6 @@ It will display a list of all variables defined in the existing .env file (or
 .env.sample file). It tries to group elements by prefix to improve user
 experience in case of larger or more complex .env files.
 
-
 ### Options
 ```
 Usage: dotenv-editor [FILE]
@@ -60,3 +59,12 @@ besides the generally available cli tools (bash, grep, awk)
 
 One of these libraries is required. The script will detect which library is
 available or ask you to install one.
+
+
+### Contributing
+In case you experience a bug please fork the git repository and push a git merge requests with improvements. In case you have an idea but you are unable to implement it please mention it in the [TODO.md](TODO.md) file.
+
+### Credits
+The following people get a free beer next time I see them in a bar as they contributed to this project:
+* [Eric Herman](https://github.com/ericherman)
+

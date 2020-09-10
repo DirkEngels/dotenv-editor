@@ -69,3 +69,8 @@ Once a feature/bug has been implemented/fixed it can be merged/pushed into the m
 The following people get a free beer next time I see them in a bar as they contributed to this project:
 * [Eric Herman](https://github.com/ericherman)
 
+
+### License
+Licensed under the terms of the MIT License.
+
+See [LICENSE](LICENSE) for details.

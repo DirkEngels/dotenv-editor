@@ -16,6 +16,7 @@ A lot of programming languages have libraries to handle .env files:
 
 ### Usage
 Start the application by running the script:
+
 ```
 ./dotenv-editor
 ```
@@ -48,6 +49,14 @@ Specify UI library:
 If no file parameter (-f) is provided it wil look like for the .env file. In
 case the .env does not exists it wil check for any .env-* file to use as an
 example to start from after which it will be copied to the .env file.
+
+
+### Install
+The script can easily be installed globally by running:
+```
+make install
+```
+Run *make* to see a list of all possible targets.
 
 
 ### Requirements

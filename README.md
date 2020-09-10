@@ -27,7 +27,7 @@ experience in case of larger or more complex .env files.
 
 ### Options
 ```
-Usage: dotenv-editor [DIR]
+Usage: dotenv-editor [FILE]
 
 Command options:
   -f, --file=FILE            use this dotenv configuration file (default: .env)

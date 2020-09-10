@@ -2,7 +2,8 @@
 .DEFAULT_GOAL := help
 .PHONY: $(filter-out install vendor node_modules,$(MAKECMDGOALS))
 
-BIN_DIR=/usr/bin
+DEST_DIR:=/usr/local
+BIN_DIR=bin
 
 ### CLI COLORS
 COLOR_RESET=\033[0m
@@ -34,14 +35,14 @@ help:                                                                           
 ###
 install:										# Clean build stuff
 	@echo "$(COLOR_ORANGE)Installing dotenv-editor into /usr/bin$(COLOR_RESET)";
-	cp dotenv-editor $(DEST_DIR)$(BIN_DIR)
+	cp dotenv-editor $(DEST_DIR)/$(BIN_DIR)
 
 ###
 # Uninstall: Unnstall the script (remove /usr/bin/dotenv-editor)
 ###
-uninstall: $(DEST_DIR)$(BIN_DIR)/dotenv-editor  					# Clean build stuff
+uninstall: $(DEST_DIR)/$(BIN_DIR)/dotenv-editor  					# Clean build stuff
 	@echo "$(COLOR_ORANGE)Un-installing dotenv-editor (removing from /usr/bin)$(COLOR_RESET)";
-	rm $(DEST_DIR)$(BIN_DIR)/dotenv-editor
+	rm $(DEST_DIR)/$(BIN_DIR)/dotenv-editor
 
 
 ###

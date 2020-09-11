@@ -1,5 +1,5 @@
 # Dotenv Editor
-This tools make it easier for users to setup and configure an application
+This tool makes it easier for users to setup and configure an application
 which uses a dotenv file for its configuration.
 
 ![dotenv-editor-screenshot](https://user-images.githubusercontent.com/503929/91663533-bd27c080-eae9-11ea-9d1d-9e2196b23b11.png)

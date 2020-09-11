@@ -474,7 +474,7 @@ function viewSettings() {
 
 SERVICES_FILTER=""
 
-function buildServicesListAndFilter() {
+function grepVariableListAndFilter() {
     echo "Building services list (*_ENABLED)" >> $LOG_FILE
     SERVICES_LIST=""
 
@@ -514,7 +514,7 @@ function dialogEnableServices() {
     # Duplicate file descriptor 1 on descriptor 3
     exec 3>&1
      
-    buildServicesListAndFilter
+    grepVariableListAndFilter
 
     # Generate the dialog box
     SERVICES=$($DIALOG --title "INPUT BOX" \
@@ -547,7 +547,7 @@ function dialogEnableServices() {
 
             # Source .env file and rebuild services list and filter.
             source $DOTENV_FILE_TMP
-            buildServicesListAndFilter
+            grepVariableListAndFilter
             ;;
 
         $DIALOG_CANCEL)
@@ -1004,7 +1004,7 @@ checkDependencies;
 determineDotEnvFile
 
 # Build services list and filter
-buildServicesListAndFilter
+grepVariableListAndFilter
 
 # Run the main program.
 mainLoop

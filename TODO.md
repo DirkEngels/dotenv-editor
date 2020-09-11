@@ -1,5 +1,8 @@
 # Next release 0.3.4
 
+### Removed
++ Welcome message
+
 
 # Todo for future version
 

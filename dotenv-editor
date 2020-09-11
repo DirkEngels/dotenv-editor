@@ -193,19 +193,6 @@ function determineDotEnvFile() {
 
 
 ###
-# Welcome: display a nice and warm welcome message.
-###
-function welcomeMessage() {
-    $($DIALOG \
-        --title "Dotenv Editor - Welcome" \
-        --clear \
-        --msgbox "$APP_TITLE\n\nThis setup will guide you through configuring all the existing variables.\n\nTheir defaults are already prefilled, so hit ENTER to go the next one." \
-        20 80 \
-        3>&1 1>&2 2>&3)
-}
-
-
-###
 # Menu: Display a menu using dialog/whiptail with the provided options. The
 # return value is the selected item.
 ###
@@ -1012,9 +999,6 @@ done
 
 # Check dependencies
 checkDependencies;
-
-# Display welcome message
-#welcomeMessage
 
 # Select .env file (or copy from a sample file)
 determineDotEnvFile

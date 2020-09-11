@@ -69,9 +69,9 @@ library is available or ask you to install one if none found.
 
 
 ### Contributing
-In case you experience a bug or have an improvement please fork the git repository and push a git merge requests. 
+In case you experience a bug or have an improvement please fork the git repository and push a git merge requests.
 
-In case you have an idea but you are unable to implement it, then add your idea in the bottom section (future versions) of the [TODO.md](TODO.md) file. 
+In case you have an idea but you are unable to implement it, then add your idea in the bottom section (future versions) of the [TODO.md](TODO.md) file.
 
 Once a feature/bug has been implemented/fixed it can be merged/pushed into the master branch. Once a release is made the implemented items from the [TODO](TODO.md) list will be moved to the [CHANGELOG](CHANGELOG.md) file.
 

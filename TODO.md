@@ -1,13 +1,13 @@
 # Next release 0.3.4
 
+### Fixes
+- Do not quote integer values
+
 ### Removed
 + Welcome message
 
 
 # Todo for future version
-
-### Fixes
-- Do not quote integer values
 
 ### Improvements
 - Add meta description for each variable by appending a # at the end of each

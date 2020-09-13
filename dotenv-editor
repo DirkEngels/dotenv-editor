@@ -290,13 +290,18 @@ function updateVariable() {
                 ;;
         esac
 
-
     # Value is different
     elif [ "$OLD" != "$NEW" ]; then
         echo "Updating $KEY: $OLD => $NEW" >> $LOG_FILE;
 
+        # Check if value is an integer (no quotes)
+        local VALUE_IS_INTEGER=false;
+        if [ "$NEW" -eq "$NEW" ] 2>/dev/null; then
+          VALUE_IS_INTEGER=true
+        fi
+
         # When quotes are enabled
-        if [[ "$COMPAT_QUOTE" == "ON" ]]; then
+        if [[ "$COMPAT_QUOTE" == "ON" && VALUE_IS_INTEGER == true ]]; then
             sed -i "s/$KEY=.*/$KEY=\"$NEW\"/" $DOTENV_FILE_TMP
 
         # When there are spaces found in the value

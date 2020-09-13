@@ -2,6 +2,15 @@
 All notable changes to this project will be documented in this file.
 
 
+## 0.3.5 (2020-09-13)
+
+### Fixes
++ Do not quote integer values
+
+### Removed
++ Welcome message
+
+
 ## 0.3.4 (2020-09-10)
 Some small fixes and improvements to the README file.
 

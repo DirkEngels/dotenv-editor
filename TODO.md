@@ -1,10 +1,13 @@
 # Next release 0.4.0
 
 ### Improvements
-- Add meta description for each variable by appending a # at the end of each
-  line OR use the previous line (depending on how dotenv readers have been
-  implemented)
++ Extract variable comment by getting the previous lines in the .env file which
+  start with a #. The comment is used to give more information how a variable
+  is used and changes the applications behaviour.
 
+
+### Fixes
+- Go back to previous depth level after editing a variable
 
 
 

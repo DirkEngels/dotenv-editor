@@ -252,11 +252,15 @@ function updateVariable() {
     KEY=$1
     OLD=${!KEY}
 
+    # Extract comment from .env file
+    CMD="grep -i -B 10 '${KEY}=' .env | tac | awk '{print} /^$/ {exit}' | grep '^#' | tac | sed 's/^#\ \(.*\)/\1/' | tr '\n' ' '" 
+    COMMENT=$(eval $CMD)
+
     # Show dialog
     echo "Showing dialog for updating variable: ${KEY}" >> $LOG_FILE
     NEW=$($DIALOG \
         --clear \
-        --inputbox "$KEY" \
+        --inputbox "${KEY}: ${COMMENT}" \
         8 80 "$OLD" \
         3>&1 1>&2 2>&3)
 

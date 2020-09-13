@@ -718,7 +718,7 @@ function buildMenuSelection {
         FULL_SELECT="${CURRENT}_${SELECTED_ITEM}"
     fi
 
-    # Go back one level (update current / selected item)
+    # # Go back one level (update current / selected item)
     if [ "$SELECTED_ITEM" == "Back" ]; then
         # CURRENT=`echo "${CURRENT}_${SELECTED_ITEM}" | cut --delimiter='_' --fields=-$DEPTH_LEVEL`
         CURRENT=`echo "${FULL_SELECT}" | cut --delimiter='_' --fields=-$DEPTH_LEVEL`
@@ -733,10 +733,16 @@ function buildMenuSelection {
     CNT_GROUPS=`cat $DOTENV_FILE_TMP | grep $FULL_SELECT"_" | wc -l`
     if [ $CNT_MATCHES == 1 ]; then
         updateVariable $FULL_SELECT
-        CURRENT=`echo "${CURRENT}_${SELECTED_ITEM}" | cut --delimiter='_' --fields=-$DEPTH_LEVEL`
-        SELECTED_ITEM=$CURRENT
 
-    else
+        # Decrement depth level.
+        SELECTED_ITEM=`echo "${CURRENT}_${SELECTED_ITEM}" | cut --delimiter='_' --fields=-$DEPTH_LEVEL`
+        CURRENT=""
+        FULL_SELECT="${SELECTED_ITEM}"
+        if [[ "$CURRENT" != "" ]]; then
+            FULL_SELECT="${CURRENT}_${SELECTED_ITEM}"
+        fi
+    fi
+
         CURRENT=$FULL_SELECT
         # CURRENT=$SELECTED_ITEM
         MENU_LIST_GROUPS=""
@@ -863,7 +869,7 @@ function buildMenuSelection {
 
         # Display menu
         menu
-    fi
+
     echo "" >> $LOG_FILE
 }
 

@@ -718,16 +718,6 @@ function buildMenuSelection {
         FULL_SELECT="${CURRENT}_${SELECTED_ITEM}"
     fi
 
-    # # Go back one level (update current / selected item)
-    if [ "$SELECTED_ITEM" == "Back" ]; then
-        # CURRENT=`echo "${CURRENT}_${SELECTED_ITEM}" | cut --delimiter='_' --fields=-$DEPTH_LEVEL`
-        CURRENT=`echo "${FULL_SELECT}" | cut --delimiter='_' --fields=-$DEPTH_LEVEL`
-        SELECTED_ITEM=$CURRENT
-        echo "DEPTH_LEVEL: $DEPTH_LEVEL";
-        echo "CURRENT: $CURRENT";
-        exit;
-    fi
-
     # Check if a single option has been chosen
     CNT_MATCHES=`cat $DOTENV_FILE_TMP | grep "$FULL_SELECT=" | wc -l`
     CNT_GROUPS=`cat $DOTENV_FILE_TMP | grep $FULL_SELECT"_" | wc -l`

@@ -7,8 +7,8 @@
 
 
 ### Fixes
-- Go back to previous depth level after editing a variable
-
++ Go back to previous depth level after editing a variable
++ Hide _ENABLED fields when the services checkbox feature is enabled
 
 
 

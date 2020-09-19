@@ -819,7 +819,11 @@ function buildMenuSelection {
             fi
 
             CNT_ITEMS=`cat $DOTENV_FILE_TMP | grep "$FULL_NAME=" | wc -l`
-            if [ "$CNT_ITEMS" == "1" ]; then
+            if [[ "${MODE_CHECKBOX}" == "ON" && "$i" == "ENABLED" ]]; then
+                # Ignore _ENABLED item
+                echo "Ignoring _ENABLED items when MODE_CHECKBOX is ON" >> $LOG_FILE;
+
+            elif [ "$CNT_ITEMS" == "1" ]; then
                 VALUE=${!FULL_NAME}
                 MENU_LIST_ITEMS="$MENU_LIST_ITEMS $i \"$VALUE\" "
             else

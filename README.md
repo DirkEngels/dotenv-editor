@@ -67,6 +67,15 @@ bash, grep, awk). The only requirement it to have at least one CLI UI rendering
 tool installed (such as dialog or whiptail). The script will detect which
 library is available or ask you to install one if none found.
 
+### Configuration
+The default options can be changed by creating a ~/.dotenv-editor file. This
+file contains variable defaults.
+```
+MODE_GROUP="ON"
+MODE_CHECKBOX="OFF"
+COMPAT_QUOTE="ON"
+LOG_FILE=/tmp/dotenv-editor.log
+```
 
 ### Contributing
 In case you experience a bug or have an improvement please fork the git repository and push a git merge requests.

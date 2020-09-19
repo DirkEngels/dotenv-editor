@@ -704,6 +704,14 @@ function mainLoop() {
 }
 
 
+###
+# Build Menu Selection: TL;DR: Build a string of options to display.
+# This is probably the most difficult function in this script (meaning it can
+# be improved in many ways). However it does the trick for now and I would like
+# to see pull requests regarding this function.
+#
+# @TODO: It uses global variables; shouldn't I pass them  as an argument?
+###
 function buildMenuSelection {
     echo "Menu item selection" >> $LOG_FILE
     echo "-> CURRENT:  $CURRENT" >> $LOG_FILE

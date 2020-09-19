@@ -2,6 +2,19 @@
 All notable changes to this project will be documented in this file.
 
 
+## 0.4.0 (2020-09-19)
+Supports description of variables using comments.
+
+### Improvements
++ Extract variable comment by getting the previous lines in the .env file which
+  start with a #. The comment is used to give more information how a variable
+  is used and changes the applications behaviour.
+
+### Fixes
++ Go back to previous depth level after editing a variable
++ Hide ENABLED fields when the services checkbox feature is enabled
+
+
 ## 0.3.5 (2020-09-13)
 Various small fixes and code clean up
 

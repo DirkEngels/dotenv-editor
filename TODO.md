@@ -1,14 +1,6 @@
-# Next release 0.4.0
+# Next release
 
-### Improvements
-+ Extract variable comment by getting the previous lines in the .env file which
-  start with a #. The comment is used to give more information how a variable
-  is used and changes the applications behaviour.
-
-
-### Fixes
-+ Go back to previous depth level after editing a variable
-+ Hide _ENABLED fields when the services checkbox feature is enabled
-
+Currently there are no planned features. If you have a feature request mention
+it below so it can be picked up in a possible future release.
 
 

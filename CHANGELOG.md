@@ -3,6 +3,7 @@ All notable changes to this project will be documented in this file.
 
 
 ## 0.3.5 (2020-09-13)
+Various small fixes and code clean up
 
 ### Fixes
 + Do not quote integer values

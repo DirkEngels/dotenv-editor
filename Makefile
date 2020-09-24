@@ -58,7 +58,7 @@ endif
 
 ifneq ($(VERSION),"")
 	mkdir -p build/DEBIAN
-	echo "Package: dotenv-editor\nVersion: ${VERSION}\nArchitecture: all\nMaintainer: Dirk Engels <d.engels@dirkengels.com>\nDepends:\nDescription: Dotenv Editor" > build/DEBIAN/control
+	echo "Package: dotenv-editor\nVersion: ${VERSION}\nArchitecture: all\nMaintainer: Dirk Engels <d.engels@dirkengels.com>\nDepends:\nDescription: CLI editor for .env files" > build/DEBIAN/control
 
 	mkdir -p build/usr/bin
 	cp dotenv-editor build/usr/bin

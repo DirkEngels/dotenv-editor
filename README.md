@@ -25,6 +25,7 @@ It will display a list of all variables defined in the existing .env file (or
 .env.sample file). It tries to group elements by prefix to improve user
 experience in case of larger or more complex .env files.
 
+
 ### Options
 ```
 Usage: dotenv-editor [FILE]
@@ -52,6 +53,33 @@ If no file parameter (-f) is provided it wil look like for the .env file. In
 case the .env does not exists it wil check for any .env-* file to use as an
 example to start from after which it will be copied to the .env file.
 
+
+### Examples
+The examples directory contains a couple of example .env files to show the
+features of the dotenv-editor script.
+
+#### Simple example
+The most basic example contains of a (small) list of key/value pairs. This
+works good if the amount of variables to configure is not too large.
+```
+./dotenv-editor -f=example/simple
+```
+
+#### Grouped example
+To configure a large list of variables (key/value pairs) the menu items can be
+grouped using the *-g option*. This option will split the variables on an
+underscore. (Leave out the -g option to see the difference)
+```
+./dotenv-editor -f=example/grouped -g
+```
+
+#### Checkboxes example
+Enable/disable a group of variables can be used with the *-c option*. A service
+is a variabled ending with "$NAME_ENABLED". In case the value of this variable will
+be set to 0 all variables starting with $NAME will be hidden.
+```
+./dotenv-editor -f=example/checked -c
+```
 
 ### Install
 The script can easily be installed globally by running:
@@ -83,6 +111,7 @@ In case you experience a bug or have an improvement please fork the git reposito
 In case you have an idea but you are unable to implement it, then add your idea in the bottom section (future versions) of the [TODO.md](TODO.md) file.
 
 Once a feature/bug has been implemented/fixed it can be merged/pushed into the master branch. Once a release is made the implemented items from the [TODO](TODO.md) list will be moved to the [CHANGELOG](CHANGELOG.md) file.
+
 
 ### Vision
 The goal for this project is to be a

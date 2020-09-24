@@ -13,3 +13,4 @@ Please provide feedback and report your bugs!
 - List is empty after VIEW_DIFF (depth level too high?)
 + Improved README (& added github pages)
 - View changes after enabling/disabling services
+- Unable to parse .env file from laradock project

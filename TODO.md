@@ -14,3 +14,6 @@ Please provide feedback and report your bugs!
 + Improved README (& added github pages)
 - View changes after enabling/disabling services
 - Unable to parse .env file from laradock project
+
+### Added
++ Extract a description for the group. (default: 'More options')

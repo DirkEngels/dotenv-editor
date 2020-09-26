@@ -835,7 +835,18 @@ function buildMenuSelection {
                 VALUE=${!FULL_NAME}
                 MENU_LIST_ITEMS="$MENU_LIST_ITEMS $i \"$VALUE\" "
             else
-                MENU_LIST_MORE="$MENU_LIST_MORE $i =\>\ more " >> $LOG_FILE;
+                # Try to extract a description for the group. Otherwise use 'More options'
+                VAR_LENGTH=`echo -n "$i" | wc -c`
+                MORE_CMD="cat $DOTENV_FILE_TMP | grep \"^# $i:\" | cut -c 4- | cut -c $VAR_LENGTH- | rev | cut 2- | rev"
+                MORE_TEXT=`cat $DOTENV_FILE_TMP | grep "^# $i:" | rev  | cut -c 2- | rev`
+                MORE_TEXT="${MORE_TEXT:2}"
+                MORE_TEXT="${MORE_TEXT:$VAR_LENGTH}"
+                MORE_TEXT="${MORE_TEXT:2}"
+                MORE_TEXT="${MORE_TEXT:-2}"
+                if [[ "${MORE_TEXT}" == "2" ]]; then
+                    MORE_TEXT="More options";
+                fi
+                MENU_LIST_MORE="$MENU_LIST_MORE $i =\>\ \"$MORE_TEXT\" " >> $LOG_FILE;
             fi
 
         else

@@ -15,3 +15,4 @@ Please provide feedback and report your bugs!
 - Unable to parse .env file from laradock project
 - Integrate CI to build debian package and push to launchpad
 - Fix laradock .env file
+- Only show added/deleting variables when the --new has been enabled

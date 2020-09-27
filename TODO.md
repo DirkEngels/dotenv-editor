@@ -13,4 +13,5 @@ Please provide feedback and report your bugs!
 - List is empty after VIEW_DIFF (depth level too high?)
 - View changes after enabling/disabling services
 - Unable to parse .env file from laradock project
-
+- Integrate CI to build debian package and push to launchpad
+- Fix laradock .env file

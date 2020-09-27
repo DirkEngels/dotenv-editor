@@ -8,11 +8,6 @@ Most of the ideas have now been implemented. The next following
 versions will be used for fix any bugs after which there will be a 1.0 version.
 Please provide feedback and report your bugs!
 
-### Fixed
-+ Description/value not set when adding a new variable.
-+ List is empty after VIEW_DIFF (depth level too high?)
-+ View changes after enabling/disabling services
-
 ## Bugs
 - Unable to parse .env file from laradock project
 - Integrate CI to build debian package and push to launchpad

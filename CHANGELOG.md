@@ -2,6 +2,15 @@
 All notable changes to this project will be documented in this file.
 
 
+## 0.4.2 (2020-09-27)
+Various bugfixes and improvements.
+
+### Fixed
++ Description/value not set when adding a new variable.
++ List is empty after VIEW_DIFF (depth level too high?)
++ View changes after enabling/disabling services
+
+
 ## 0.4.1 (2020-09-27)
 Descriptions for grouped items
 

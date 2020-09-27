@@ -778,11 +778,22 @@ function buildMenuSelection {
     echo "- VAR_GROUP: $VARIABLE_GROUP" >> $LOG_FILE;
     echo "" >> $LOG_FILE;
 
-
-
     # Loop over the matched variables (in case of grouping).
     echo "Listing menu items" >> $LOG_FILE;
+    COUNTER=0
+    PROGRESS_MAX=`echo "$VARIABLE_GROUP" | wc -l`
+    echo "-> CNT_MATCHES: $CNT_MATCHES" >> $LOG_FILE
+    echo "-> CNT_ITEMS: $CNT_ITEMS" >> $LOG_FILE
+    echo "-> CNT_GROUPS: $CNT_GROUPS" >> $LOG_FILE
+    echo "-> PROGRESS_MAX: $PROGRESS_MAX" >> $LOG_FILE;
     for i in $VARIABLE_GROUP; do
+        ((COUNTER++))
+
+        # Calculate and display progress percentage.
+        PERCENTAGE=$(( (100 * COUNTER/PROGRESS_MAX) + 50 / 100 ))
+        echo $PERCENTAGE | $DIALOG --gauge "Processing variable: $i" 12 70
+        echo "${COUNTER} / ${PROGRESS_MAX} => ${PERCENTAGE} %" >> $LOG_FILE;
+
         if [[ "$MODE_GROUP" == "ON" ]]; then
 
             local NUMBER_OF_UNDERSCORES=`echo "$i" | grep -o \_  | wc -l`

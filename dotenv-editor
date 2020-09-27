@@ -486,6 +486,7 @@ SERVICES_FILTER=""
 function grepVariableListAndFilter() {
     echo "Building services list (*_ENABLED)" >> $LOG_FILE
     SERVICES_LIST=""
+    SERVICES_FILTER=""
 
     if [[ "${MODE_CHECKBOX}" == "OFF" ]]; then
         echo "- Checkboxes disabled => no filtering" >> $LOG_FILE
@@ -496,7 +497,7 @@ function grepVariableListAndFilter() {
         VARNAME="${SERVICE}_ENABLED"
 
         VALUE=${!VARNAME}
-        # echo "VALUE: $VALUE"
+        # echo "${VARNAME}: $VALUE"
 
         if [[ $VALUE == "1" || $VALUE == 1 ]]; then
             SERVICES_LIST="$SERVICES_LIST ${SERVICE} ${SERVICE} ON "
@@ -545,13 +546,14 @@ function dialogEnableServices() {
             echo "SERVICES: $SERVICES" >> $LOG_FILE
 
             # Disable all services
-            for SERVICE in `cat DOTENV_FILE_TMP | grep '_ENABLED=' | rev | cut --delimiter='_' --fields=2- | rev`; do
+            for SERVICE in `cat $DOTENV_FILE_TMP | grep '_ENABLED=' | rev | cut --delimiter='_' --fields=2- | rev`; do
                 sed -i "s/${SERVICE}_ENABLED=.*/${SERVICE}_ENABLED=0/" $DOTENV_FILE_TMP
+                echo "DISABLING: ${SERVICE}" >> $LOG_FILE
             done
-
             # Enable selected services
             for SERVICE in $SERVICES; do
                 sed -i "s/${SERVICE}_ENABLED=.*/${SERVICE}_ENABLED=1/" $DOTENV_FILE_TMP
+                echo "ENABLING: ${SERVICE}" >> $LOG_FILE
             done;
 
             # Source .env file and rebuild services list and filter.

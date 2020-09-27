@@ -11,9 +11,9 @@ Please provide feedback and report your bugs!
 ### Fixed
 + Description/value not set when adding a new variable.
 + List is empty after VIEW_DIFF (depth level too high?)
++ View changes after enabling/disabling services
 
 ## Bugs
-- View changes after enabling/disabling services
 - Unable to parse .env file from laradock project
 - Integrate CI to build debian package and push to launchpad
 - Fix laradock .env file

@@ -492,7 +492,7 @@ function grepVariableListAndFilter() {
         return;
     fi
 
-    for SERVICE in `cat .env | grep '_ENABLED=' | rev | cut --delimiter='_' --fields=2- | rev`; do
+    for SERVICE in `cat $DOTENV_FILE_TMP | grep '_ENABLED=' | rev | cut --delimiter='_' --fields=2- | rev`; do
         VARNAME="${SERVICE}_ENABLED"
 
         VALUE=${!VARNAME}
@@ -545,7 +545,7 @@ function dialogEnableServices() {
             echo "SERVICES: $SERVICES" >> $LOG_FILE
 
             # Disable all services
-            for SERVICE in `cat .env | grep '_ENABLED=' | rev | cut --delimiter='_' --fields=2- | rev`; do
+            for SERVICE in `cat DOTENV_FILE_TMP | grep '_ENABLED=' | rev | cut --delimiter='_' --fields=2- | rev`; do
                 sed -i "s/${SERVICE}_ENABLED=.*/${SERVICE}_ENABLED=0/" $DOTENV_FILE_TMP
             done
 

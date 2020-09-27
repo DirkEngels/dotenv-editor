@@ -455,29 +455,6 @@ function viewSettings() {
             fi
             ;;
     esac
-    # exit;
-
-    # FEATURES=$($DIALOG \
-    #     --title "Settings" \
-    #     --checklist \
-    #     --output-fd 1 \
-    #     "Modify settings according to your preferences" 20 78 4 \
-    #     "MODE_GROUP" "Enable grouping variables by separator (_)" $MODE_GROUP \
-    #     "MODE_CHECKBOX" "Allow connections from other hosts" $MODE_CHECKBOX \
-    #     "COMPAT_QUOTE" "Quote variables with a '\"'" $COMPAT_QUOTE \
-    #     )
-    # RETVAT=$?
-    # CHOICE_PACKAGES=$RETVAL;
-
-    #     # Get exit status
-    #     # 0 means user hit [yes] button.
-    #     # 1 means user hit [no] button.
-    #     # 255 means user hit [Esc] key.
-    #         echo "FEATURES: $FEATURES"
-    #         echo "RETVAL: $RETVAL"
-    #         echo "PACKAGES: $CHOICE_PACKAGES"
-    #         exit;
-
     echo "" >> $LOG_FILE
 }
 
@@ -685,14 +662,12 @@ function mainLoop() {
             ;;
 
         *NEW) # Reset changes
-            # MENU_LIST="$MENU_LIST GROUP enable\ grouping\ variables\ by\ separator ON "
             newVariable
             decrementDepthLevel
             ;;
 
 
         *SETTINGS) # Edit settings
-            # MENU_LIST="$MENU_LIST GROUP enable\ grouping\ variables\ by\ separator ON "
             viewSettings
             decrementDepthLevel
             ;;

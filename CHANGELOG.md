@@ -2,6 +2,16 @@
 All notable changes to this project will be documented in this file.
 
 
+## 0.4.1 (2020-09-27)
+Descriptions for grouped items
+
+### Added
++ Extract a description for the group. (default: 'More options')
+
+### Improvements
++ Improved README (& added github pages)
+
+
 ## 0.4.0 (2020-09-19)
 Supports description of variables using comments.
 

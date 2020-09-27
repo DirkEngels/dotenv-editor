@@ -746,32 +746,32 @@ function buildMenuSelection {
 
         if [[ $DEPTH_LEVEL -ge $GROUP_MAX_DEPTH ]]; then
             echo "=> Max reached" >> $LOG_FILE;
-            VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE_TMP | grep -v '^#' | grep -v '^$' | grep '^'$CURRENT | cut --delimiter='_' --fields=$FIELD_DEPTH- | sort | uniq`
-            CMD="awk -F= '{print $1 }' $DOTENV_FILE_TMP  | grep -v '^#' | grep -v '^$' | grep '^'$CURRENT | cut --delimiter='_' --fields=$FIELD_DEPTH | sort | uniq"
+            VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE_TMP | grep -v '^#' | grep -v '^$' | grep -v '^ '| grep '^'$CURRENT | cut --delimiter='_' --fields=$FIELD_DEPTH- | sort | uniq`
+            CMD="awk -F= '{print $1 }' $DOTENV_FILE_TMP  | grep -v '^#' | grep -v '^$' | grep -v '^ '| grep '^'$CURRENT | cut --delimiter='_' --fields=$FIELD_DEPTH | sort | uniq"
 
         elif [[ $DEPTH_LEVEL -gt 0 ]]; then
             echo "=> Sub item" >> $LOG_FILE;
             FIELD_DEPTH=`echo "$FULL_SELECT" | grep -o \_  | wc -l`
             ((FIELD_DEPTH=FIELD_DEPTH+2))
             echo "-> NEW DEPTH: $FIELD_DEPTH" >> $LOG_FILE;
-            VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE_TMP  | grep -v '^#' | grep -v '^$' | grep "\${FULL_SELECT}" | cut --delimiter='_' --fields=$FIELD_DEPTH | sort | uniq`
+            VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE_TMP  | grep -v '^#' | grep -v '^$' | grep -v '^ '| grep "\${FULL_SELECT}" | cut --delimiter='_' --fields=$FIELD_DEPTH | sort | uniq`
             # VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE_TMP  | grep -v '^#' | grep -v '^$' | grep '^$FULL_SELECT' | cut --delimiter='_' --fields=$FIELD_DEPTH | sort | uniq`
-            CMD="awk -F= '{print $1 }' $DOTENV_FILE_TMP  | grep -v '^#' | grep -v '^$' | grep '^${FULL_SELECT}' | cut --delimiter='_' --fields=$FIELD_DEPTH | sort | uniq"
+            CMD="awk -F= '{print $1 }' $DOTENV_FILE_TMP  | grep -v '^#' | grep -v '^$' | grep -v '^ '| grep '^${FULL_SELECT}' | cut --delimiter='_' --fields=$FIELD_DEPTH | sort | uniq"
 
         else 
             echo "=> Nothing selected" >> $LOG_FILE;
             if [[ "$SERVICES_FILTER" != "" ]]; then
-                VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE_TMP | grep -v ${SERVICES_FILTER} | grep -v '^#' | grep -v '^$' | cut --delimiter='_' --fields=1 | sort | uniq`
+                VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE_TMP | grep -v ${SERVICES_FILTER} | grep -v '^#' | grep -v '^$' | grep -v '^ '| cut --delimiter='_' --fields=1 | sort | uniq`
             else
-                VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE_TMP | grep -v '^#' | grep -v '^$' | cut --delimiter='_' --fields=1 | sort | uniq`
+                VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE_TMP | grep -v '^#' | grep -v '^$' | grep -v '^ '| cut --delimiter='_' --fields=1 | sort | uniq`
             fi
-            CMD="awk -F= '{print $1 }' $DOTENV_FILE_TMP | grep -v '${SERVICES_FILTER}' | grep -v '^#' | grep -v '^$' | cut --delimiter='_' --fields=1 | sort | uniq"
+            CMD="awk -F= '{print $1 }' $DOTENV_FILE_TMP | grep -v '${SERVICES_FILTER}' | grep -v '^#' | grep -v '^$' | grep -v '^ '| cut --delimiter='_' --fields=1 | sort | uniq"
         fi
 
     else
         echo "=> Simple mode" >> $LOG_FILE;
-        VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE_TMP  | grep -v '^#' | grep -v '^$' | sort | uniq`
-        CMD="awk -F= '{print $1 }' $DOTENV_FILE_TMP  | grep -v '^#' | grep -v '^$' | sort | uniq"
+        VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE_TMP  | grep -v '^#' | grep -v '^$' | grep -v '^ '| sort | uniq`
+        CMD="awk -F= '{print $1 }' $DOTENV_FILE_TMP  | grep -v '^#' | grep -v '^$' | grep -v '^ '| sort | uniq"
     fi;
 
     echo "- CMD: $CMD" >> $LOG_FILE;
@@ -814,8 +814,8 @@ function buildMenuSelection {
             else
                 # Try to extract a description for the group. Otherwise use 'More options'
                 VAR_LENGTH=`echo -n "$i" | wc -c`
-                MORE_CMD="cat $DOTENV_FILE_TMP | grep \"^# $i:\" | cut -c 4- | cut -c $VAR_LENGTH- | rev | cut 2- | rev"
-                MORE_TEXT=`cat $DOTENV_FILE_TMP | grep "^# $i:" | rev  | cut -c 2- | rev`
+                MORE_CMD="cat $DOTENV_FILE_TMP | grep -v '^ '| grep \"^# $i:\" | cut -c 4- | cut -c $VAR_LENGTH- | rev | cut 2- | rev"
+                MORE_TEXT=`cat $DOTENV_FILE_TMP | grep -v '^ '| grep "^# $i:" | rev  | cut -c 2- | rev`
                 MORE_TEXT="${MORE_TEXT:2}"
                 MORE_TEXT="${MORE_TEXT:$VAR_LENGTH}"
                 MORE_TEXT="${MORE_TEXT:2}"

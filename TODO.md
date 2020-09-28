@@ -9,7 +9,7 @@ versions will be used for fix any bugs after which there will be a 1.0 version.
 Please provide feedback and report your bugs!
 
 ### Added
-- Show progress bar when progressing files (improve performance later)
++ Show progress bar when progressing files (improve performance later)
 
 ### Fixed
 + Ignore files starting with a space (fixes loading laradock example)
@@ -20,3 +20,4 @@ Please provide feedback and report your bugs!
 - Only show added/deleting variables when the --new has been enabled
 - Improve processing larger .env files
 - Bug when using whiptail (for the progressbar)
+- Fix flickering when showing a progress bar

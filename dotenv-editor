@@ -50,6 +50,15 @@ COMPAT_QUOTE="OFF"
 
 
 ###
+# Log helper function
+# FROM: https://www.franzoni.eu/quick-log-for-bash-scripts-with-line-limit/
+###
+function log {
+    echo "[$(date --rfc-3339=seconds)]: $*" >> $LOG_FILE
+}
+
+
+###
 # Read preferences from ~/.dotenv-editor file
 ###
 function readPreferences() {
@@ -114,10 +123,10 @@ function checkDependencies() {
 CMD_FILE_ARG=$1
 function determineDotEnvFile() {
     if [ "$CMD_FILE_ARG" != "" ]; then
-        echo "Checking for argument file: $CMD_FILE_ARG" ;
+        log "Checking for argument file: $CMD_FILE_ARG";
         if [ -f $CMD_FILE_ARG ]; then
             DOTENV_FILE_ORIG=$CMD_FILE_ARG
-            echo "-> file exists: $DOTENV_FILE_ORIG" >> $LOG_FILE;
+            log "-> file exists: $DOTENV_FILE_ORIG"
             cp $DOTENV_FILE_ORIG $DOTENV_FILE_TMP;
             source $DOTENV_FILE_TMP
             echo "" >> $LOG_FILE;
@@ -125,9 +134,9 @@ function determineDotEnvFile() {
         fi
     fi
 
-    echo "Checking for existing .env file: $DOTENV_FILE_ORIG" >> $LOG_FILE;
+    log "Checking for existing .env file: $DOTENV_FILE_ORIG"
     if [ -f $DOTENV_FILE_ORIG ]; then
-        echo "-> file exists: $DOTENV_FILE_ORIG" >> $LOG_FILE;
+        log "-> file exists: $DOTENV_FILE_ORIG"
         cp $DOTENV_FILE_ORIG $DOTENV_FILE_TMP;
         source $DOTENV_FILE_TMP
         echo "" >> $LOG_FILE;
@@ -137,7 +146,7 @@ function determineDotEnvFile() {
     # Detect .env-* files
     SAMPLE_FILES=`ls .env-*` 2&> /dev/null
     if [[ "$SAMPLE_FILES" != "" ]]; then
-        echo "-> samples found: ask user to select one" >> $LOG_FILE;
+        log "-> samples found: ask user to select one"
 
         # Build menu list file found files
         MENU_LIST=""
@@ -147,7 +156,7 @@ function determineDotEnvFile() {
         menu;
 
         # Use selected file as original
-        echo "-> user selected: $SELECTED_ITEM" >> $LOG_FILE;
+        log "-> user selected: $SELECTED_ITEM"
         DOTENV_FILE_ORIG=$SELECTED_ITEM
         cp $SELECTED_ITEM $DOTENV_FILE_TMP;
         SELECTED_ITEM=""
@@ -156,7 +165,7 @@ function determineDotEnvFile() {
         return 1;
     fi
 
-    echo "-> no .env files found: creating empty one" >> $LOG_FILE
+    log "-> no .env files found: creating empty one";
 
     $DIALOG --title "Create new file" \
     --clear \
@@ -176,7 +185,7 @@ function determineDotEnvFile() {
             return 1
             ;;
        1|255)
-            echo "User didn't want to create an empty file => exiting." >> $LOG_FILE
+            log "User didn't want to create an empty file => exiting."
             clear
             echo ""
             echo -e "${COLOR_RED}No .env file found!${COLOR_NONE}"
@@ -235,11 +244,11 @@ function decrementDepthLevel {
         DEPTH_LEVEL=0
     fi
 
-    echo "Back item pressed => decrementing depth level" >> $LOG_FILE
-    echo "- DEPTH_LEVEL: $DEPTH_LEVEL" >> $LOG_FILE
-    echo "- CURRENT: $CURRENT" >> $LOG_FILE
-    echo "- PREV: $PREV_ITEM" >> $LOG_FILE
-    echo "- SELECTED: $SELECTED_ITEM" >> $LOG_FILE
+    log "Back item pressed => decrementing depth level"
+    log "- DEPTH_LEVEL: $DEPTH_LEVEL"
+    log "- CURRENT: $CURRENT"
+    log "- PREV: $PREV_ITEM"
+    log "- SELECTED: $SELECTED_ITEM"
     echo "" >> $LOG_FILE
 }
 
@@ -257,7 +266,7 @@ function updateVariable() {
     COMMENT=$(eval $CMD)
 
     # Show dialog
-    echo "Showing dialog for updating variable: ${KEY}" >> $LOG_FILE
+    log "Showing dialog for updating variable: ${KEY}"
     NEW=$($DIALOG \
         --clear \
         --inputbox "${KEY}: ${COMMENT}" \
@@ -267,7 +276,7 @@ function updateVariable() {
 
     # Value is empty
     if [[ "$NEW" == "" || "$NEW" == "\"\"" ]]; then
-        echo "Empty $KEY: $OLD => Should delete?" >> $LOG_FILE;
+        log "Empty $KEY: $OLD => Should delete?"
 
         $DIALOG --title "Delete variable" \
         --clear \
@@ -281,22 +290,22 @@ function updateVariable() {
         response=$?
         case $response in
            0)
-                echo "Delete variable: filter variable and overwrite file." >> $LOG_FILE
+                log "Delete variable: filter variable and overwrite file."
                 CMD=`cat $DOTENV_FILE_TMP | grep -v "$KEY=" > /tmp/dotenv-editor.tmp && cp /tmp/dotenv-editor.tmp $DOTENV_FILE_TMP`
 
                 source $DOTENV_FILE_TMP
                 ;;
            1)
-                echo "Keep variable => Do nothing." >> $LOG_FILE
+                log "Keep variable => Do nothing.";
                 ;;
            255)
-                echo "[ESC] key pressed." >> $LOG_FILE
+                log "[ESC] key pressed.";
                 ;;
         esac
 
     # Value is different
     elif [ "$OLD" != "$NEW" ]; then
-        echo "Updating $KEY: $OLD => $NEW" >> $LOG_FILE;
+        log "Updating $KEY: $OLD => $NEW";
 
         # Check if value is an integer (no quotes)
         local VALUE_IS_INTEGER=false;
@@ -322,7 +331,7 @@ function updateVariable() {
 
     # Otherwise nothing happened.
     else
-        echo "No change $KEY: $OLD => $NEW" >> $LOG_FILE;
+        log "No change $KEY: $OLD => $NEW";
     fi
 
     echo "" >> $LOG_FILE
@@ -330,7 +339,7 @@ function updateVariable() {
 
 
 function newVariable() {
-    echo "Showing dialog for creating a new variable" >> $LOG_FILE
+    log "Showing dialog for creating a new variable";
 
     NAME=$($DIALOG \
         --clear \
@@ -363,9 +372,9 @@ function newVariable() {
     echo "# $DESCRIPTION" >> $DOTENV_FILE_TMP
     echo "${FULL_NAME^^}=\"$VALUE\"" >> $DOTENV_FILE_TMP
 
-    echo "- Name: ${FULL_NAME}" >> $LOG_FILE
-    echo "- Value: ${VALUE}" >> $LOG_FILE
-    echo "- Description: ${DESCRIPTION}" >> $LOG_FILE
+    log "- Name: ${FULL_NAME}";
+    log "- Value: ${VALUE}";
+    log "- Description: ${DESCRIPTION}";
 
     echo "" >> $LOG_FILE
 }
@@ -380,7 +389,7 @@ function newVariable() {
 # @see: http://linuxcommand.org/lc3_adv_dialog.php
 ###
 function viewSettings() {
-    echo "Showing dialog for modifying settings" >> $LOG_FILE
+    log "Showing dialog for modifying settings";
 
     # Duplicate file descriptor 1 on descriptor 3
     exec 3>&1
@@ -404,7 +413,7 @@ function viewSettings() {
     # Act on the exit status
     case $return_value in
         $DIALOG_OK)
-            echo "FEATURES: $FEATURES" >> $LOG_FILE
+            log "FEATURES: $FEATURES"
 
             # Reset all features to defaults
             MODE_GROUP="OFF"
@@ -413,18 +422,18 @@ function viewSettings() {
 
             # Update features with selected op tions
             for FEATURE in $FEATURES; do
-                echo "FEATURE: $FEATURE" >> $LOG_FILE;
+                log "FEATURE: $FEATURE"
                 if [[ $FEATURE = *MODE_GROUP* ]]; then
                 # if [[ "$FEATURE" == "-\>GROUP" ]]; then
-                    echo "ENABLING GROUPING!" >> $LOG_FILE;
+                    log "ENABLING GROUPING!"
                     MODE_GROUP="ON"
                 fi
                 if [[ $FEATURE = *MODE_CHECKBOX* ]]; then
-                    echo "ENABLING CHECKBOX!" >> $LOG_FILE;
+                    log "ENABLING CHECKBOX!"
                     MODE_CHECKBOX="ON"
                 fi
                 if [[ $FEATURE = *COMPAT_QUOTE* ]]; then
-                    echo "ENABLING QUOTE!" >> $LOG_FILE;
+                    log "ENABLING QUOTE!"
                     COMPAT_QUOTE="ON"
                 fi
             done;
@@ -432,26 +441,26 @@ function viewSettings() {
             ;;
 
         $DIALOG_CANCEL)
-            echo "Cancel pressed." >> $LOG_FILE
+            log "Cancel pressed."
             ;;
 
         $DIALOG_HELP)
-            echo "Help pressed." >> $LOG_FILE
+            log "Help pressed."
             ;;
 
         $DIALOG_EXTRA)
-            echo "Extra button pressed." >> $LOG_FILE
+            log "Extra button pressed."
             ;;
 
         $DIALOG_ITEM_HELP)
-            echo "Item-help button pressed." >> $LOG_FILE
+            log "Item-help button pressed."
             ;;
 
         $DIALOG_ESC)
             if test -n "$FEATURES" ; then
-                echo "ESC pressed." >> $LOG_FILE
+                log "ESC pressed."
             else
-                echo "ESC pressed." >> $LOG_FILE
+                log "ESC pressed."
             fi
             ;;
     esac
@@ -461,12 +470,12 @@ function viewSettings() {
 SERVICES_FILTER=""
 
 function grepVariableListAndFilter() {
-    echo "Building services list (*_ENABLED)" >> $LOG_FILE
+    log "Building services list (*_ENABLED)"
     SERVICES_LIST=""
     SERVICES_FILTER=""
 
     if [[ "${MODE_CHECKBOX}" == "OFF" ]]; then
-        echo "- Checkboxes disabled => no filtering" >> $LOG_FILE
+        log "- Checkboxes disabled => no filtering"
         return;
     fi
 
@@ -488,15 +497,15 @@ function grepVariableListAndFilter() {
         fi;
     done;
 
-    echo "- SERVICES_FILTER: ${SERVICES_FILTER}" >> $LOG_FILE
-    echo "- SERVICES_LIST: ${SERVICES_LIST}" >> $LOG_FILE
+    log "- SERVICES_FILTER: ${SERVICES_FILTER}"
+    log "- SERVICES_LIST: ${SERVICES_LIST}"
     echo "" >> $LOG_FILE
 }
 
 
 
 function dialogEnableServices() {
-    echo "Showing dialog for enabling/disabling services" >> $LOG_FILE
+    log "Showing dialog for enabling/disabling services"
 
     # Duplicate file descriptor 1 on descriptor 3
     exec 3>&1
@@ -520,17 +529,17 @@ function dialogEnableServices() {
     # Act on the exit status
     case $return_value in
         $DIALOG_OK)
-            echo "SERVICES: $SERVICES" >> $LOG_FILE
+            log "SERVICES: $SERVICES"
 
             # Disable all services
             for SERVICE in `cat $DOTENV_FILE_TMP | grep '_ENABLED=' | rev | cut --delimiter='_' --fields=2- | rev`; do
                 sed -i "s/${SERVICE}_ENABLED=.*/${SERVICE}_ENABLED=0/" $DOTENV_FILE_TMP
-                echo "DISABLING: ${SERVICE}" >> $LOG_FILE
+                log "DISABLING: ${SERVICE}"
             done
             # Enable selected services
             for SERVICE in $SERVICES; do
                 sed -i "s/${SERVICE}_ENABLED=.*/${SERVICE}_ENABLED=1/" $DOTENV_FILE_TMP
-                echo "ENABLING: ${SERVICE}" >> $LOG_FILE
+                log "ENABLING: ${SERVICE}"
             done;
 
             # Source .env file and rebuild services list and filter.
@@ -539,26 +548,26 @@ function dialogEnableServices() {
             ;;
 
         $DIALOG_CANCEL)
-            echo "Cancel pressed." >> $LOG_FILE
+            log "Cancel pressed."
             ;;
 
         $DIALOG_HELP)
-            echo "Help pressed." >> $LOG_FILE
+            log "Help pressed."
             ;;
 
         $DIALOG_EXTRA)
-            echo "Extra button pressed." >> $LOG_FILE
+            log "Extra button pressed."
             ;;
 
         $DIALOG_ITEM_HELP)
-            echo "Item-help button pressed." >> $LOG_FILE
+            log "Item-help button pressed."
             ;;
 
         $DIALOG_ESC)
             if test -n "$FEATURES" ; then
-                echo "ESC pressed." >> $LOG_FILE
+                log "ESC pressed."
             else
-                echo "ESC pressed." >> $LOG_FILE
+                log "ESC pressed."
             fi
             ;;
     esac
@@ -567,12 +576,12 @@ function dialogEnableServices() {
 
 
 function saveChangesOrExit() {
-    echo "Save changes or exit" >> $LOG_FILE
+    log "Save changes or exit"
 
     # Check if tmp file differs from orig file.
     diffTmpVsOrigFile;
     if [ -s $DOTENV_FILE_TMP.diff ]; then
-        echo "- Showing dialog asking to save changes" >> $LOG_FILE
+        log "- Showing dialog asking to save changes"
 
         $DIALOG --title "Dotenv Editor - Save Changes?" \
             --yesno "Are you sure you want to save the changes to \"$DOTENV_FILE_ORIG\"?" 7 60
@@ -584,15 +593,15 @@ function saveChangesOrExit() {
         response=$?
         case $response in
            0)
-                echo "-> Overwriting original file with changes." >> $LOG_FILE;
+                log "-> Overwriting original file with changes."
                 cp $DOTENV_FILE_TMP $DOTENV_FILE_ORIG
                 ;;
            1)
-                echo "-> Changes discarded." >> $LOG_FILE;
+                log "-> Changes discarded."
 
                 ;;
            255)
-                echo "-> [ESC] key pressed. " >> $LOG_FILE
+                log "-> [ESC] key pressed. "
                 ;;
         esac
     fi
@@ -602,7 +611,7 @@ function saveChangesOrExit() {
     echo "" >> $LOG_FILE
 
     # Exit application
-    echo "Exiting dotenv-editor" >> $LOG_FILE
+    log "Exiting dotenv-editor"
     echo "" >> $LOG_FILE
     clear;
     exit;
@@ -635,7 +644,7 @@ function mainLoop() {
 
         *SAVE) # Save the   
             # clear;
-            echo "Saving tmp file to orig file" >> $LOG_FILE;
+            log "Saving tmp file to orig file"
             cp $DOTENV_FILE_TMP $DOTENV_FILE_ORIG
             source $DOTENV_FILE_ORIG
             decrementDepthLevel
@@ -690,10 +699,10 @@ function mainLoop() {
 # @TODO: It uses global variables; shouldn't I pass them  as an argument?
 ###
 function buildMenuSelection {
-    echo "Menu item selection" >> $LOG_FILE
-    echo "-> CURRENT:  $CURRENT" >> $LOG_FILE
-    echo "-> SELECTED: $SELECTED_ITEM" >> $LOG_FILE
-    echo "-> PREV: $PREV_ITEM" >> $LOG_FILE
+    log "Menu item selection"
+    log "-> CURRENT:  $CURRENT"
+    log "-> SELECTED: $SELECTED_ITEM"
+    log "-> PREV: $PREV_ITEM"
     PREV_ITEM=$CURRENT
     # echo "-> PREV: $PREV_ITEM" >> $LOG_FILE
 
@@ -734,32 +743,32 @@ function buildMenuSelection {
 
     echo "" >> $LOG_FILE;
     if [[ "$MODE_GROUP" == "ON" ]]; then
-        echo "-> GROUP MODE ENABLED" >> $LOG_FILE;
-        echo "-> SELECT: $FULL_SELECT" >> $LOG_FILE;
-        echo "-> DEPTH: $DEPTH_LEVEL" >> $LOG_FILE;
-        echo "-> MAX: $GROUP_MAX_DEPTH" >> $LOG_FILE;
+        log "-> GROUP MODE ENABLED"
+        log "-> SELECT: $FULL_SELECT"
+        log "-> DEPTH: $DEPTH_LEVEL"
+        log "-> MAX: $GROUP_MAX_DEPTH"
 
         FIELD_DEPTH=$((DEPTH_LEVEL+1))
         # FIELD_DEPTH=$((DEPTH_LEVEL))
         # FIELD_DEPTH=1
-        echo "-> FIELD: $FIELD_DEPTH" >> $LOG_FILE;
+        log "-> FIELD: $FIELD_DEPTH"
 
         if [[ $DEPTH_LEVEL -ge $GROUP_MAX_DEPTH ]]; then
-            echo "=> Max reached" >> $LOG_FILE;
+            log "=> Max reached"
             VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE_TMP | grep -v '^#' | grep -v '^$' | grep -v '^ '| grep '^'$CURRENT | cut --delimiter='_' --fields=$FIELD_DEPTH- | sort | uniq`
             CMD="awk -F= '{print $1 }' $DOTENV_FILE_TMP  | grep -v '^#' | grep -v '^$' | grep -v '^ '| grep '^'$CURRENT | cut --delimiter='_' --fields=$FIELD_DEPTH | sort | uniq"
 
         elif [[ $DEPTH_LEVEL -gt 0 ]]; then
-            echo "=> Sub item" >> $LOG_FILE;
+            log "=> Sub item"
             FIELD_DEPTH=`echo "$FULL_SELECT" | grep -o \_  | wc -l`
             ((FIELD_DEPTH=FIELD_DEPTH+2))
-            echo "-> NEW DEPTH: $FIELD_DEPTH" >> $LOG_FILE;
+            log "-> NEW DEPTH: $FIELD_DEPTH"
             VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE_TMP  | grep -v '^#' | grep -v '^$' | grep -v '^ '| grep "\${FULL_SELECT}" | cut --delimiter='_' --fields=$FIELD_DEPTH | sort | uniq`
             # VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE_TMP  | grep -v '^#' | grep -v '^$' | grep '^$FULL_SELECT' | cut --delimiter='_' --fields=$FIELD_DEPTH | sort | uniq`
             CMD="awk -F= '{print $1 }' $DOTENV_FILE_TMP  | grep -v '^#' | grep -v '^$' | grep -v '^ '| grep '^${FULL_SELECT}' | cut --delimiter='_' --fields=$FIELD_DEPTH | sort | uniq"
 
         else 
-            echo "=> Nothing selected" >> $LOG_FILE;
+            log "=> Nothing selected"
             if [[ "$SERVICES_FILTER" != "" ]]; then
                 VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE_TMP | grep -v ${SERVICES_FILTER} | grep -v '^#' | grep -v '^$' | grep -v '^ '| cut --delimiter='_' --fields=1 | sort | uniq`
             else
@@ -769,35 +778,36 @@ function buildMenuSelection {
         fi
 
     else
-        echo "=> Simple mode" >> $LOG_FILE;
+        log "=> Simple mode"
         VARIABLE_GROUP=`awk -F= '{print $1 }' $DOTENV_FILE_TMP  | grep -v '^#' | grep -v '^$' | grep -v '^ '| sort | uniq`
         CMD="awk -F= '{print $1 }' $DOTENV_FILE_TMP  | grep -v '^#' | grep -v '^$' | grep -v '^ '| sort | uniq"
     fi;
 
-    echo "- CMD: $CMD" >> $LOG_FILE;
-    echo "- VAR_GROUP: $VARIABLE_GROUP" >> $LOG_FILE;
+    log "- CMD: $CMD"
+    log "- VAR_GROUP: $VARIABLE_GROUP"
     echo "" >> $LOG_FILE;
 
-    # Loop over the matched variables (in case of grouping).
-    echo "Listing menu items" >> $LOG_FILE;
     COUNTER=0
     PROGRESS_MAX=`echo "$VARIABLE_GROUP" | wc -l`
-    echo "-> CNT_MATCHES: $CNT_MATCHES" >> $LOG_FILE
-    echo "-> CNT_ITEMS: $CNT_ITEMS" >> $LOG_FILE
-    echo "-> CNT_GROUPS: $CNT_GROUPS" >> $LOG_FILE
-    echo "-> PROGRESS_MAX: $PROGRESS_MAX" >> $LOG_FILE;
+    log "-> CNT_MATCHES: $CNT_MATCHES"
+    log "-> CNT_ITEMS: $CNT_ITEMS"
+    log "-> CNT_GROUPS: $CNT_GROUPS"
+    log "-> PROGRESS_MAX: $PROGRESS_MAX"
+
+    # Loop over the matched variables (in case of grouping).
+    log "Listing menu items"
     for i in $VARIABLE_GROUP; do
         ((COUNTER++))
 
         # Calculate and display progress percentage.
         PERCENTAGE=$(( (100 * COUNTER/PROGRESS_MAX) + 50 / 100 ))
         echo $PERCENTAGE | $DIALOG --gauge "Processing variable: $i" 12 70
-        echo "${COUNTER} / ${PROGRESS_MAX} => ${PERCENTAGE} %" >> $LOG_FILE;
+        log "${COUNTER} / ${PROGRESS_MAX} => ${PERCENTAGE} %";
 
         if [[ "$MODE_GROUP" == "ON" ]]; then
 
             local NUMBER_OF_UNDERSCORES=`echo "$i" | grep -o \_  | wc -l`
-            echo "- $i => $NUMBER_OF_UNDERSCORES" >> $LOG_FILE;
+            log "- $i => $NUMBER_OF_UNDERSCORES";
 
             local MENU_KEY=""
             if [[ $NUMBER_OF_UNDERSCORES -gt $GROUP_MAX_DEPTH ]]; then
@@ -817,7 +827,7 @@ function buildMenuSelection {
             CNT_ITEMS=`cat $DOTENV_FILE_TMP | grep "$FULL_NAME=" | wc -l`
             if [[ "${MODE_CHECKBOX}" == "ON" && "$i" == "ENABLED" ]]; then
                 # Ignore _ENABLED item
-                echo "Ignoring _ENABLED items when MODE_CHECKBOX is ON" >> $LOG_FILE;
+                log "Ignoring _ENABLED items when MODE_CHECKBOX is ON";
 
             elif [ "$CNT_ITEMS" == "1" ]; then
                 VALUE=${!FULL_NAME}
@@ -834,7 +844,7 @@ function buildMenuSelection {
                 if [[ "${MORE_TEXT}" == "2" ]]; then
                     MORE_TEXT="More options";
                 fi
-                MENU_LIST_MORE="$MENU_LIST_MORE $i =\>\ \"$MORE_TEXT\" " >> $LOG_FILE;
+                MENU_LIST_MORE="$MENU_LIST_MORE $i =\>\ \"$MORE_TEXT\" "
             fi
 
         else
@@ -951,13 +961,13 @@ while true ; do
     case "$1" in
         -f|--file)
             DOTENV_FILE_ORIG=${2#=}
-            echo "- receiving option --file: $DOTENV_FILE_ORIG" >> $LOG_FILE;
+            log "- receiving option --file: $DOTENV_FILE_ORIG"
             shift 2 ;;
 
         -l|--log)
             LOG_FILE=${2#=}
-            echo "Starting dotenv-editor" >> $LOG_FILE;
-            echo "- receiving option --log: $LOG_FILE" >> $LOG_FILE;
+            log "Starting dotenv-editor"
+            log "- receiving option --log: $LOG_FILE"
             shift 2 ;;
 
         -h|--help)
@@ -972,43 +982,43 @@ while true ; do
 
         # UI modes
         -g|--group)
-            echo "- enabling ui mode --group" >> $LOG_FILE;
+            log "- enabling ui mode --group"
             MODE_GROUP="ON"
             GROUP_MAX_DEPTH="2"
             shift 2 ;;
 
         --depth)
-            echo "- setting group depth to " >> $LOG_FILE;
+            log "- setting group depth to "
             GROUP_MAX_DEPTH=${2#=}
             MODE_GROUP="ON"
             shift 2 ;;
 
         -c|--checkbox)
-            echo "- enabling ui mode --checkbox" >> $LOG_FILE;
+            log "- enabling ui mode --checkbox"
             MODE_CHECKBOX="ON"
             shift 2 ;;
 
         # Compatibility modes
         -q|--quote)
-            echo "- enabling compat mode --quote" >> $LOG_FILE;
+            log "- enabling compat mode --quote"
             COMPAT_QUOTE="ON"
             shift 2 ;;
 
         --dialog)
             TEST_UI_LIBS="dialog $TEST_UI_LIBS"
-            echo "- selected UI lib: dialog" >> $LOG_FILE;
+            log "- selected UI lib: dialog"
             DIALOG="dialog"
             shift 2 ;;
 
         --whiptail)
             TEST_UI_LIBS="whiptail $TEST_UI_LIBS"
-            echo "- selected UI lib: whiptail" >> $LOG_FILE;
+            log "- selected UI lib: whiptail"
             DIALOG="whiptail"
             shift 2 ;;
 
         --) shift ; break ;;
         *)
-            echo "Internal error!" >> $LOG_FILE;
+            log "Internal error!"
             exit 1 ;;
     esac
 done

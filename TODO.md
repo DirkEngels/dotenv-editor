@@ -19,4 +19,4 @@ Please provide feedback and report your bugs!
 - Integrate CI to build debian package and push to launchpad
 - Only show added/deleting variables when the --new has been enabled
 - Improve processing larger .env files
-
+- Bug when using whiptail (for the progressbar)

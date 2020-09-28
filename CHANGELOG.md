@@ -2,6 +2,16 @@
 All notable changes to this project will be documented in this file.
 
 
+## 0.4.3 (2020-09-28)
+Show a progress bar loading a larger files.
+
+### Added
++ Show progress bar when progressing files (improve performance later)
+
+### Fixed
++ Ignore files starting with a space (fixes loading laradock example)
+
+
 ## 0.4.2 (2020-09-27)
 Various bugfixes and improvements.
 

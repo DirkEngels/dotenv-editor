@@ -3,7 +3,7 @@
 ###
 # Release version & libraries too check
 ###
-VERSION="0.4.2"
+VERSION="0.4.3"
 TEST_DEPENDENCIES="sed awk sort uniq grep"
 TEST_UI_LIBS="dialog whiptail"
 

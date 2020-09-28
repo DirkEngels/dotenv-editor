@@ -8,12 +8,6 @@ Most of the ideas have now been implemented. The next following
 versions will be used for fix any bugs after which there will be a 1.0 version.
 Please provide feedback and report your bugs!
 
-### Added
-+ Show progress bar when progressing files (improve performance later)
-
-### Fixed
-+ Ignore files starting with a space (fixes loading laradock example)
-
 
 ## Bugs / Requests
 - Integrate CI to build debian package and push to launchpad

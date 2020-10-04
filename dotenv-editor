@@ -984,10 +984,9 @@ while true ; do
         -g|--group)
             log "- enabling ui mode --group"
             MODE_GROUP="ON"
-            GROUP_MAX_DEPTH="2"
             shift 2 ;;
 
-        --depth)
+        -d|--depth)
             log "- setting group depth to "
             GROUP_MAX_DEPTH=${2#=}
             MODE_GROUP="ON"

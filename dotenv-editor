@@ -622,7 +622,7 @@ function saveChangesOrExit() {
 # Store differences between ORIG and TMP file in a DIFF file.
 ###
 function diffTmpVsOrigFile () {
-    diff --color $DOTENV_FILE_ORIG $DOTENV_FILE_TMP > $DOTENV_FILE_TMP.diff
+    diff --unified --color $DOTENV_FILE_ORIG $DOTENV_FILE_TMP > $DOTENV_FILE_TMP.diff
 }
 
 

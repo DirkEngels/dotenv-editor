@@ -3,7 +3,7 @@
 ###
 # Release version & libraries too check
 ###
-VERSION="0.4.4"
+VERSION="0.5.0"
 TEST_DEPENDENCIES="sed awk sort uniq grep"
 TEST_UI_LIBS="dialog whiptail"
 
@@ -30,15 +30,15 @@ COLOR_ORANGE='\033[0;33m'
 COLOR_NONE='\033[0m' # No Color
 
 # UI modes
-MODE_GROUP="OFF"
-MODE_SERVICES="OFF"
-MODE_MODIFY="OFF"
+MODE_GROUP="ON"
+MODE_SERVICES="ON"
+MODE_MODIFY="ON"
 
 # Group specific options
 GROUP_MAX_DEPTH=2
 
 # Compatibility modes
-COMPAT_QUOTE="OFF"
+COMPAT_QUOTE="ON"
 
 # Define the dialog exit status codes
 # @see: http://linuxcommand.org/lc3_adv_dialog.php
@@ -906,10 +906,10 @@ function showHelp {
     # echo -e "  -k, --keep-comments        keep comments"
     echo ""
     echo "UI features:"
-    echo "  -g, --group                enable grouping variables by separator"
-    echo "  -s, --services             enable/disable services checkboxes for variables called"
-    echo "                             *_ENABLED* and have a 0 or 1 value"
-    echo "  -m, --modify               enable deleting and/or creating new variables."
+    echo "  -g, --disable-grouping     enable grouping variables by separator"
+    echo "  -m, --disable-modify       disable deleting and/or creating new variables."
+    echo "  -s, --disable-services     disable selecting services for variables called"
+    echo "                             *_ENABLED* to enable/disable using checkboxes"
     echo ""
     # echo "Group mode options:"
     # echo "  -d, --depth=2              stops grouping variables after this depth"
@@ -945,7 +945,7 @@ function showVersion {
 ###
 
 # read the options
-TEMP=`getopt -n "$0" -o "f::l::h::v::q::g::d::s::m::" --long "file:,log:,help::,version::,group::,depth:,services::,,quote::,modify::,dialog::,whiptail::" -- "$@"`
+TEMP=`getopt -n "$0" -o "f::l::h::v::q::g::d::s::m::" --long "file:,log:,help::,version::,disable-grouping::,depth:,disable-services::,,disable-quote::,disable-modify::,dialog::,whiptail::" -- "$@"`
 eval set -- "$TEMP"
 
 # Set defaults in case optional parameters have not been set.
@@ -986,15 +986,15 @@ while true ; do
             ;;
 
         # UI modes
-        -g|--group)
+        -g|--disable-grouping)
             log "- enabling ui mode --group"
-            MODE_GROUP="ON"
+            MODE_GROUP="OFF"
             shift 2 ;;
 
         # UI modes
-        -m|--modify)
+        -m|--disable-modify)
             log "- enabling ui mode --modify"
-            MODE_MODIFY="ON"
+            MODE_MODIFY="OFF"
             shift 2 ;;
 
         -d|--depth)
@@ -1003,15 +1003,15 @@ while true ; do
             MODE_GROUP="ON"
             shift 2 ;;
 
-        -s|--services)
+        -s|--disable-services)
             log "- enabling ui mode --services"
-            MODE_SERVICES="ON"
+            MODE_SERVICES="OFF"
             shift 2 ;;
 
         # Compatibility modes
         -q|--quote)
             log "- enabling compat mode --quote"
-            COMPAT_QUOTE="ON"
+            COMPAT_QUOTE="OFF"
             shift 2 ;;
 
         --dialog)

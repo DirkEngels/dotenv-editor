@@ -2,6 +2,15 @@
 All notable changes to this project will be documented in this file.
 
 
+## 0.5.0 (2020-10-04)
+Enable features by default and can be disabled using one of the 
+--disable-<feature> flags./
+
+### Changed
++ Rename option --checkbox => --services
++ Options enabled by default; disable using --disable-<feature> flag.
+
+
 ## 0.4.4 (2020-10-04)
 More command line options for tweaking behaviour.
 

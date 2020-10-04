@@ -31,7 +31,7 @@ COLOR_NONE='\033[0m' # No Color
 
 # UI modes
 MODE_GROUP="OFF"
-MODE_CHECKBOX="OFF"
+MODE_SERVICES="OFF"
 MODE_MODIFY="OFF"
 
 # Group specific options
@@ -402,7 +402,7 @@ function viewSettings() {
         "Modify settings according to your preferences" 20 78 6 \
         "MODE_GROUP" "Enable grouping variables by separator (_)" $MODE_GROUP \
         "MODE_MODIFY" "Delete or create new variables" $MODE_MODIFY \
-        "MODE_CHECKBOX" "Enable/disable services (& sections)" $MODE_CHECKBOX \
+        "MODE_SERVICES" "Enable/disable services (& sections)" $MODE_SERVICES \
         "COMPAT_QUOTE" "Quote variables with a '\"'" $COMPAT_QUOTE \
         2>&1 1>&3)
 
@@ -419,7 +419,7 @@ function viewSettings() {
 
             # Reset all features to defaults
             MODE_GROUP="OFF"
-            MODE_CHECKBOX="OFF"
+            MODE_SERVICES="OFF"
             COMPAT_QUOTE="OFF"
 
             # Update features with selected op tions
@@ -430,9 +430,9 @@ function viewSettings() {
                     log "ENABLING GROUPING!"
                     MODE_GROUP="ON"
                 fi
-                if [[ $FEATURE = *MODE_CHECKBOX* ]]; then
-                    log "ENABLING CHECKBOX!"
-                    MODE_CHECKBOX="ON"
+                if [[ $FEATURE = *MODE_SERVICES* ]]; then
+                    log "ENABLING SERVICES!"
+                    MODE_SERVICES="ON"
                 fi
                 if [[ $FEATURE = *COMPAT_QUOTE* ]]; then
                     log "ENABLING QUOTE!"
@@ -476,8 +476,8 @@ function grepVariableListAndFilter() {
     SERVICES_LIST=""
     SERVICES_FILTER=""
 
-    if [[ "${MODE_CHECKBOX}" == "OFF" ]]; then
-        log "- Checkboxes disabled => no filtering"
+    if [[ "${MODE_SERVICES}" == "OFF" ]]; then
+        log "- Services disabled => no filtering"
         return;
     fi
 
@@ -827,9 +827,9 @@ function buildMenuSelection {
             fi
 
             CNT_ITEMS=`cat $DOTENV_FILE_TMP | grep "$FULL_NAME=" | wc -l`
-            if [[ "${MODE_CHECKBOX}" == "ON" && "$i" == "ENABLED" ]]; then
+            if [[ "${MODE_SERVICES}" == "ON" && "$i" == "ENABLED" ]]; then
                 # Ignore _ENABLED item
-                log "Ignoring _ENABLED items when MODE_CHECKBOX is ON";
+                log "Ignoring _ENABLED items when MODE_SERVICES is ON";
 
             elif [ "$CNT_ITEMS" == "1" ]; then
                 VALUE=${!FULL_NAME}
@@ -857,7 +857,7 @@ function buildMenuSelection {
     done
 
     # Build menu list out of MORE (sub items) and ITEMS (modify).
-    if [[ "${MODE_CHECKBOX}" == "ON" ]]; then
+    if [[ "${MODE_SERVICES}" == "ON" ]]; then
         MENU_LIST="$MENU_LIST *SERVICES \"Enable/disable services\" "
         MENU_LIST="$MENU_LIST \" \" \"\" "
     fi
@@ -907,7 +907,7 @@ function showHelp {
     echo ""
     echo "UI features:"
     echo "  -g, --group                enable grouping variables by separator"
-    echo "  -c, --checkbox             enable/disable services checkboxes for variables called"
+    echo "  -s, --services             enable/disable services checkboxes for variables called"
     echo "                             *_ENABLED* and have a 0 or 1 value"
     echo "  -m, --modify               enable deleting and/or creating new variables."
     echo ""
@@ -945,7 +945,7 @@ function showVersion {
 ###
 
 # read the options
-TEMP=`getopt -n "$0" -o "f::l::h::v::q::g::d::c::m::" --long "file:,log:,help::,version::,group::,depth:,checkbox::,,quote::,modify::,dialog::,whiptail::" -- "$@"`
+TEMP=`getopt -n "$0" -o "f::l::h::v::q::g::d::s::m::" --long "file:,log:,help::,version::,group::,depth:,services::,,quote::,modify::,dialog::,whiptail::" -- "$@"`
 eval set -- "$TEMP"
 
 # Set defaults in case optional parameters have not been set.
@@ -1003,9 +1003,9 @@ while true ; do
             MODE_GROUP="ON"
             shift 2 ;;
 
-        -c|--checkbox)
-            log "- enabling ui mode --checkbox"
-            MODE_CHECKBOX="ON"
+        -s|--services)
+            log "- enabling ui mode --services"
+            MODE_SERVICES="ON"
             shift 2 ;;
 
         # Compatibility modes

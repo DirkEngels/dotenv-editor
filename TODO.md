@@ -16,3 +16,8 @@ Please provide feedback and report your bugs!
 - Improve processing larger .env files
 - Bug when using whiptail (for the progressbar)
 - Fix flickering when showing a progress bar
+
+
+## v0.5.x
+- Change paramaters from enable to disable (by default enable all features).
+

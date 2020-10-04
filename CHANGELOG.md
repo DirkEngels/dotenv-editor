@@ -2,6 +2,14 @@
 All notable changes to this project will be documented in this file.
 
 
+## 0.4.4 (2020-10-04)
+More command line options for tweaking behaviour.
+
+### Added
+- Option (--depth=2) to define the group depth level.
+- Option (--modify) for enabling/disabling added/deleting variables.
+
+
 ## 0.4.3 (2020-09-28)
 Show a progress bar loading a larger files.
 

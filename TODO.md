@@ -11,8 +11,8 @@ Please provide feedback and report your bugs!
 
 ## Bugs / Requests
 - Add command option to define the group depth level
++ Only show added/deleting variables when the --modify has been enabled
 - Integrate CI to build debian package and push to launchpad
-- Only show added/deleting variables when the --new has been enabled
 - Improve processing larger .env files
 - Bug when using whiptail (for the progressbar)
 - Fix flickering when showing a progress bar
